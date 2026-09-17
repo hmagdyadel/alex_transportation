@@ -11,6 +11,12 @@ class BusStates<T> with _$BusStates<T> {
   /// Subscribing to a bus route + stop.
   const factory BusStates.subscribingToRoute() = SubscribingToRoute;
 
+  /// Booking a seat on a route.
+  const factory BusStates.bookingSeat() = BookingSeat;
+
+  /// Cancelling a seat booking.
+  const factory BusStates.cancellingBooking() = CancellingBooking;
+
   /// Checking in for today's ride.
   const factory BusStates.checkingInToday() = CheckingInToday;
 

@@ -123,6 +123,53 @@
 - ModalProgressHUD with rotating brand logo enforced for all async operations.
 
 ### Open for Next Phase
-- Phase 3: Employee Bus Transit Module (routes, real-time schedule, stop manifests, boarding pass).
+- Phase 3 completed on branch `phase-3`
+
+---
+
+## Phase 3 — Employee Bus Transit Module
+**Date:** 2026-09-17
+**Branch:** `phase-3`
+
+### Built
+- **Data Models (Pure `json_serializable`)**:
+  - `BusStopModel` ([bus_stop_model.dart](file:///Users/haithammagdy/Flutter/alex_transportation/lib/features/buses/data/models/bus_stop_model.dart)): Sequence of transit stops with English/Arabic names, scheduled time, completed and current status.
+  - `BusRouteModel` ([bus_route_model.dart](file:///Users/haithammagdy/Flutter/alex_transportation/lib/features/buses/data/models/bus_route_model.dart)): Shuttle route with shift (Morning/Evening), departure/arrival times, total/available seat counters, driver info, and stop manifests.
+  - `BusBoardingPassModel` ([bus_boarding_pass_model.dart](file:///Users/haithammagdy/Flutter/alex_transportation/lib/features/buses/data/models/bus_boarding_pass_model.dart)): Digital QR boarding pass with seat assignment and pickup stop.
+- **Cubit Logic**:
+  - `BusCubit` ([bus_cubit.dart](file:///Users/haithammagdy/Flutter/alex_transportation/lib/features/buses/presentation/bloc/bus_cubit.dart)):
+    - 5 realistic routes across Cairo & Giza (Maadi HQ Express, New Cairo, Heliopolis & Nasr City, 6th October/Zayed, Evening Return).
+    - Shift filter toggling (`All`, `Morning`, `Evening`).
+    - Route stop timeline selection.
+    - Seat booking flow with capacity check, seat number assignment, and QR pass generation.
+    - Check-in with driver (`boarded` status).
+    - Seat cancellation with automated seat restoration on route.
+- **Widgets & UI**:
+  - `BusBoardingPassCard` ([bus_boarding_pass_card.dart](file:///Users/haithammagdy/Flutter/alex_transportation/lib/features/buses/presentation/widgets/bus_boarding_pass_card.dart)):
+    - High-contrast digital QR boarding pass generated via `qr_flutter`.
+    - Seat badge (`#14`), pickup stop, departure time, and "Board Bus" / "Cancel Reservation" actions.
+  - `BusStopTimeline` ([bus_stop_timeline.dart](file:///Users/haithammagdy/Flutter/alex_transportation/lib/features/buses/presentation/widgets/bus_stop_timeline.dart)):
+    - Vertical stepper indicator showing completed stops (green checkmark), current bus position (pulsing badge), and upcoming stops.
+    - Interactive pickup stop selector.
+  - `BusesPage` ([buses_page.dart](file:///Users/haithammagdy/Flutter/alex_transportation/lib/features/buses/presentation/pages/buses_page.dart)):
+    - Active boarding pass hero card.
+    - Shift filter pill switcher.
+    - Route cards with capacity pill, live status, driver details with direct call action, expandable stop timeline, and one-tap seat booking.
+    - Wrapped with `ModalProgressHUD` + `CustomLoadingIndicator` for all async actions.
+  - `HomePage` ([home_page.dart](file:///Users/haithammagdy/Flutter/alex_transportation/lib/features/home/presentation/pages/home_page.dart)):
+    - Connected `BusesPage` to the **🚌 Buses** tab with badge set to **Active**.
+- **Tests**:
+  - `bus_models_test.dart`: Pure `json_serializable` serialization/deserialization for all bus models.
+  - `bus_cubit_test.dart`: Complete unit tests covering shift filters, seat booking, capacity limits, cancellation, and driver check-in.
+  - Test suite: **25/25 tests passing**.
+  - `flutter analyze`: **0 issues found**.
+
+### Key Decisions
+- Pure `json_serializable` maintained for all data models.
+- Interactive vertical stepper timeline used for stop manifests.
+
+### Open for Next Phase
+- Phase 4: Employee Errand Cars Module (on-demand official vehicle requests, supervisor approvals, mileage logs).
+
 
 

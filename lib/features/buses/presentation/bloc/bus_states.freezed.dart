@@ -56,13 +56,15 @@ extension BusStatesPatterns<T> on BusStates<T> {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( _Initial<T> value)?  initial,TResult Function( Loading<T> value)?  loading,TResult Function( SubscribingToRoute<T> value)?  subscribingToRoute,TResult Function( CheckingInToday<T> value)?  checkingInToday,TResult Function( Loaded<T> value)?  loaded,TResult Function( Empty<T> value)?  empty,TResult Function( Success<T> value)?  success,TResult Function( Error<T> value)?  error,required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( _Initial<T> value)?  initial,TResult Function( Loading<T> value)?  loading,TResult Function( SubscribingToRoute<T> value)?  subscribingToRoute,TResult Function( BookingSeat<T> value)?  bookingSeat,TResult Function( CancellingBooking<T> value)?  cancellingBooking,TResult Function( CheckingInToday<T> value)?  checkingInToday,TResult Function( Loaded<T> value)?  loaded,TResult Function( Empty<T> value)?  empty,TResult Function( Success<T> value)?  success,TResult Function( Error<T> value)?  error,required TResult orElse(),}){
 final _that = this;
 switch (_that) {
 case _Initial() when initial != null:
 return initial(_that);case Loading() when loading != null:
 return loading(_that);case SubscribingToRoute() when subscribingToRoute != null:
-return subscribingToRoute(_that);case CheckingInToday() when checkingInToday != null:
+return subscribingToRoute(_that);case BookingSeat() when bookingSeat != null:
+return bookingSeat(_that);case CancellingBooking() when cancellingBooking != null:
+return cancellingBooking(_that);case CheckingInToday() when checkingInToday != null:
 return checkingInToday(_that);case Loaded() when loaded != null:
 return loaded(_that);case Empty() when empty != null:
 return empty(_that);case Success() when success != null:
@@ -85,13 +87,15 @@ return error(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( _Initial<T> value)  initial,required TResult Function( Loading<T> value)  loading,required TResult Function( SubscribingToRoute<T> value)  subscribingToRoute,required TResult Function( CheckingInToday<T> value)  checkingInToday,required TResult Function( Loaded<T> value)  loaded,required TResult Function( Empty<T> value)  empty,required TResult Function( Success<T> value)  success,required TResult Function( Error<T> value)  error,}){
+@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( _Initial<T> value)  initial,required TResult Function( Loading<T> value)  loading,required TResult Function( SubscribingToRoute<T> value)  subscribingToRoute,required TResult Function( BookingSeat<T> value)  bookingSeat,required TResult Function( CancellingBooking<T> value)  cancellingBooking,required TResult Function( CheckingInToday<T> value)  checkingInToday,required TResult Function( Loaded<T> value)  loaded,required TResult Function( Empty<T> value)  empty,required TResult Function( Success<T> value)  success,required TResult Function( Error<T> value)  error,}){
 final _that = this;
 switch (_that) {
 case _Initial():
 return initial(_that);case Loading():
 return loading(_that);case SubscribingToRoute():
-return subscribingToRoute(_that);case CheckingInToday():
+return subscribingToRoute(_that);case BookingSeat():
+return bookingSeat(_that);case CancellingBooking():
+return cancellingBooking(_that);case CheckingInToday():
 return checkingInToday(_that);case Loaded():
 return loaded(_that);case Empty():
 return empty(_that);case Success():
@@ -113,13 +117,15 @@ return error(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( _Initial<T> value)?  initial,TResult? Function( Loading<T> value)?  loading,TResult? Function( SubscribingToRoute<T> value)?  subscribingToRoute,TResult? Function( CheckingInToday<T> value)?  checkingInToday,TResult? Function( Loaded<T> value)?  loaded,TResult? Function( Empty<T> value)?  empty,TResult? Function( Success<T> value)?  success,TResult? Function( Error<T> value)?  error,}){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( _Initial<T> value)?  initial,TResult? Function( Loading<T> value)?  loading,TResult? Function( SubscribingToRoute<T> value)?  subscribingToRoute,TResult? Function( BookingSeat<T> value)?  bookingSeat,TResult? Function( CancellingBooking<T> value)?  cancellingBooking,TResult? Function( CheckingInToday<T> value)?  checkingInToday,TResult? Function( Loaded<T> value)?  loaded,TResult? Function( Empty<T> value)?  empty,TResult? Function( Success<T> value)?  success,TResult? Function( Error<T> value)?  error,}){
 final _that = this;
 switch (_that) {
 case _Initial() when initial != null:
 return initial(_that);case Loading() when loading != null:
 return loading(_that);case SubscribingToRoute() when subscribingToRoute != null:
-return subscribingToRoute(_that);case CheckingInToday() when checkingInToday != null:
+return subscribingToRoute(_that);case BookingSeat() when bookingSeat != null:
+return bookingSeat(_that);case CancellingBooking() when cancellingBooking != null:
+return cancellingBooking(_that);case CheckingInToday() when checkingInToday != null:
 return checkingInToday(_that);case Loaded() when loaded != null:
 return loaded(_that);case Empty() when empty != null:
 return empty(_that);case Success() when success != null:
@@ -141,12 +147,14 @@ return error(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  initial,TResult Function()?  loading,TResult Function()?  subscribingToRoute,TResult Function()?  checkingInToday,TResult Function()?  loaded,TResult Function()?  empty,TResult Function( T data)?  success,TResult Function( String message)?  error,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  initial,TResult Function()?  loading,TResult Function()?  subscribingToRoute,TResult Function()?  bookingSeat,TResult Function()?  cancellingBooking,TResult Function()?  checkingInToday,TResult Function()?  loaded,TResult Function()?  empty,TResult Function( T data)?  success,TResult Function( String message)?  error,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Initial() when initial != null:
 return initial();case Loading() when loading != null:
 return loading();case SubscribingToRoute() when subscribingToRoute != null:
-return subscribingToRoute();case CheckingInToday() when checkingInToday != null:
+return subscribingToRoute();case BookingSeat() when bookingSeat != null:
+return bookingSeat();case CancellingBooking() when cancellingBooking != null:
+return cancellingBooking();case CheckingInToday() when checkingInToday != null:
 return checkingInToday();case Loaded() when loaded != null:
 return loaded();case Empty() when empty != null:
 return empty();case Success() when success != null:
@@ -169,12 +177,14 @@ return error(_that.message);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  initial,required TResult Function()  loading,required TResult Function()  subscribingToRoute,required TResult Function()  checkingInToday,required TResult Function()  loaded,required TResult Function()  empty,required TResult Function( T data)  success,required TResult Function( String message)  error,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  initial,required TResult Function()  loading,required TResult Function()  subscribingToRoute,required TResult Function()  bookingSeat,required TResult Function()  cancellingBooking,required TResult Function()  checkingInToday,required TResult Function()  loaded,required TResult Function()  empty,required TResult Function( T data)  success,required TResult Function( String message)  error,}) {final _that = this;
 switch (_that) {
 case _Initial():
 return initial();case Loading():
 return loading();case SubscribingToRoute():
-return subscribingToRoute();case CheckingInToday():
+return subscribingToRoute();case BookingSeat():
+return bookingSeat();case CancellingBooking():
+return cancellingBooking();case CheckingInToday():
 return checkingInToday();case Loaded():
 return loaded();case Empty():
 return empty();case Success():
@@ -196,12 +206,14 @@ return error(_that.message);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  initial,TResult? Function()?  loading,TResult? Function()?  subscribingToRoute,TResult? Function()?  checkingInToday,TResult? Function()?  loaded,TResult? Function()?  empty,TResult? Function( T data)?  success,TResult? Function( String message)?  error,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  initial,TResult? Function()?  loading,TResult? Function()?  subscribingToRoute,TResult? Function()?  bookingSeat,TResult? Function()?  cancellingBooking,TResult? Function()?  checkingInToday,TResult? Function()?  loaded,TResult? Function()?  empty,TResult? Function( T data)?  success,TResult? Function( String message)?  error,}) {final _that = this;
 switch (_that) {
 case _Initial() when initial != null:
 return initial();case Loading() when loading != null:
 return loading();case SubscribingToRoute() when subscribingToRoute != null:
-return subscribingToRoute();case CheckingInToday() when checkingInToday != null:
+return subscribingToRoute();case BookingSeat() when bookingSeat != null:
+return bookingSeat();case CancellingBooking() when cancellingBooking != null:
+return cancellingBooking();case CheckingInToday() when checkingInToday != null:
 return checkingInToday();case Loaded() when loaded != null:
 return loaded();case Empty() when empty != null:
 return empty();case Success() when success != null:
@@ -302,6 +314,70 @@ int get hashCode => runtimeType.hashCode;
 @override
 String toString() {
     return 'BusStates<$T>.subscribingToRoute()';
+}
+
+
+}
+
+
+
+
+/// @nodoc
+
+
+class BookingSeat<T> implements BusStates<T> {
+  const BookingSeat();
+  
+
+
+
+
+
+
+@override
+bool operator ==(Object other) {
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is BookingSeat<T>);
+}
+
+
+@override
+int get hashCode => runtimeType.hashCode;
+
+@override
+String toString() {
+    return 'BusStates<$T>.bookingSeat()';
+}
+
+
+}
+
+
+
+
+/// @nodoc
+
+
+class CancellingBooking<T> implements BusStates<T> {
+  const CancellingBooking();
+  
+
+
+
+
+
+
+@override
+bool operator ==(Object other) {
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is CancellingBooking<T>);
+}
+
+
+@override
+int get hashCode => runtimeType.hashCode;
+
+@override
+String toString() {
+    return 'BusStates<$T>.cancellingBooking()';
 }
 
 

@@ -14,6 +14,11 @@ abstract final class FirebaseClient {
   static Future<bool> initialize() async {
     if (_initialized) return true;
     try {
+      if (Firebase.apps.isNotEmpty) {
+        _initialized = true;
+        debugPrint('[FirebaseClient] ✓ Firebase already initialized (hot restart)');
+        return true;
+      }
       await Firebase.initializeApp(
         options: DefaultFirebaseOptions.currentPlatform,
       );

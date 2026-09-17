@@ -8,6 +8,8 @@ import 'package:alex_transportation/core/widgets/alex_logo.dart';
 import 'package:alex_transportation/core/widgets/app_card.dart';
 import 'package:alex_transportation/core/widgets/status_pill.dart';
 import 'package:alex_transportation/features/auth/presentation/bloc/auth_cubit.dart';
+import 'package:alex_transportation/features/buses/presentation/bloc/bus_cubit.dart';
+import 'package:alex_transportation/features/buses/presentation/pages/buses_page.dart';
 import 'package:alex_transportation/features/garage/presentation/bloc/garage_cubit.dart';
 import 'package:alex_transportation/features/garage/presentation/pages/garage_page.dart';
 
@@ -34,7 +36,7 @@ class _HomePageState extends State<HomePage> {
     _ModuleInfo(
       title: 'Buses',
       icon: Icons.directions_bus_rounded,
-      badge: 'Phase 3',
+      badge: 'Active',
     ),
     _ModuleInfo(
       title: 'Errand Cars',
@@ -242,13 +244,10 @@ class _HomePageState extends State<HomePage> {
             child: const GaragePage(),
           ),
 
-          // Module 1: Bus Transit (Phase 3 - Coming Soon)
-          _buildComingSoonView(
-            title: 'Bus Transit System',
-            phase: 'Phase 3',
-            icon: Icons.directions_bus_rounded,
-            description:
-                'Real-time AlexBank employee shuttle tracking, route schedules, stop manifests, and digital boarding passes.',
+          // Module 1: Bus Transit (Phase 3 - Live)
+          BlocProvider<BusCubit>(
+            create: (_) => sl<BusCubit>()..loadBuses(),
+            child: const BusesPage(),
           ),
 
           // Module 2: Errand Car Request (Phase 4 - Coming Soon)
