@@ -30,7 +30,7 @@
 
 ### Stubbed / Placeholder
 - All route screens are placeholder (construction icon + "Coming soon")
-- Firebase init will fail without config files — app runs fine regardless
+- Firebase configured with DefaultFirebaseOptions (Android & iOS config files added)
 - No real logic in any Cubit yet
 - `core/widgets/` is empty — shared widgets built in Phase 1
 
@@ -42,5 +42,4 @@
 - One admin Cubit+States per tab (5 pairs) so tab actions don't block each other
 
 ### Open for Next Phase
-- Need `google-services.json` + `GoogleService-Info.plist` for Firebase
-- Phase 1: design system shared widgets, splash screen, onboarding, invite-code gate
+- Phase 1: design system shared widgets, splash screen, onboarding, invite-code gate (on branch `phase-1`)

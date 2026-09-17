@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "712019137000",
+    "project_id": "alexbank-transport",
+    "storage_bucket": "alexbank-transport.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:712019137000:android:3b648bb3024d43e7eed45d",
+        "android_client_info": {
+          "package_name": "alexbank.com.alex_transportation"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCcbd7SfbjoNurA1ig91_-0lS6TUqkip6c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
