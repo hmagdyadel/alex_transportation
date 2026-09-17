@@ -20,7 +20,7 @@ final sl = GetIt.instance;
 /// Subsequent phases add data sources, repositories, and use cases.
 Future<void> setupInjector() async {
   // ─── Auth ──────────────────────────────────────────────────────────────
-  sl.registerFactory(() => AuthCubit());
+  sl.registerLazySingleton(() => AuthCubit());
 
   // ─── Garage ────────────────────────────────────────────────────────────
   sl.registerFactory(() => GarageCubit());

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 /// Design tokens from the Transit Screen Specifications §0.
 /// Never hardcode raw numbers in widgets — always reference these constants.
@@ -107,6 +108,74 @@ abstract final class AppTypography {
   // Headline — 20sp / bold — top-level screen title
   static const double headlineSize = 20;
   static const FontWeight headlineWeight = FontWeight.w700;
+
+  // ─── Direct TextStyle accessors via Inter ────────────────────────────────
+  static TextStyle get headlineLarge => GoogleFonts.inter(
+        fontSize: 24,
+        fontWeight: headlineWeight,
+        color: AppColors.textPrimary,
+      );
+
+  static TextStyle get headlineMedium => GoogleFonts.inter(
+        fontSize: headlineSize,
+        fontWeight: headlineWeight,
+        color: AppColors.textPrimary,
+      );
+
+  static TextStyle get titleLarge => GoogleFonts.inter(
+        fontSize: titleSize,
+        fontWeight: titleWeight,
+        color: AppColors.textPrimary,
+      );
+
+  static TextStyle get titleMedium => GoogleFonts.inter(
+        fontSize: subtitleSize,
+        fontWeight: subtitleWeight,
+        color: AppColors.textPrimary,
+      );
+
+  static TextStyle get bodyLarge => GoogleFonts.inter(
+        fontSize: 16,
+        fontWeight: bodyWeight,
+        color: AppColors.textPrimary,
+      );
+
+  static TextStyle get bodyMedium => GoogleFonts.inter(
+        fontSize: bodySize,
+        fontWeight: bodyWeight,
+        color: AppColors.textPrimary,
+      );
+
+  static TextStyle get bodySmall => GoogleFonts.inter(
+        fontSize: bodySmSize,
+        fontWeight: bodySmWeight,
+        color: AppColors.textMid,
+      );
+
+  static TextStyle get labelLarge => GoogleFonts.inter(
+        fontSize: 14,
+        fontWeight: FontWeight.w600,
+        color: AppColors.textPrimary,
+      );
+
+  static TextStyle get labelMedium => GoogleFonts.inter(
+        fontSize: labelSize,
+        fontWeight: labelWeight,
+        letterSpacing: labelLetterSpacing,
+        color: AppColors.textPrimary,
+      );
+
+  static TextStyle get labelSmall => GoogleFonts.inter(
+        fontSize: captionSize,
+        fontWeight: FontWeight.w600,
+        color: AppColors.textSecondary,
+      );
+
+  static TextStyle get caption => GoogleFonts.inter(
+        fontSize: captionSize,
+        fontWeight: captionWeight,
+        color: AppColors.textSecondary,
+      );
 }
 
 // ─── Elevation ─────────────────────────────────────────────────────────────

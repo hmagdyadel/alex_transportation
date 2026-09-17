@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:alex_transportation/core/design_system/tokens.dart';
+import 'package:alex_transportation/features/auth/presentation/pages/access_gate_page.dart';
+import 'package:alex_transportation/features/auth/presentation/pages/onboarding_page.dart';
+import 'package:alex_transportation/features/auth/presentation/pages/splash_page.dart';
 
 /// App-wide router configuration.
-///
-/// Phase 0: all routes point to placeholder screens.
-/// Each phase replaces placeholders with real page widgets.
 class AppRouter {
   AppRouter._();
 
@@ -16,19 +16,17 @@ class AppRouter {
       GoRoute(
         path: '/splash',
         name: 'splash',
-        builder: (context, state) => const _PlaceholderScreen(title: 'Splash'),
+        builder: (context, state) => const SplashPage(),
       ),
       GoRoute(
         path: '/onboarding',
         name: 'onboarding',
-        builder: (context, state) =>
-            const _PlaceholderScreen(title: 'Onboarding'),
+        builder: (context, state) => const OnboardingPage(),
       ),
       GoRoute(
         path: '/access',
         name: 'access',
-        builder: (context, state) =>
-            const _PlaceholderScreen(title: 'Invite Code'),
+        builder: (context, state) => const AccessGatePage(),
       ),
       // Employee home with module tabs
       GoRoute(

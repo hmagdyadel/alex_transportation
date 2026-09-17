@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:alex_transportation/core/design_system/theme.dart';
 import 'package:alex_transportation/core/di/injector.dart';
 import 'package:alex_transportation/core/network/firebase_client.dart';
 import 'package:alex_transportation/core/routing/app_router.dart';
+import 'package:alex_transportation/features/auth/presentation/bloc/auth_cubit.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -22,11 +24,15 @@ class TransitApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
-      title: 'Transit',
-      debugShowCheckedModeBanner: false,
-      theme: AppTheme.light(),
-      routerConfig: AppRouter.router,
+    return BlocProvider(
+      create: (context) => sl<AuthCubit>(),
+      child: MaterialApp.router(
+        title: 'Transit',
+        debugShowCheckedModeBanner: false,
+        theme: AppTheme.light(),
+        routerConfig: AppRouter.router,
+      ),
     );
   }
 }
+
