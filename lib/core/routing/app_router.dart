@@ -5,6 +5,7 @@ import 'package:alex_transportation/core/design_system/tokens.dart';
 import 'package:alex_transportation/features/auth/presentation/pages/access_gate_page.dart';
 import 'package:alex_transportation/features/auth/presentation/pages/onboarding_page.dart';
 import 'package:alex_transportation/features/auth/presentation/pages/splash_page.dart';
+import 'package:alex_transportation/features/home/presentation/pages/home_page.dart';
 
 /// App-wide router configuration.
 class AppRouter {
@@ -32,8 +33,7 @@ class AppRouter {
       GoRoute(
         path: '/home',
         name: 'home',
-        builder: (context, state) =>
-            const _PlaceholderScreen(title: 'Home — Employee'),
+        builder: (context, state) => const HomePage(),
         routes: [
           GoRoute(
             path: 'garage',

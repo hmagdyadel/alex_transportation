@@ -80,5 +80,49 @@
 - Branching workflow: all phase changes committed and pushed to `phase-1`.
 
 ### Open for Next Phase
-- Phase 2: Employee Garage Parking Module (bay status, plate registration, QR check-in/out, cancellation request).
+- Phase 2 completed on branch `phase-2`
+
+---
+
+## Phase 2 — Employee Garage Parking Module
+**Date:** 2026-09-17
+**Branch:** `phase-2`
+
+### Built
+- **Data Model**:
+  - `GarageSubscriptionModel` ([garage_subscription_model.dart](file:///Users/haithammagdy/Flutter/alex_transportation/lib/features/garage/data/models/garage_subscription_model.dart)): Pure `@JsonSerializable()` data model (without Freezed) with `fromJson`, `toJson`, and `copyWith`.
+  - `garage_subscription_model.g.dart`: Generated via `build_runner` + `json_serializable`.
+- **Cubit Logic**:
+  - `GarageCubit` ([garage_cubit.dart](file:///Users/haithammagdy/Flutter/alex_transportation/lib/features/garage/presentation/bloc/garage_cubit.dart)):
+    - Live garage slots tracking: 300 total, 42 available, 10 VIP.
+    - `submitSubscription`: Form validation (national ID, 5-digit ISL, AlexBank work email, EGP 1,200 payroll deduction consent), auto slot assignment or waiting list enqueue.
+    - `checkInOut`: QR gate toggle updating bay occupancy and check-in timestamp.
+    - `requestCancellation`: Submits cancellation request with ISL and email.
+    - `findSubscription`: Status lookup for existing employee records.
+- **Widgets & UI**:
+  - `GarageQrPassCard` ([garage_qr_pass_card.dart](file:///Users/haithammagdy/Flutter/alex_transportation/lib/features/garage/presentation/widgets/garage_qr_pass_card.dart)):
+    - High-contrast digital QR pass using `qr_flutter`.
+    - Live status badge, slot bay pill (`P1-014`), timestamp, and interactive Check In / Check Out toggle button.
+  - `GaragePage` ([garage_page.dart](file:///Users/haithammagdy/Flutter/alex_transportation/lib/features/garage/presentation/pages/garage_page.dart)):
+    - Live capacity banner with real-time bay count and occupancy progress bar.
+    - 4 tab views: **My Pass**, **Subscribe** (with EGP 1,200 payroll notice), **Status Lookup**, and **Cancel Request**.
+    - Fully wrapped with `ModalProgressHUD` + `CustomLoadingIndicator` for all async actions.
+  - `HomePage` ([home_page.dart](file:///Users/haithammagdy/Flutter/alex_transportation/lib/features/home/presentation/pages/home_page.dart)):
+    - AlexBank corporate header with official logo, role pill, and logout confirmation dialog.
+    - Top Module Switcher: 🅿️ Garage (Active), 🚌 Buses (Phase 3 preview), 🚗 Errand Cars (Phase 4 preview).
+- **Routing**:
+  - `AppRouter` updated: `/home` routes to `HomePage()`.
+- **Tests**:
+  - Unit tests for pure `json_serializable` serialization and deserialization.
+  - Unit tests for `GarageCubit` operations.
+  - Total test suite: 16/16 tests passing.
+  - `flutter analyze`: 0 issues.
+
+### Key Decisions
+- Pure `json_serializable` used for all data models (no Freezed for models).
+- ModalProgressHUD with rotating brand logo enforced for all async operations.
+
+### Open for Next Phase
+- Phase 3: Employee Bus Transit Module (routes, real-time schedule, stop manifests, boarding pass).
+
 
