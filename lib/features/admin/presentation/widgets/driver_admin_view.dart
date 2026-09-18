@@ -65,45 +65,54 @@ class DriverAdminView extends StatelessWidget {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Row(
-                              children: [
-                                CircleAvatar(
-                                  radius: 20,
-                                  backgroundColor: isErrandChauffeur
-                                      ? AppColors.goldLight
-                                      : AppColors.greenLight,
-                                  child: Icon(
-                                    isErrandChauffeur
-                                        ? Icons.drive_eta_rounded
-                                        : Icons.directions_bus_rounded,
-                                    size: 20,
-                                    color: isErrandChauffeur
-                                        ? AppColors.accentGold
-                                        : AppColors.primary,
+                            Expanded(
+                              child: Row(
+                                children: [
+                                  CircleAvatar(
+                                    radius: 20,
+                                    backgroundColor: isErrandChauffeur
+                                        ? AppColors.goldLight
+                                        : AppColors.greenLight,
+                                    child: Icon(
+                                      isErrandChauffeur
+                                          ? Icons.drive_eta_rounded
+                                          : Icons.directions_bus_rounded,
+                                      size: 20,
+                                      color: isErrandChauffeur
+                                          ? AppColors.accentGold
+                                          : AppColors.primary,
+                                    ),
                                   ),
-                                ),
-                                const SizedBox(width: AppSpacing.sm),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      driver.name,
-                                      style: AppTypography.titleMedium.copyWith(
-                                        fontWeight: FontWeight.w800,
-                                        fontSize: 15,
-                                      ),
+                                  const SizedBox(width: AppSpacing.sm),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          driver.name,
+                                          style: AppTypography.titleMedium.copyWith(
+                                            fontWeight: FontWeight.w800,
+                                            fontSize: 15,
+                                          ),
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                        Text(
+                                          'License: ${driver.licenseNumber} • ${driver.phone}',
+                                          style: AppTypography.caption.copyWith(
+                                            color: AppColors.textSecondary,
+                                            fontSize: 10,
+                                          ),
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ],
                                     ),
-                                    Text(
-                                      'License: ${driver.licenseNumber} • ${driver.phone}',
-                                      style: AppTypography.caption.copyWith(
-                                        color: AppColors.textSecondary,
-                                        fontSize: 10,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
+                                  ),
+                                ],
+                              ),
                             ),
+                            const SizedBox(width: AppSpacing.xs),
                             Container(
                               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                               decoration: BoxDecoration(

@@ -36,26 +36,30 @@ class GarageAdminView extends StatelessWidget {
                   children: [
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'MONTHLY PARKING SUBSCRIPTION RATE',
-                              style: AppTypography.labelSmall.copyWith(
-                                letterSpacing: 0.8,
-                                fontWeight: FontWeight.w700,
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'MONTHLY PARKING SUBSCRIPTION RATE',
+                                style: AppTypography.labelSmall.copyWith(
+                                  letterSpacing: 0.8,
+                                  fontWeight: FontWeight.w700,
+                                ),
                               ),
-                            ),
-                            const SizedBox(height: 2),
-                            Text(
-                              'Admin Dynamic Pricing',
-                              style: AppTypography.caption.copyWith(
-                                color: AppColors.textSecondary,
+                              const SizedBox(height: 2),
+                              Text(
+                                'Admin Dynamic Pricing',
+                                style: AppTypography.caption.copyWith(
+                                  color: AppColors.textSecondary,
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
+                        const SizedBox(width: AppSpacing.sm),
                         const StatusPill(
                           label: 'PAYROLL DEDUCTION',
                           type: StatusPillType.gold,
@@ -75,50 +79,56 @@ class GarageAdminView extends StatelessWidget {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'CURRENT TARIFF',
-                                style: AppTypography.caption.copyWith(
-                                  fontSize: 9,
-                                  fontWeight: FontWeight.w700,
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'CURRENT TARIFF',
+                                  style: AppTypography.caption.copyWith(
+                                    fontSize: 9,
+                                    fontWeight: FontWeight.w700,
+                                  ),
                                 ),
-                              ),
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.baseline,
-                                textBaseline: TextBaseline.alphabetic,
-                                children: [
-                                  Text(
-                                    '$fee',
+                                Text.rich(
+                                  TextSpan(
+                                    text: '$fee',
                                     style: AppTypography.headlineLarge.copyWith(
                                       color: AppColors.primary,
                                       fontWeight: FontWeight.w900,
-                                      fontSize: 32,
+                                      fontSize: 28,
                                     ),
+                                    children: [
+                                      TextSpan(
+                                        text: ' EGP/mo',
+                                        style: AppTypography.labelSmall.copyWith(
+                                          color: AppColors.textSecondary,
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                  const SizedBox(width: 4),
-                                  Text(
-                                    'EGP / Month',
-                                    style: AppTypography.labelMedium.copyWith(
-                                      color: AppColors.textSecondary,
-                                      fontWeight: FontWeight.w700,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ],
+                            ),
                           ),
+                          const SizedBox(width: AppSpacing.xs),
 
                           // Increase / Decrease Stepper Buttons
                           Row(
+                            mainAxisSize: MainAxisSize.min,
                             children: [
                               IconButton.filled(
+                                visualDensity: VisualDensity.compact,
+                                padding: EdgeInsets.zero,
+                                constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
                                 style: IconButton.styleFrom(
                                   backgroundColor: AppColors.surface,
                                   foregroundColor: AppColors.textPrimary,
                                 ),
-                                icon: const Icon(Icons.remove_rounded),
+                                icon: const Icon(Icons.remove_rounded, size: 18),
                                 tooltip: 'Decrease by 100 EGP',
                                 onPressed: () {
                                   garageCubit.decreaseMonthlyFee(100);
@@ -133,11 +143,14 @@ class GarageAdminView extends StatelessWidget {
                               ),
                               const SizedBox(width: AppSpacing.xs),
                               IconButton.filled(
+                                visualDensity: VisualDensity.compact,
+                                padding: EdgeInsets.zero,
+                                constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
                                 style: IconButton.styleFrom(
                                   backgroundColor: AppColors.primary,
                                   foregroundColor: Colors.white,
                                 ),
-                                icon: const Icon(Icons.add_rounded),
+                                icon: const Icon(Icons.add_rounded, size: 18),
                                 tooltip: 'Increase by 100 EGP',
                                 onPressed: () {
                                   garageCubit.increaseMonthlyFee(100);
@@ -152,7 +165,10 @@ class GarageAdminView extends StatelessWidget {
                               ),
                               const SizedBox(width: AppSpacing.xs),
                               IconButton(
-                                icon: const Icon(Icons.edit_note_rounded),
+                                visualDensity: VisualDensity.compact,
+                                padding: EdgeInsets.zero,
+                                constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
+                                icon: const Icon(Icons.edit_note_rounded, size: 20),
                                 tooltip: 'Set Exact Tariff',
                                 onPressed: () => _showEditFeeDialog(context, garageCubit, fee),
                               ),
@@ -241,23 +257,30 @@ class GarageAdminView extends StatelessWidget {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                subscription.name,
-                                style: AppTypography.titleMedium.copyWith(
-                                  fontWeight: FontWeight.w800,
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  subscription.name,
+                                  style: AppTypography.titleMedium.copyWith(
+                                    fontWeight: FontWeight.w800,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
                                 ),
-                              ),
-                              Text(
-                                'ISL: ${subscription.isl} • ${subscription.dept} Dept',
-                                style: AppTypography.caption.copyWith(
-                                  color: AppColors.textSecondary,
+                                Text(
+                                  'ISL: ${subscription.isl} • ${subscription.dept} Dept',
+                                  style: AppTypography.caption.copyWith(
+                                    color: AppColors.textSecondary,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
+                          const SizedBox(width: AppSpacing.xs),
                           StatusPill(
                             label: subscription.status.toUpperCase().replaceAll('_', ' '),
                             type: subscription.status == 'active'
@@ -272,45 +295,57 @@ class GarageAdminView extends StatelessWidget {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text('ASSIGNED BAY', style: AppTypography.caption),
-                              Text(
-                                subscription.slotLabel ?? 'P1-014',
-                                style: AppTypography.bodySmall.copyWith(
-                                  fontWeight: FontWeight.w700,
-                                  color: AppColors.primary,
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text('ASSIGNED BAY', style: AppTypography.caption),
+                                Text(
+                                  subscription.slotLabel ?? 'P1-014',
+                                  style: AppTypography.bodySmall.copyWith(
+                                    fontWeight: FontWeight.w700,
+                                    color: AppColors.primary,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text('PRESENCE STATUS', style: AppTypography.caption),
-                              Text(
-                                subscription.checkedIn ? 'Inside Facility' : 'Outside',
-                                style: AppTypography.bodySmall.copyWith(
-                                  fontWeight: FontWeight.w700,
-                                  color: subscription.checkedIn
-                                      ? AppColors.primaryMid
-                                      : AppColors.textSecondary,
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text('PRESENCE STATUS', style: AppTypography.caption),
+                                Text(
+                                  subscription.checkedIn ? 'Inside Facility' : 'Outside',
+                                  style: AppTypography.bodySmall.copyWith(
+                                    fontWeight: FontWeight.w700,
+                                    color: subscription.checkedIn
+                                        ? AppColors.primaryMid
+                                        : AppColors.textSecondary,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text('CURRENT TARIFF', style: AppTypography.caption),
-                              Text(
-                                '$fee EGP',
-                                style: AppTypography.bodySmall.copyWith(
-                                  fontWeight: FontWeight.w700,
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text('CURRENT TARIFF', style: AppTypography.caption),
+                                Text(
+                                  '$fee EGP',
+                                  style: AppTypography.bodySmall.copyWith(
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ],
                       ),

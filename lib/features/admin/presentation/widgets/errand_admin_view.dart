@@ -37,13 +37,16 @@ class ErrandAdminView extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
-                          'EXECUTIVE FLEET OVERVIEW',
-                          style: AppTypography.labelSmall.copyWith(
-                            letterSpacing: 0.8,
-                            fontWeight: FontWeight.w700,
+                        Expanded(
+                          child: Text(
+                            'EXECUTIVE FLEET OVERVIEW',
+                            style: AppTypography.labelSmall.copyWith(
+                              letterSpacing: 0.8,
+                              fontWeight: FontWeight.w700,
+                            ),
                           ),
                         ),
+                        const SizedBox(width: AppSpacing.xs),
                         StatusPill(
                           label: '$availableCars / ${fleet.length} AVAILABLE',
                           type: availableCars > 0 ? StatusPillType.active : StatusPillType.danger,
@@ -155,36 +158,45 @@ class ErrandAdminView extends StatelessWidget {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  children: [
-                                    Text(
-                                      req.id,
-                                      style: AppTypography.labelMedium.copyWith(
-                                        color: AppColors.primary,
-                                        fontWeight: FontWeight.w800,
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Text(
+                                        req.id,
+                                        style: AppTypography.labelMedium.copyWith(
+                                          color: AppColors.primary,
+                                          fontWeight: FontWeight.w800,
+                                        ),
                                       ),
-                                    ),
-                                    const SizedBox(width: AppSpacing.xs),
-                                    Text(
-                                      '• ${req.employeeName} (ISL: ${req.employeeIsl})',
-                                      style: AppTypography.caption.copyWith(
-                                        fontWeight: FontWeight.w600,
+                                      const SizedBox(width: AppSpacing.xs),
+                                      Expanded(
+                                        child: Text(
+                                          '• ${req.employeeName} (${req.employeeIsl})',
+                                          style: AppTypography.caption.copyWith(
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
                                       ),
-                                    ),
-                                  ],
-                                ),
-                                Text(
-                                  'Dept: ${req.department} • Supervisor: ${req.supervisorName}',
-                                  style: AppTypography.caption.copyWith(
-                                    color: AppColors.textSecondary,
-                                    fontSize: 10,
+                                    ],
                                   ),
-                                ),
-                              ],
+                                  Text(
+                                    'Dept: ${req.department} • Supervisor: ${req.supervisorName}',
+                                    style: AppTypography.caption.copyWith(
+                                      color: AppColors.textSecondary,
+                                      fontSize: 10,
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ],
+                              ),
                             ),
+                            const SizedBox(width: AppSpacing.xs),
                             StatusPill(
                               label: req.status.toUpperCase().replaceAll('_', ' '),
                               type: isApproved

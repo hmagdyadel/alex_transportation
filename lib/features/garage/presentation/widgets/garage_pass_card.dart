@@ -35,32 +35,39 @@ class GaragePassCard extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Row(
-                children: [
-                  const AlexLogo(size: 22),
-                  const SizedBox(width: AppSpacing.xs),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'DIGITAL PARKING PASS',
-                        style: AppTypography.caption.copyWith(
-                          color: AppColors.primary,
-                          fontWeight: FontWeight.w800,
-                          letterSpacing: 0.8,
-                          fontSize: 10,
-                        ),
+              Expanded(
+                child: Row(
+                  children: [
+                    const AlexLogo(size: 22),
+                    const SizedBox(width: AppSpacing.xs),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'DIGITAL PARKING PASS',
+                            style: AppTypography.caption.copyWith(
+                              color: AppColors.primary,
+                              fontWeight: FontWeight.w800,
+                              letterSpacing: 0.8,
+                              fontSize: 10,
+                            ),
+                          ),
+                          Text(
+                            subscription.name,
+                            style: AppTypography.titleMedium.copyWith(
+                              fontWeight: FontWeight.w700,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
                       ),
-                      Text(
-                        subscription.name,
-                        style: AppTypography.titleMedium.copyWith(
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
+                    ),
+                  ],
+                ),
               ),
+              const SizedBox(width: AppSpacing.xs),
               StatusPill(
                 label: isCheckedIn ? 'CHECKED IN' : 'CHECKED OUT',
                 type: isCheckedIn ? StatusPillType.active : StatusPillType.neutral,

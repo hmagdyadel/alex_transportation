@@ -82,26 +82,29 @@ class _BusAdminViewState extends State<BusAdminView> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              selectedRoute.routeNumber.toUpperCase(),
-                              style: AppTypography.titleMedium.copyWith(
-                                color: AppColors.primary,
-                                fontWeight: FontWeight.w800,
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                selectedRoute.routeNumber.toUpperCase(),
+                                style: AppTypography.titleMedium.copyWith(
+                                  color: AppColors.primary,
+                                  fontWeight: FontWeight.w800,
+                                ),
                               ),
-                            ),
-                            const SizedBox(height: 2),
-                            Text(
-                              selectedRoute.name,
-                              style: AppTypography.bodySmall.copyWith(
-                                color: AppColors.textSecondary,
-                                fontWeight: FontWeight.w600,
+                              const SizedBox(height: 2),
+                              Text(
+                                selectedRoute.name,
+                                style: AppTypography.bodySmall.copyWith(
+                                  color: AppColors.textSecondary,
+                                  fontWeight: FontWeight.w600,
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
+                        const SizedBox(width: AppSpacing.sm),
                         StatusPill(
                           label: selectedRoute.shift.toUpperCase(),
                           type: isMorningRoute ? StatusPillType.gold : StatusPillType.active,
