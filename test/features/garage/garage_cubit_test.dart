@@ -71,5 +71,23 @@ void main() {
 
       expect(cubit.currentSubscription!.status, 'cancellation_pending');
     });
+
+    test('monthly fee can be defined, increased, and decreased by admin', () {
+      GarageCubit.monthlyFee = 1200;
+      expect(cubit.currentMonthlyFee, 1200);
+
+      cubit.updateMonthlyFee(1500);
+      expect(cubit.currentMonthlyFee, 1500);
+      expect(GarageCubit.monthlyFee, 1500);
+
+      cubit.increaseMonthlyFee(200);
+      expect(cubit.currentMonthlyFee, 1700);
+
+      cubit.decreaseMonthlyFee(300);
+      expect(cubit.currentMonthlyFee, 1400);
+
+      // Reset back
+      cubit.updateMonthlyFee(1200);
+    });
   });
 }

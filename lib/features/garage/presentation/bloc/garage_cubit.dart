@@ -8,7 +8,32 @@ import 'package:alex_transportation/features/garage/presentation/bloc/garage_sta
 class GarageCubit extends Cubit<GarageStates> {
   static const int totalCapacity = 300;
   static const int vipSlots = 10;
-  static const int monthlyFee = 1200; // EGP
+
+  /// Dynamic monthly parking fee defined and adjustable by Admin (default: 1,200 EGP).
+  static int monthlyFee = 1200;
+
+  int get currentMonthlyFee => monthlyFee;
+
+  /// Allows Admin to set the monthly parking fee to an exact amount.
+  void updateMonthlyFee(int newFee) {
+    if (newFee <= 0) return;
+    monthlyFee = newFee;
+    safeEmit(const GarageStates.loaded());
+  }
+
+  /// Allows Admin to increase the monthly parking fee by a given step (default 100 EGP).
+  void increaseMonthlyFee([int step = 100]) {
+    monthlyFee += step;
+    safeEmit(const GarageStates.loaded());
+  }
+
+  /// Allows Admin to decrease the monthly parking fee by a given step (default 100 EGP).
+  void decreaseMonthlyFee([int step = 100]) {
+    if (monthlyFee - step >= 100) {
+      monthlyFee -= step;
+      safeEmit(const GarageStates.loaded());
+    }
+  }
 
   int _availableSlots = 42;
   int _waitingCount = 4;
@@ -92,7 +117,7 @@ class GarageCubit extends Cubit<GarageStates> {
     }
 
     if (!consent) {
-      safeEmit(const GarageStates.error(message: 'You must agree to the EGP 1,200 payroll deduction to proceed'));
+      safeEmit(GarageStates.error(message: 'You must agree to the EGP $monthlyFee payroll deduction to proceed'));
       return;
     }
 

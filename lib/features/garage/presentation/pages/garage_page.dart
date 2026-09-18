@@ -183,10 +183,10 @@ class _GaragePageState extends State<GaragePage> {
                               ),
                             ],
                           ),
-                          const StatusPill(
-                            label: 'EGP 1,200 / MO',
+                          StatusPill(
+                            label: 'EGP ${cubit.currentMonthlyFee} / MO',
                             type: StatusPillType.gold,
-                            icon: Icon(
+                            icon: const Icon(
                               Icons.account_balance_wallet_outlined,
                               size: 14,
                               color: AppColors.accentGold,
@@ -251,7 +251,7 @@ class _GaragePageState extends State<GaragePage> {
                 if (_selectedSubTab == 0)
                   _buildMyPassTab(cubit, isLoading)
                 else if (_selectedSubTab == 1)
-                  _buildSubscribeTab(context)
+                  _buildSubscribeTab(context, cubit)
                 else if (_selectedSubTab == 2)
                   _buildStatusLookupTab(context)
                 else
@@ -341,7 +341,7 @@ class _GaragePageState extends State<GaragePage> {
   }
 
   // ── Tab 1: Subscribe ────────────────────────────────────────────────────────
-  Widget _buildSubscribeTab(BuildContext context) {
+  Widget _buildSubscribeTab(BuildContext context, GarageCubit cubit) {
     return AppCard(
       padding: const EdgeInsets.all(AppSpacing.lg),
       child: Column(
@@ -517,7 +517,7 @@ class _GaragePageState extends State<GaragePage> {
             controlAffinity: ListTileControlAffinity.leading,
             activeColor: AppColors.primary,
             title: Text(
-              'I authorize AlexBank to deduct EGP 1,200 monthly from my salary for garage parking services.',
+              'I authorize AlexBank to deduct EGP ${cubit.currentMonthlyFee} monthly from my salary for garage parking services.',
               style: AppTypography.caption.copyWith(color: AppColors.textMid),
             ),
           ),

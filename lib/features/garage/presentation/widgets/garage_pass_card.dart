@@ -220,7 +220,7 @@ class GaragePassCard extends StatelessWidget {
 
           // Toggle Action Button (Check in / Check out)
           AppButton(
-            label: isCheckedIn ? 'Check Out of Garage' : 'Check In to Bay',
+            label: isCheckedIn ? 'Check Out' : 'Check In',
             variant: isCheckedIn ? AppButtonVariant.secondary : AppButtonVariant.primary,
             onPressed: isLoading ? null : onCheckInOut,
             leadingIcon: Icon(
