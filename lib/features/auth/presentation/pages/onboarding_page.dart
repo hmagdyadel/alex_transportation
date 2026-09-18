@@ -39,7 +39,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
       tag: 'SMART PARKING',
       title: 'Reserve & Access Bank Garages',
       description:
-          'Automated license plate recognition, real-time bay occupancy, and effortless QR check-in across all AlexBank branch facilities.',
+          'Automated license plate recognition, real-time bay occupancy, and one-tap check-in across all AlexBank branch facilities.',
     ),
     OnboardingSlide(
       lottieAsset: 'assets/lottie/bus_shuttle.json',

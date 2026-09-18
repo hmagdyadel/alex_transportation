@@ -12,7 +12,7 @@ import 'package:alex_transportation/core/widgets/status_pill.dart';
 import 'package:alex_transportation/features/garage/data/models/garage_subscription_model.dart';
 import 'package:alex_transportation/features/garage/presentation/bloc/garage_cubit.dart';
 import 'package:alex_transportation/features/garage/presentation/bloc/garage_states.dart';
-import 'package:alex_transportation/features/garage/presentation/widgets/garage_qr_pass_card.dart';
+import 'package:alex_transportation/features/garage/presentation/widgets/garage_pass_card.dart';
 
 class GaragePage extends StatefulWidget {
   const GaragePage({super.key});
@@ -238,7 +238,7 @@ class _GaragePageState extends State<GaragePage> {
                   ),
                   child: Row(
                     children: [
-                      _buildSubTabItem(0, 'My Pass', Icons.qr_code_rounded),
+                      _buildSubTabItem(0, 'My Pass', Icons.local_parking_rounded),
                       _buildSubTabItem(1, 'Subscribe', Icons.add_circle_outline_rounded),
                       _buildSubTabItem(2, 'Status', Icons.search_rounded),
                       _buildSubTabItem(3, 'Cancel', Icons.cancel_outlined),
@@ -319,7 +319,7 @@ class _GaragePageState extends State<GaragePage> {
             ),
             const SizedBox(height: AppSpacing.xs),
             Text(
-              'Submit a subscription request to get your assigned bay and QR scanner pass.',
+              'Submit a subscription request to get your assigned bay and parking pass.',
               textAlign: TextAlign.center,
               style: AppTypography.bodySmall,
             ),
@@ -333,7 +333,7 @@ class _GaragePageState extends State<GaragePage> {
       );
     }
 
-    return GarageQrPassCard(
+    return GaragePassCard(
       subscription: sub,
       isLoading: isLoading,
       onCheckInOut: () => cubit.checkInOut(),

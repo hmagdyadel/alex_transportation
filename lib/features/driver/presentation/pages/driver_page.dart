@@ -15,7 +15,7 @@ import 'package:alex_transportation/features/driver/presentation/widgets/driver_
 import 'package:alex_transportation/features/driver/presentation/widgets/passenger_manifest_tile.dart';
 
 /// Main screen for the AlexBank Driver Operations Portal.
-/// Includes live trip execution HUD, passenger roster check-in & QR scanner,
+/// Includes live trip execution HUD, passenger roster check-in,
 /// and pre-trip vehicle safety inspection.
 class DriverPage extends StatefulWidget {
   const DriverPage({super.key});
@@ -482,7 +482,7 @@ class _DriverPageState extends State<DriverPage> {
     );
   }
 
-  // ─── TAB 1: PASSENGER MANIFEST & SCANNER ──────────────────────────────────
+  // ─── TAB 1: PASSENGER MANIFEST & ROSTER ──────────────────────────────────
   Widget _buildManifestView(DriverCubit cubit, dynamic trip) {
     final filteredPassengers = trip.passengers.where((p) {
       if (_manifestFilter == 1) return !p.isBoarded;

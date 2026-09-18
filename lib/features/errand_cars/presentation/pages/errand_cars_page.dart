@@ -16,7 +16,7 @@ import 'package:alex_transportation/features/errand_cars/presentation/widgets/er
 
 /// Employee Errand Cars Screen:
 /// - Fleet overview with availability banner
-/// - Active dispatch pass with QR verification
+/// - Active dispatch pass with mission actions
 /// - Request new vehicle for corporate missions
 /// - Track request history and status
 class ErrandCarsPage extends StatefulWidget {

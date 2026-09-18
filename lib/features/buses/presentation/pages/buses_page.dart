@@ -15,7 +15,7 @@ import 'package:alex_transportation/features/buses/presentation/widgets/bus_stop
 
 /// Employee Bus Transit Screen:
 /// - Real-time route schedules (Morning & Evening shifts)
-/// - Digital boarding pass with QR verification
+/// - Digital boarding pass with one-tap boarding
 /// - Interactive stop timelines and driver information
 /// - Seat booking and cancellation with ModalProgressHUD
 class BusesPage extends StatefulWidget {

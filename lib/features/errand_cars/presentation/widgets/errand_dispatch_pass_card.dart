@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:qr_flutter/qr_flutter.dart';
 
 import 'package:alex_transportation/core/design_system/tokens.dart';
 import 'package:alex_transportation/core/widgets/alex_logo.dart';
@@ -7,7 +6,7 @@ import 'package:alex_transportation/core/widgets/app_card.dart';
 import 'package:alex_transportation/features/errand_cars/data/models/errand_dispatch_pass_model.dart';
 
 /// Digital dispatch pass card for an approved errand car mission.
-/// Displays mission code, assigned vehicle, destination, QR code,
+/// Displays mission code, assigned vehicle, destination, authorized schedule,
 /// and mileage tracking with start/end mission actions.
 class ErrandDispatchPassCard extends StatelessWidget {
   final ErrandDispatchPassModel pass;
@@ -437,51 +436,77 @@ class ErrandDispatchPassCard extends StatelessWidget {
 
                 const SizedBox(height: AppSpacing.md),
 
-                // QR Code
-                Center(
-                  child: Container(
-                    padding: const EdgeInsets.all(AppSpacing.sm),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(AppRadius.lg),
-                      border: Border.all(color: AppColors.border, width: 1.5),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.04),
-                          blurRadius: 10,
-                          offset: const Offset(0, 4),
-                        ),
-                      ],
+                // Mission Status & Verification Banner
+                Container(
+                  padding: const EdgeInsets.all(AppSpacing.md),
+                  decoration: BoxDecoration(
+                    color: isCompleted
+                        ? AppColors.greenLight
+                        : ((pass.startMileage != null) ? AppColors.greenLight : AppColors.goldLight),
+                    borderRadius: BorderRadius.circular(AppRadius.md),
+                    border: Border.all(
+                      color: (isCompleted || pass.startMileage != null)
+                          ? AppColors.primaryLight.withValues(alpha: 0.3)
+                          : AppColors.accentGold.withValues(alpha: 0.3),
                     ),
-                    child: Column(
-                      children: [
-                        SizedBox(
-                          width: 148,
-                          height: 148,
-                          child: QrImageView(
-                            data: pass.qrPayload,
-                            version: QrVersions.auto,
-                            size: 148,
-                            eyeStyle: const QrEyeStyle(
-                              eyeShape: QrEyeShape.square,
-                              color: AppColors.primary,
-                            ),
-                            dataModuleStyle: const QrDataModuleStyle(
-                              dataModuleShape: QrDataModuleShape.square,
-                              color: AppColors.textPrimary,
-                            ),
-                          ),
+                  ),
+                  child: Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(AppSpacing.xs),
+                        decoration: BoxDecoration(
+                          color: (isCompleted || pass.startMileage != null
+                                  ? AppColors.primary
+                                  : AppColors.accentGold)
+                              .withValues(alpha: 0.15),
+                          shape: BoxShape.circle,
                         ),
-                        const SizedBox(height: 4),
-                        Text(
-                          'Show QR to security at gate',
-                          style: AppTypography.caption.copyWith(
-                            fontSize: 10,
-                            color: AppColors.textMid,
-                          ),
+                        child: Icon(
+                          isCompleted
+                              ? Icons.check_circle_rounded
+                              : (pass.startMileage != null
+                                  ? Icons.directions_car_rounded
+                                  : Icons.verified_user_rounded),
+                          color: (isCompleted || pass.startMileage != null)
+                              ? AppColors.primary
+                              : AppColors.accentGold,
+                          size: 24,
                         ),
-                      ],
-                    ),
+                      ),
+                      const SizedBox(width: AppSpacing.sm),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              isCompleted
+                                  ? 'Mission Completed — Vehicle Returned'
+                                  : (pass.startMileage != null
+                                      ? 'Mission In Progress — Vehicle Dispatched'
+                                      : 'Authorized Official Mission Pass'),
+                              style: AppTypography.bodySmall.copyWith(
+                                fontWeight: FontWeight.w700,
+                                color: (isCompleted || pass.startMileage != null)
+                                    ? AppColors.primary
+                                    : AppColors.textPrimary,
+                              ),
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              isCompleted
+                                  ? 'Trip concluded and logged to corporate fleet'
+                                  : (pass.startMileage != null
+                                      ? 'Heading to ${pass.destination}'
+                                      : 'Approved for ${pass.employeeName} (${pass.missionCode})'),
+                              style: AppTypography.caption.copyWith(
+                                color: AppColors.textMid,
+                                fontSize: 10,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
                 ),
 

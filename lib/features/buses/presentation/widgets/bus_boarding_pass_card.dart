@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:qr_flutter/qr_flutter.dart';
 
 import 'package:alex_transportation/core/design_system/tokens.dart';
 import 'package:alex_transportation/core/widgets/app_card.dart';
 import 'package:alex_transportation/core/widgets/status_pill.dart';
 import 'package:alex_transportation/features/buses/data/models/bus_boarding_pass_model.dart';
 
-/// Digital bus boarding pass card with QR code, seat assignment, and pickup stop.
+/// Digital bus boarding pass card with seat assignment, pickup stop, and boarding actions.
 class BusBoardingPassCard extends StatelessWidget {
   final BusBoardingPassModel pass;
   final VoidCallback? onCheckIn;
@@ -223,51 +222,65 @@ class BusBoardingPassCard extends StatelessWidget {
 
                 const SizedBox(height: AppSpacing.md),
 
-                // High-contrast QR Pass Section
-                Center(
-                  child: Container(
-                    padding: const EdgeInsets.all(AppSpacing.sm),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(AppRadius.lg),
-                      border: Border.all(color: AppColors.border, width: 1.5),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.04),
-                          blurRadius: 10,
-                          offset: const Offset(0, 4),
-                        ),
-                      ],
+                // Boarding Status & Verification Banner
+                Container(
+                  padding: const EdgeInsets.all(AppSpacing.md),
+                  decoration: BoxDecoration(
+                    color: isBoarded ? AppColors.greenLight : AppColors.goldLight,
+                    borderRadius: BorderRadius.circular(AppRadius.md),
+                    border: Border.all(
+                      color: isBoarded
+                          ? AppColors.primaryLight.withValues(alpha: 0.3)
+                          : AppColors.accentGold.withValues(alpha: 0.3),
                     ),
-                    child: Column(
-                      children: [
-                        SizedBox(
-                          width: 148,
-                          height: 148,
-                          child: QrImageView(
-                            data: pass.qrPayload,
-                            version: QrVersions.auto,
-                            size: 148,
-                            eyeStyle: const QrEyeStyle(
-                              eyeShape: QrEyeShape.square,
-                              color: AppColors.primary,
-                            ),
-                            dataModuleStyle: const QrDataModuleStyle(
-                              dataModuleShape: QrDataModuleShape.square,
-                              color: AppColors.textPrimary,
-                            ),
-                          ),
+                  ),
+                  child: Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(AppSpacing.xs),
+                        decoration: BoxDecoration(
+                          color: (isBoarded ? AppColors.primary : AppColors.accentGold)
+                              .withValues(alpha: 0.15),
+                          shape: BoxShape.circle,
                         ),
-                        const SizedBox(height: 4),
-                        Text(
-                          'Show QR to driver upon boarding',
-                          style: AppTypography.caption.copyWith(
-                            fontSize: 10,
-                            color: AppColors.textMid,
-                          ),
+                        child: Icon(
+                          isBoarded
+                              ? Icons.check_circle_rounded
+                              : Icons.airline_seat_recline_normal_rounded,
+                          color: isBoarded ? AppColors.primary : AppColors.accentGold,
+                          size: 24,
                         ),
-                      ],
-                    ),
+                      ),
+                      const SizedBox(width: AppSpacing.sm),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              isBoarded
+                                  ? 'Boarded — Seat ${pass.seatNumber} Occupied'
+                                  : 'Seat ${pass.seatNumber} Confirmed',
+                              style: AppTypography.bodySmall.copyWith(
+                                fontWeight: FontWeight.w700,
+                                color: isBoarded
+                                    ? AppColors.primary
+                                    : AppColors.textPrimary,
+                              ),
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              isBoarded
+                                  ? 'Passenger checked in on ${pass.routeNumber}'
+                                  : 'Tap below to confirm boarding when entering',
+                              style: AppTypography.caption.copyWith(
+                                color: AppColors.textMid,
+                                fontSize: 10,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
                 ),
 

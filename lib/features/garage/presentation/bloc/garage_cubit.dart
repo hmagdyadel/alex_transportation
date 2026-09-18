@@ -4,7 +4,7 @@ import 'package:alex_transportation/core/extensions/safe_emit_extension.dart';
 import 'package:alex_transportation/features/garage/data/models/garage_subscription_model.dart';
 import 'package:alex_transportation/features/garage/presentation/bloc/garage_states.dart';
 
-/// Manages garage parking subscriptions, live capacity, QR check-in/out, and cancellation.
+/// Manages garage parking subscriptions, live capacity, check-in/out, and cancellation.
 class GarageCubit extends Cubit<GarageStates> {
   static const int totalCapacity = 300;
   static const int vipSlots = 10;

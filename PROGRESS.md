@@ -96,13 +96,13 @@
   - `GarageCubit` ([garage_cubit.dart](file:///Users/haithammagdy/Flutter/alex_transportation/lib/features/garage/presentation/bloc/garage_cubit.dart)):
     - Live garage slots tracking: 300 total, 42 available, 10 VIP.
     - `submitSubscription`: Form validation (national ID, 5-digit ISL, AlexBank work email, EGP 1,200 payroll deduction consent), auto slot assignment or waiting list enqueue.
-    - `checkInOut`: QR gate toggle updating bay occupancy and check-in timestamp.
+    - `checkInOut`: Button toggle updating bay occupancy and check-in timestamp.
     - `requestCancellation`: Submits cancellation request with ISL and email.
     - `findSubscription`: Status lookup for existing employee records.
 - **Widgets & UI**:
-  - `GarageQrPassCard` ([garage_qr_pass_card.dart](file:///Users/haithammagdy/Flutter/alex_transportation/lib/features/garage/presentation/widgets/garage_qr_pass_card.dart)):
-    - High-contrast digital QR pass using `qr_flutter`.
-    - Live status badge, slot bay pill (`P1-014`), timestamp, and interactive Check In / Check Out toggle button.
+  - `GaragePassCard` ([garage_pass_card.dart](file:///Users/haithammagdy/Flutter/alex_transportation/lib/features/garage/presentation/widgets/garage_pass_card.dart)):
+    - Digital parking pass card with assigned bay (`P1-014`), level, and ISL.
+    - Live status banner and 1-tap Check In / Check Out toggle button (no QR codes, no barrier gate).
   - `GaragePage` ([garage_page.dart](file:///Users/haithammagdy/Flutter/alex_transportation/lib/features/garage/presentation/pages/garage_page.dart)):
     - Live capacity banner with real-time bay count and occupancy progress bar.
     - 4 tab views: **My Pass**, **Subscribe** (with EGP 1,200 payroll notice), **Status Lookup**, and **Cancel Request**.
@@ -135,19 +135,18 @@
 - **Data Models (Pure `json_serializable`)**:
   - `BusStopModel` ([bus_stop_model.dart](file:///Users/haithammagdy/Flutter/alex_transportation/lib/features/buses/data/models/bus_stop_model.dart)): Sequence of transit stops with English/Arabic names, scheduled time, completed and current status.
   - `BusRouteModel` ([bus_route_model.dart](file:///Users/haithammagdy/Flutter/alex_transportation/lib/features/buses/data/models/bus_route_model.dart)): Shuttle route with shift (Morning/Evening), departure/arrival times, total/available seat counters, driver info, and stop manifests.
-  - `BusBoardingPassModel` ([bus_boarding_pass_model.dart](file:///Users/haithammagdy/Flutter/alex_transportation/lib/features/buses/data/models/bus_boarding_pass_model.dart)): Digital QR boarding pass with seat assignment and pickup stop.
+  - `BusBoardingPassModel` ([bus_boarding_pass_model.dart](file:///Users/haithammagdy/Flutter/alex_transportation/lib/features/buses/data/models/bus_boarding_pass_model.dart)): Digital boarding pass with seat assignment and pickup stop.
 - **Cubit Logic**:
   - `BusCubit` ([bus_cubit.dart](file:///Users/haithammagdy/Flutter/alex_transportation/lib/features/buses/presentation/bloc/bus_cubit.dart)):
     - 5 realistic routes across Cairo & Giza (Maadi HQ Express, New Cairo, Heliopolis & Nasr City, 6th October/Zayed, Evening Return).
     - Shift filter toggling (`All`, `Morning`, `Evening`).
     - Route stop timeline selection.
-    - Seat booking flow with capacity check, seat number assignment, and QR pass generation.
+    - Seat booking flow with capacity check, seat number assignment, and boarding pass generation.
     - Check-in with driver (`boarded` status).
     - Seat cancellation with automated seat restoration on route.
 - **Widgets & UI**:
   - `BusBoardingPassCard` ([bus_boarding_pass_card.dart](file:///Users/haithammagdy/Flutter/alex_transportation/lib/features/buses/presentation/widgets/bus_boarding_pass_card.dart)):
-    - High-contrast digital QR boarding pass generated via `qr_flutter`.
-    - Seat badge (`#14`), pickup stop, departure time, and "Board Bus" / "Cancel Reservation" actions.
+    - Digital boarding pass with seat badge (`#14`), pickup stop, departure time, status banner, and 1-tap "Board Bus" / "Cancel Reservation" actions (no QR codes).
   - `BusStopTimeline` ([bus_stop_timeline.dart](file:///Users/haithammagdy/Flutter/alex_transportation/lib/features/buses/presentation/widgets/bus_stop_timeline.dart)):
     - Vertical stepper indicator showing completed stops (green checkmark), current bus position (pulsing badge), and upcoming stops.
     - Interactive pickup stop selector.
