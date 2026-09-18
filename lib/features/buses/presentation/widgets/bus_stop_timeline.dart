@@ -122,6 +122,26 @@ class BusStopTimeline extends StatelessWidget {
                             label: 'BUS CURRENTLY HERE',
                             type: StatusPillType.gold,
                           ),
+                        ] else if (stop.latitude != null && !stop.isCompleted) ...[
+                          const SizedBox(height: 4),
+                          Row(
+                            children: [
+                              const Icon(
+                                Icons.near_me_rounded,
+                                size: 11,
+                                color: AppColors.primaryLight,
+                              ),
+                              const SizedBox(width: 3),
+                              Text(
+                                'GPS Geofence: ${stop.radiusMeters.round()}m',
+                                style: AppTypography.caption.copyWith(
+                                  fontSize: 10,
+                                  color: AppColors.primaryLight,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
+                          ),
                         ],
                       ],
                     ),

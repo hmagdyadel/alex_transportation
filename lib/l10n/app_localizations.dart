@@ -2385,6 +2385,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Syncing...'**
   String get syncStatusSyncing;
+
+  /// No description provided for @gpsTrackingActive.
+  ///
+  /// In en, this message translates to:
+  /// **'GPS Tracking Active'**
+  String get gpsTrackingActive;
+
+  /// No description provided for @gpsAutoGeofence.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto Geofence'**
+  String get gpsAutoGeofence;
+
+  /// No description provided for @gpsAutoGeofenceOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto GPS: ON'**
+  String get gpsAutoGeofenceOn;
+
+  /// No description provided for @gpsAutoGeofenceOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto GPS: OFF'**
+  String get gpsAutoGeofenceOff;
+
+  /// No description provided for @gpsDistanceToNextStop.
+  ///
+  /// In en, this message translates to:
+  /// **'{distance} to next stop'**
+  String gpsDistanceToNextStop(String distance);
+
+  /// No description provided for @gpsSimulateArrival.
+  ///
+  /// In en, this message translates to:
+  /// **'Simulate GPS Arrival'**
+  String get gpsSimulateArrival;
+
+  /// No description provided for @gpsArrivedAtGeofence.
+  ///
+  /// In en, this message translates to:
+  /// **'GPS: Bus reached {stopName}!'**
+  String gpsArrivedAtGeofence(String stopName);
 }
 
 class _AppLocalizationsDelegate

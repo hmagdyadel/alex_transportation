@@ -14,6 +14,9 @@ BusStopModel _$BusStopModelFromJson(Map<String, dynamic> json) => BusStopModel(
   isCompleted: json['isCompleted'] as bool? ?? false,
   isCurrent: json['isCurrent'] as bool? ?? false,
   order: (json['order'] as num).toInt(),
+  latitude: (json['latitude'] as num?)?.toDouble(),
+  longitude: (json['longitude'] as num?)?.toDouble(),
+  radiusMeters: (json['radiusMeters'] as num?)?.toDouble() ?? 150.0,
 );
 
 Map<String, dynamic> _$BusStopModelToJson(BusStopModel instance) =>
@@ -25,4 +28,7 @@ Map<String, dynamic> _$BusStopModelToJson(BusStopModel instance) =>
       'isCompleted': instance.isCompleted,
       'isCurrent': instance.isCurrent,
       'order': instance.order,
+      'latitude': instance.latitude,
+      'longitude': instance.longitude,
+      'radiusMeters': instance.radiusMeters,
     };

@@ -1,6 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:alex_transportation/core/extensions/safe_emit_extension.dart';
+import 'package:alex_transportation/core/network/firestore_sync_service.dart';
+import 'package:alex_transportation/core/services/gps_geofence_service.dart';
 import 'package:alex_transportation/features/buses/data/models/bus_stop_model.dart';
 import 'package:alex_transportation/features/driver/data/models/driver_profile_model.dart';
 import 'package:alex_transportation/features/driver/data/models/driver_trip_model.dart';
@@ -8,7 +12,8 @@ import 'package:alex_transportation/features/driver/data/models/trip_manifest_it
 import 'package:alex_transportation/features/driver/presentation/bloc/driver_states.dart';
 
 /// Manages driver profile, active trip execution, route stops navigation,
-/// pre-trip vehicle safety inspection, and passenger boarding pass verification.
+/// pre-trip vehicle safety inspection, passenger boarding pass verification,
+/// and automatic GPS geofence stop arrival detection.
 class DriverCubit extends Cubit<DriverStates> {
   DriverProfileModel? _profile;
   DriverTripModel? _activeTrip;
@@ -21,6 +26,11 @@ class DriverCubit extends Cubit<DriverStates> {
     'cleanliness': true,
   };
 
+  bool _isAutoGeofenceEnabled = true;
+  double? _distanceToNextStopMeters;
+  bool _isGpsActive = false;
+  StreamSubscription? _gpsSubscription;
+
   DriverCubit() : super(const DriverStates.initial()) {
     loadDriverDashboard();
   }
@@ -32,6 +42,15 @@ class DriverCubit extends Cubit<DriverStates> {
 
   int get boardedCount => _activeTrip?.boardedCount ?? 0;
   int get totalPassengers => _activeTrip?.totalPassengers ?? 0;
+
+  bool get isAutoGeofenceEnabled => _isAutoGeofenceEnabled;
+  double? get distanceToNextStopMeters => _distanceToNextStopMeters;
+  bool get isGpsActive => _isGpsActive;
+
+  String? get formattedDistanceToNextStop {
+    if (_distanceToNextStopMeters == null) return null;
+    return GpsGeofenceService.formatDistance(_distanceToNextStopMeters!);
+  }
 
   /// Loads driver profile, vehicle assignment, active route, and passenger manifest.
   Future<void> loadDriverDashboard() async {
@@ -61,6 +80,9 @@ class DriverCubit extends Cubit<DriverStates> {
         isCompleted: false,
         isCurrent: true,
         order: 1,
+        latitude: 30.0715,
+        longitude: 31.0210,
+        radiusMeters: 150.0,
       ),
       const BusStopModel(
         id: 'stop-2',
@@ -70,6 +92,9 @@ class DriverCubit extends Cubit<DriverStates> {
         isCompleted: false,
         isCurrent: false,
         order: 2,
+        latitude: 30.0520,
+        longitude: 31.0530,
+        radiusMeters: 150.0,
       ),
       const BusStopModel(
         id: 'stop-3',
@@ -79,6 +104,9 @@ class DriverCubit extends Cubit<DriverStates> {
         isCompleted: false,
         isCurrent: false,
         order: 3,
+        latitude: 30.0380,
+        longitude: 31.0850,
+        radiusMeters: 150.0,
       ),
       const BusStopModel(
         id: 'stop-4',
@@ -88,6 +116,9 @@ class DriverCubit extends Cubit<DriverStates> {
         isCompleted: false,
         isCurrent: false,
         order: 4,
+        latitude: 30.0190,
+        longitude: 31.1210,
+        radiusMeters: 150.0,
       ),
     ];
 
@@ -180,7 +211,13 @@ class DriverCubit extends Cubit<DriverStates> {
     }
   }
 
-  /// Starts the bus trip and enters in_progress state.
+  /// Toggles automatic GPS geofencing arrival detection.
+  void toggleAutoGeofence() {
+    _isAutoGeofenceEnabled = !_isAutoGeofenceEnabled;
+    safeEmit(const DriverStates.loaded());
+  }
+
+  /// Starts the bus trip and enters in_progress state with live GPS geofencing.
   Future<void> startTrip() async {
     final trip = _activeTrip;
     if (trip == null) {
@@ -212,12 +249,76 @@ class DriverCubit extends Cubit<DriverStates> {
       startedAt: DateTime.now(),
     );
 
+    // Initialize GPS Geofencing
+    _startGpsGeofencing();
+
+    FirestoreSyncService.instance.syncDriverTripStatus(_activeTrip!);
+
     safeEmit(const DriverStates.success('Trip started! Route 101 is now active.'));
     safeEmit(const DriverStates.loaded());
   }
 
+  void _startGpsGeofencing() {
+    _gpsSubscription?.cancel();
+    GpsGeofenceService.instance.resetTriggers();
+
+    if (_activeTrip != null && _activeTrip!.stops.isNotEmpty) {
+      GpsGeofenceService.instance.tryTriggerArrival(_activeTrip!.stops[0].id);
+      if (_activeTrip!.stops.length > 1) {
+        final nextStop = _activeTrip!.stops[1];
+        if (_activeTrip!.stops[0].latitude != null && _activeTrip!.stops[0].longitude != null) {
+          _distanceToNextStopMeters = GpsGeofenceService.instance.distanceToStop(
+            currentLat: _activeTrip!.stops[0].latitude!,
+            currentLng: _activeTrip!.stops[0].longitude!,
+            targetStop: nextStop,
+          );
+        }
+      }
+    }
+
+    _gpsSubscription = GpsGeofenceService.instance.positionStream.listen((pos) {
+      handleGpsLocationUpdate(pos.latitude, pos.longitude);
+    });
+
+    GpsGeofenceService.instance.startLocationUpdates();
+    _isGpsActive = true;
+  }
+
+  /// Processes a GPS location update and detects geofence arrival at the next stop.
+  void handleGpsLocationUpdate(double latitude, double longitude) {
+    final trip = _activeTrip;
+    if (trip == null || !trip.isInProgress) return;
+
+    final currentIdx = trip.currentStopIndex;
+    if (currentIdx >= trip.stops.length - 1) {
+      _distanceToNextStopMeters = 0;
+      safeEmit(const DriverStates.loaded());
+      return;
+    }
+
+    final targetStop = trip.stops[currentIdx + 1];
+    final distance = GpsGeofenceService.instance.distanceToStop(
+      currentLat: latitude,
+      currentLng: longitude,
+      targetStop: targetStop,
+    );
+
+    _distanceToNextStopMeters = distance;
+    _isGpsActive = true;
+
+    // Check automatic geofence arrival
+    if (_isAutoGeofenceEnabled && distance != null && distance <= targetStop.radiusMeters) {
+      if (GpsGeofenceService.instance.tryTriggerArrival(targetStop.id)) {
+        advanceToNextStop(isFromGps: true);
+        return;
+      }
+    }
+
+    safeEmit(const DriverStates.loaded());
+  }
+
   /// Advances to the next stop along the route.
-  Future<void> advanceToNextStop() async {
+  Future<void> advanceToNextStop({bool isFromGps = false}) async {
     final trip = _activeTrip;
     if (trip == null || !trip.isInProgress) {
       safeEmit(const DriverStates.error(message: 'No active trip in progress'));
@@ -231,7 +332,7 @@ class DriverCubit extends Cubit<DriverStates> {
     }
 
     safeEmit(const DriverStates.advancingStop());
-    await Future.delayed(const Duration(milliseconds: 500));
+    await Future.delayed(const Duration(milliseconds: 350));
 
     final nextIdx = currentIdx + 1;
     final updatedStops = trip.stops.asMap().entries.map((entry) {
@@ -248,9 +349,53 @@ class DriverCubit extends Cubit<DriverStates> {
       stops: updatedStops,
     );
 
+    if (nextIdx < trip.stops.length - 1) {
+      final upcoming = trip.stops[nextIdx + 1];
+      final lastPos = GpsGeofenceService.instance.lastKnownPosition;
+      if (lastPos != null) {
+        _distanceToNextStopMeters = GpsGeofenceService.instance.distanceToStop(
+          currentLat: lastPos.latitude,
+          currentLng: lastPos.longitude,
+          targetStop: upcoming,
+        );
+      } else if (trip.stops[nextIdx].latitude != null && trip.stops[nextIdx].longitude != null) {
+        _distanceToNextStopMeters = GpsGeofenceService.instance.distanceToStop(
+          currentLat: trip.stops[nextIdx].latitude!,
+          currentLng: trip.stops[nextIdx].longitude!,
+          targetStop: upcoming,
+        );
+      }
+    } else {
+      _distanceToNextStopMeters = 0;
+    }
+
+    FirestoreSyncService.instance.syncDriverTripStatus(_activeTrip!);
+
     final nextStopName = trip.stops[nextIdx].name;
-    safeEmit(DriverStates.success('Arrived at $nextStopName'));
+    if (isFromGps) {
+      safeEmit(DriverStates.success('📍 GPS Geofence: Arrived at $nextStopName!'));
+    } else {
+      safeEmit(DriverStates.success('Arrived at $nextStopName'));
+    }
     safeEmit(const DriverStates.loaded());
+  }
+
+  /// Simulates entering the geofence of the next stop (for demo / emulator testing).
+  Future<void> simulateArrivalAtNextStop() async {
+    final trip = _activeTrip;
+    if (trip == null || !trip.isInProgress) return;
+    final currentIdx = trip.currentStopIndex;
+    if (currentIdx >= trip.stops.length - 1) return;
+
+    final targetStop = trip.stops[currentIdx + 1];
+    if (targetStop.latitude != null && targetStop.longitude != null) {
+      GpsGeofenceService.instance.simulatePosition(
+        latitude: targetStop.latitude!,
+        longitude: targetStop.longitude!,
+      );
+    } else {
+      await advanceToNextStop(isFromGps: true);
+    }
   }
 
   /// Toggles or marks a passenger as boarded.
@@ -287,7 +432,6 @@ class DriverCubit extends Cubit<DriverStates> {
     safeEmit(const DriverStates.loaded());
   }
 
-
   /// Completes the trip session upon reaching the final destination.
   Future<void> completeTrip() async {
     final trip = _activeTrip;
@@ -310,7 +454,21 @@ class DriverCubit extends Cubit<DriverStates> {
       completedAt: DateTime.now(),
     );
 
+    _gpsSubscription?.cancel();
+    GpsGeofenceService.instance.stopLocationUpdates();
+    _isGpsActive = false;
+    _distanceToNextStopMeters = null;
+
+    FirestoreSyncService.instance.syncDriverTripStatus(_activeTrip!);
+
     safeEmit(const DriverStates.success('Trip completed! All passengers safely arrived.'));
     safeEmit(const DriverStates.loaded());
+  }
+
+  @override
+  Future<void> close() {
+    _gpsSubscription?.cancel();
+    GpsGeofenceService.instance.stopLocationUpdates();
+    return super.close();
   }
 }

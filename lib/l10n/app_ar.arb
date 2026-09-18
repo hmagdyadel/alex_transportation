@@ -397,5 +397,22 @@
   "demoPushGarageAlert": "تأكيد تصريح الانتظار",
   "syncStatusOnline": "متزامن مع السحابة",
   "syncStatusOffline": "محلي فقط",
-  "syncStatusSyncing": "جاري المزامنة..."
+  "syncStatusSyncing": "جاري المزامنة...",
+  "gpsTrackingActive": "تتبع GPS نشط",
+  "gpsAutoGeofence": "السياج الجغرافي التلقائي",
+  "gpsAutoGeofenceOn": "GPS تلقائي: مفعّل",
+  "gpsAutoGeofenceOff": "GPS تلقائي: متوقف",
+  "gpsDistanceToNextStop": "{distance} للمحطة القادمة",
+  "@gpsDistanceToNextStop": {
+    "placeholders": {
+      "distance": {"type": "String"}
+    }
+  },
+  "gpsSimulateArrival": "محاكاة وصول GPS",
+  "gpsArrivedAtGeofence": "GPS: وصلت الحافلة إلى {stopName}!",
+  "@gpsArrivedAtGeofence": {
+    "placeholders": {
+      "stopName": {"type": "String"}
+    }
+  }
 }

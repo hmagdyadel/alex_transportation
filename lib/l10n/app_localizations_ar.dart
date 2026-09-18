@@ -1230,4 +1230,29 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get syncStatusSyncing => 'جاري المزامنة...';
+
+  @override
+  String get gpsTrackingActive => 'تتبع GPS نشط';
+
+  @override
+  String get gpsAutoGeofence => 'السياج الجغرافي التلقائي';
+
+  @override
+  String get gpsAutoGeofenceOn => 'GPS تلقائي: مفعّل';
+
+  @override
+  String get gpsAutoGeofenceOff => 'GPS تلقائي: متوقف';
+
+  @override
+  String gpsDistanceToNextStop(String distance) {
+    return '$distance للمحطة القادمة';
+  }
+
+  @override
+  String get gpsSimulateArrival => 'محاكاة وصول GPS';
+
+  @override
+  String gpsArrivedAtGeofence(String stopName) {
+    return 'GPS: وصلت الحافلة إلى $stopName!';
+  }
 }

@@ -8,12 +8,17 @@ import 'package:alex_transportation/core/extensions/l10n_extension.dart';
 import 'package:alex_transportation/features/driver/data/models/driver_trip_model.dart';
 
 /// Active Trip HUD Card showing route details, live stop status,
-/// and primary trip progression controls.
+/// GPS geofencing telemetry, and primary trip progression controls.
 class DriverTripHudCard extends StatelessWidget {
   final DriverTripModel trip;
   final VoidCallback? onStartTrip;
   final VoidCallback? onAdvanceStop;
   final VoidCallback? onCompleteTrip;
+  final bool isAutoGeofenceEnabled;
+  final VoidCallback? onToggleAutoGeofence;
+  final String? distanceToNextStop;
+  final bool isGpsActive;
+  final VoidCallback? onSimulateGpsArrival;
 
   const DriverTripHudCard({
     super.key,
@@ -21,6 +26,11 @@ class DriverTripHudCard extends StatelessWidget {
     this.onStartTrip,
     this.onAdvanceStop,
     this.onCompleteTrip,
+    this.isAutoGeofenceEnabled = true,
+    this.onToggleAutoGeofence,
+    this.distanceToNextStop,
+    this.isGpsActive = false,
+    this.onSimulateGpsArrival,
   });
 
   @override
@@ -265,6 +275,109 @@ class DriverTripHudCard extends StatelessWidget {
                       ],
                     ),
                   ),
+                  const SizedBox(height: AppSpacing.sm),
+
+                  // GPS Telemetry & Auto Geofence Pill Bar
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AppSpacing.sm,
+                      vertical: AppSpacing.xs,
+                    ),
+                    decoration: BoxDecoration(
+                      color: isGpsActive
+                          ? AppColors.greenLight
+                          : AppColors.background,
+                      borderRadius: BorderRadius.circular(AppRadius.md),
+                      border: Border.all(
+                        color: isGpsActive
+                            ? AppColors.primaryLight.withValues(alpha: 0.4)
+                            : AppColors.border,
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.satellite_alt_rounded,
+                              size: 16,
+                              color: isGpsActive
+                                  ? AppColors.primaryLight
+                                  : AppColors.textMid,
+                            ),
+                            const SizedBox(width: 6),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  context.l10n.gpsTrackingActive,
+                                  style: AppTypography.caption.copyWith(
+                                    fontWeight: FontWeight.w700,
+                                    fontSize: 10,
+                                    color: isGpsActive
+                                        ? AppColors.primary
+                                        : AppColors.textMid,
+                                  ),
+                                ),
+                                if (distanceToNextStop != null && !isLastStop)
+                                  Text(
+                                    context.l10n.gpsDistanceToNextStop(distanceToNextStop!),
+                                    style: AppTypography.caption.copyWith(
+                                      fontWeight: FontWeight.w800,
+                                      fontSize: 11,
+                                      color: AppColors.primaryLight,
+                                    ),
+                                  ),
+                              ],
+                            ),
+                          ],
+                        ),
+                        InkWell(
+                          onTap: onToggleAutoGeofence,
+                          borderRadius: BorderRadius.circular(AppRadius.pill),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: AppSpacing.sm,
+                              vertical: 4,
+                            ),
+                            decoration: BoxDecoration(
+                              color: isAutoGeofenceEnabled
+                                  ? AppColors.primary
+                                  : AppColors.border,
+                              borderRadius: BorderRadius.circular(AppRadius.pill),
+                            ),
+                            child: Row(
+                              children: [
+                                Icon(
+                                  isAutoGeofenceEnabled
+                                      ? Icons.gps_fixed_rounded
+                                      : Icons.gps_off_rounded,
+                                  size: 13,
+                                  color: isAutoGeofenceEnabled
+                                      ? Colors.white
+                                      : AppColors.textMid,
+                                ),
+                                const SizedBox(width: 4),
+                                Text(
+                                  isAutoGeofenceEnabled
+                                      ? context.l10n.gpsAutoGeofenceOn
+                                      : context.l10n.gpsAutoGeofenceOff,
+                                  style: AppTypography.caption.copyWith(
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.w700,
+                                    color: isAutoGeofenceEnabled
+                                        ? Colors.white
+                                        : AppColors.textMid,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                   const SizedBox(height: AppSpacing.md),
                 ],
 
@@ -276,17 +389,49 @@ class DriverTripHudCard extends StatelessWidget {
                     onPressed: onStartTrip,
                   ),
 
-                if (trip.isInProgress)
+                if (trip.isInProgress) ...[
                   Row(
                     children: [
-                      if (!isLastStop)
+                      if (!isLastStop) ...[
                         Expanded(
+                          flex: 3,
                           child: AppButton(
                             label: context.l10n.driverArrivedAtNextStop,
                             leadingIcon: const Icon(Icons.skip_next_rounded, color: Colors.white, size: 20),
                             onPressed: onAdvanceStop,
                           ),
                         ),
+                        if (onSimulateGpsArrival != null) ...[
+                          const SizedBox(width: AppSpacing.xs),
+                          InkWell(
+                            onTap: onSimulateGpsArrival,
+                            borderRadius: BorderRadius.circular(AppRadius.md),
+                            child: Container(
+                              height: 48,
+                              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
+                              decoration: BoxDecoration(
+                                color: AppColors.goldLight,
+                                borderRadius: BorderRadius.circular(AppRadius.md),
+                                border: Border.all(color: AppColors.accentGold.withValues(alpha: 0.5)),
+                              ),
+                              child: Row(
+                                children: [
+                                  const Icon(Icons.radar_rounded, size: 16, color: AppColors.accentGold),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    context.l10n.gpsSimulateArrival,
+                                    style: AppTypography.caption.copyWith(
+                                      fontWeight: FontWeight.w700,
+                                      fontSize: 10,
+                                      color: AppColors.accentGold,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ],
                       if (isLastStop)
                         Expanded(
                           child: ElevatedButton.icon(
@@ -307,6 +452,7 @@ class DriverTripHudCard extends StatelessWidget {
                         ),
                     ],
                   ),
+                ],
 
                 if (trip.isCompleted)
                   Container(

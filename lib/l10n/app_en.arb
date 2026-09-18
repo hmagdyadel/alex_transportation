@@ -397,5 +397,22 @@
   "demoPushGarageAlert": "Parking Pass Confirmed",
   "syncStatusOnline": "Cloud Synced",
   "syncStatusOffline": "Local Only",
-  "syncStatusSyncing": "Syncing..."
+  "syncStatusSyncing": "Syncing...",
+  "gpsTrackingActive": "GPS Tracking Active",
+  "gpsAutoGeofence": "Auto Geofence",
+  "gpsAutoGeofenceOn": "Auto GPS: ON",
+  "gpsAutoGeofenceOff": "Auto GPS: OFF",
+  "gpsDistanceToNextStop": "{distance} to next stop",
+  "@gpsDistanceToNextStop": {
+    "placeholders": {
+      "distance": {"type": "String"}
+    }
+  },
+  "gpsSimulateArrival": "Simulate GPS Arrival",
+  "gpsArrivedAtGeofence": "GPS: Bus reached {stopName}!",
+  "@gpsArrivedAtGeofence": {
+    "placeholders": {
+      "stopName": {"type": "String"}
+    }
+  }
 }

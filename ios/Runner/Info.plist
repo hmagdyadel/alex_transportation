@@ -28,6 +28,10 @@
 	<true/>
 	<key>NSFaceIDUsageDescription</key>
 	<string>AlexBank Transit uses Face ID / Touch ID for secure and convenient authentication.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>AlexBank Transit uses your location to automatically detect when your bus arrives at transit stops.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>AlexBank Transit uses background location to monitor bus route arrival and alert passengers.</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>

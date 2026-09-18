@@ -13,6 +13,9 @@ class BusStopModel {
   final bool isCompleted;
   final bool isCurrent;
   final int order;
+  final double? latitude;
+  final double? longitude;
+  final double radiusMeters;
 
   const BusStopModel({
     required this.id,
@@ -22,6 +25,9 @@ class BusStopModel {
     this.isCompleted = false,
     this.isCurrent = false,
     required this.order,
+    this.latitude,
+    this.longitude,
+    this.radiusMeters = 150.0,
   });
 
   factory BusStopModel.fromJson(Map<String, dynamic> json) =>
@@ -37,6 +43,9 @@ class BusStopModel {
     bool? isCompleted,
     bool? isCurrent,
     int? order,
+    double? latitude,
+    double? longitude,
+    double? radiusMeters,
   }) {
     return BusStopModel(
       id: id ?? this.id,
@@ -46,6 +55,9 @@ class BusStopModel {
       isCompleted: isCompleted ?? this.isCompleted,
       isCurrent: isCurrent ?? this.isCurrent,
       order: order ?? this.order,
+      latitude: latitude ?? this.latitude,
+      longitude: longitude ?? this.longitude,
+      radiusMeters: radiusMeters ?? this.radiusMeters,
     );
   }
 }

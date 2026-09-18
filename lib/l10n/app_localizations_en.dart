@@ -1236,4 +1236,29 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get syncStatusSyncing => 'Syncing...';
+
+  @override
+  String get gpsTrackingActive => 'GPS Tracking Active';
+
+  @override
+  String get gpsAutoGeofence => 'Auto Geofence';
+
+  @override
+  String get gpsAutoGeofenceOn => 'Auto GPS: ON';
+
+  @override
+  String get gpsAutoGeofenceOff => 'Auto GPS: OFF';
+
+  @override
+  String gpsDistanceToNextStop(String distance) {
+    return '$distance to next stop';
+  }
+
+  @override
+  String get gpsSimulateArrival => 'Simulate GPS Arrival';
+
+  @override
+  String gpsArrivedAtGeofence(String stopName) {
+    return 'GPS: Bus reached $stopName!';
+  }
 }

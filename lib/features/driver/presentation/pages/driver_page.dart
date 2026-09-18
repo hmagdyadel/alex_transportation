@@ -338,6 +338,11 @@ class _DriverPageState extends State<DriverPage> {
             onStartTrip: () => cubit.startTrip(),
             onAdvanceStop: () => cubit.advanceToNextStop(),
             onCompleteTrip: () => cubit.completeTrip(),
+            isAutoGeofenceEnabled: cubit.isAutoGeofenceEnabled,
+            onToggleAutoGeofence: () => cubit.toggleAutoGeofence(),
+            distanceToNextStop: cubit.formattedDistanceToNextStop,
+            isGpsActive: cubit.isGpsActive,
+            onSimulateGpsArrival: () => cubit.simulateArrivalAtNextStop(),
           ),
           const SizedBox(height: AppSpacing.md),
 

@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 
 import 'package:alex_transportation/core/network/firebase_client.dart';
+import 'package:alex_transportation/features/driver/data/models/driver_trip_model.dart';
 
 /// Resilient Firestore cloud sync service.
 ///
@@ -200,6 +201,11 @@ class FirestoreSyncService {
   /// Sync system configuration (admin-controlled settings).
   Future<bool> syncSystemConfig(Map<String, dynamic> config) {
     return upsert('system', 'config', config);
+  }
+
+  /// Sync driver trip status and current stop progression.
+  Future<bool> syncDriverTripStatus(DriverTripModel trip) {
+    return upsert('driver_trips', trip.tripId, trip.toJson());
   }
 
   /// Listen to system configuration changes in real-time.

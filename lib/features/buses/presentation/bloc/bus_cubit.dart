@@ -52,6 +52,8 @@ class BusCubit extends Cubit<BusStates> {
             scheduledTime: '07:15 AM',
             isCompleted: true,
             order: 1,
+            latitude: 29.9602,
+            longitude: 31.2568,
           ),
           BusStopModel(
             id: 'S101-2',
@@ -61,6 +63,8 @@ class BusCubit extends Cubit<BusStates> {
             isCompleted: true,
             isCurrent: true,
             order: 2,
+            latitude: 29.9575,
+            longitude: 31.2750,
           ),
           BusStopModel(
             id: 'S101-3',
@@ -68,6 +72,8 @@ class BusCubit extends Cubit<BusStates> {
             nameAr: 'تقاطع العرب',
             scheduledTime: '07:45 AM',
             order: 3,
+            latitude: 29.9710,
+            longitude: 31.2820,
           ),
           BusStopModel(
             id: 'S101-4',
@@ -75,6 +81,8 @@ class BusCubit extends Cubit<BusStates> {
             nameAr: 'الأوتوستراد والدائري',
             scheduledTime: '08:05 AM',
             order: 4,
+            latitude: 29.9850,
+            longitude: 31.3050,
           ),
           BusStopModel(
             id: 'S101-5',
@@ -82,6 +90,8 @@ class BusCubit extends Cubit<BusStates> {
             nameAr: 'القرية الذكية - مقر بنك الإسكندرية',
             scheduledTime: '08:30 AM',
             order: 5,
+            latitude: 30.0715,
+            longitude: 31.0210,
           ),
         ],
       ),
@@ -105,6 +115,8 @@ class BusCubit extends Cubit<BusStates> {
             nameAr: 'شمال التسعين',
             scheduledTime: '07:00 AM',
             order: 1,
+            latitude: 30.0315,
+            longitude: 31.4720,
           ),
           BusStopModel(
             id: 'S102-2',
@@ -112,6 +124,8 @@ class BusCubit extends Cubit<BusStates> {
             nameAr: 'كونكورد بلازا',
             scheduledTime: '07:20 AM',
             order: 2,
+            latitude: 30.0270,
+            longitude: 31.4920,
           ),
           BusStopModel(
             id: 'S102-3',
@@ -119,6 +133,8 @@ class BusCubit extends Cubit<BusStates> {
             nameAr: 'تقاطع الشويفات',
             scheduledTime: '07:40 AM',
             order: 3,
+            latitude: 30.0120,
+            longitude: 31.4350,
           ),
           BusStopModel(
             id: 'S102-4',
@@ -126,6 +142,8 @@ class BusCubit extends Cubit<BusStates> {
             nameAr: 'الدائري والقطامية',
             scheduledTime: '08:00 AM',
             order: 4,
+            latitude: 29.9980,
+            longitude: 31.3850,
           ),
           BusStopModel(
             id: 'S102-5',
@@ -133,6 +151,8 @@ class BusCubit extends Cubit<BusStates> {
             nameAr: 'القرية الذكية - مقر بنك الإسكندرية',
             scheduledTime: '08:25 AM',
             order: 5,
+            latitude: 30.0715,
+            longitude: 31.0210,
           ),
         ],
       ),
@@ -701,6 +721,9 @@ class BusCubit extends Cubit<BusStates> {
                   ? estimatedArrival
                   : 'Transit Stop',
           order: i + 1,
+          latitude: s.latitude,
+          longitude: s.longitude,
+          radiusMeters: s.radiusMeters,
         ),
       );
     }

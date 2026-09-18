@@ -300,3 +300,36 @@
   - Verified all 93 unit and widget tests pass.
   - Clean merge of `phase-6` into `main` with changes pushed to `origin/main` and `origin/phase-6`.
 
+---
+
+## Phase 9 — Automatic GPS Geofence Detection for Bus Transit
+**Date:** 2026-09-18
+**Branch:** `phase-6` & `main`
+
+### Built
+- **Core GPS & Geofence Service (`GpsGeofenceService`)**:
+  - Integrated `geolocator: ^14.0.3` for high-precision real-time device location updates.
+  - Pure geodesic Haversine distance calculator with sub-meter accuracy.
+  - Automatic geofence arrival detection within station `radiusMeters` (default 150m) with stop debouncing.
+  - Built-in location simulation engine (`simulatePosition`) allowing immediate testing on emulators and devices.
+- **Geographic Coordinates across all Routes**:
+  - Enhanced `BusStopModel` with `latitude`, `longitude`, and `radiusMeters`.
+  - Regenerated `bus_stop_model.g.dart` via `build_runner`.
+  - Populated coordinates across all Cairo & Giza stops for morning and mirrored evening lines.
+- **Driver Captain Portal Integration**:
+  - `DriverCubit` automatically starts GPS tracking upon trip start (`startTrip()`).
+  - Auto-advance triggers when entering stop geofence with haptic feedback and alert (`📍 GPS Geofence: Arrived at [Stop]!`).
+  - Live distance countdown: `📍 140 m to City Center Hub`.
+  - Interactive `Auto GPS: ON / OFF` toggle pill allowing instant manual override.
+  - "Simulate GPS" button on Driver HUD for one-tap testing.
+- **Passenger Timeline Experience**:
+  - `BusStopTimeline` displays active geofence tag on upcoming stops and immediate station updates.
+- **Platform Permissions**:
+  - Added `ACCESS_FINE_LOCATION` and `ACCESS_COARSE_LOCATION` to `AndroidManifest.xml`.
+  - Added `NSLocationWhenInUseUsageDescription` and `NSLocationAlwaysAndWhenInUseUsageDescription` to `Info.plist`.
+- **Trilingual Localization**:
+  - Added GPS telemetry strings to `app_en.arb`, `app_ar.arb`, and `app_it.arb`.
+- **Automated Testing & Code Quality**:
+  - Expanded test suite: **107/107 tests passing** (added 14 unit tests for GPS distance, geofencing, debouncing, and auto-advance).
+  - `flutter analyze`: **0 issues found**.
+
