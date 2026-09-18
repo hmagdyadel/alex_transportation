@@ -116,26 +116,33 @@ class _AdminPageContentState extends State<_AdminPageContent>
                 children: [
                   const AlexLogo(size: 26),
                   const SizedBox(width: AppSpacing.sm),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'AlexBank Operations',
-                        style: AppTypography.titleMedium.copyWith(
-                          fontWeight: FontWeight.w800,
-                          color: AppColors.primary,
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          'AlexBank Operations',
+                          style: AppTypography.titleMedium.copyWith(
+                            fontWeight: FontWeight.w800,
+                            color: AppColors.primary,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
-                      ),
-                      Text(
-                        'CENTRAL MOBILITY CONSOLE',
-                        style: AppTypography.caption.copyWith(
-                          fontSize: 9,
-                          letterSpacing: 0.8,
-                          fontWeight: FontWeight.w700,
-                          color: AppColors.accentGold,
+                        Text(
+                          'CENTRAL MOBILITY CONSOLE',
+                          style: AppTypography.caption.copyWith(
+                            fontSize: 9,
+                            letterSpacing: 0.8,
+                            fontWeight: FontWeight.w700,
+                            color: AppColors.accentGold,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ],
               ),

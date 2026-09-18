@@ -9,6 +9,8 @@ import 'package:alex_transportation/core/widgets/app_card.dart';
 import 'package:alex_transportation/core/widgets/custom_loading_indicator.dart';
 import 'package:alex_transportation/core/widgets/status_pill.dart';
 import 'package:alex_transportation/features/auth/presentation/bloc/auth_cubit.dart';
+import 'package:alex_transportation/features/driver/data/models/driver_trip_model.dart';
+import 'package:alex_transportation/features/driver/data/models/trip_manifest_item_model.dart';
 import 'package:alex_transportation/features/driver/presentation/bloc/driver_cubit.dart';
 import 'package:alex_transportation/features/driver/presentation/bloc/driver_states.dart';
 import 'package:alex_transportation/features/driver/presentation/widgets/driver_trip_hud_card.dart';
@@ -112,25 +114,32 @@ class _DriverPageState extends State<DriverPage> {
                 children: [
                   const AlexLogo(size: 26),
                   const SizedBox(width: AppSpacing.xs),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'ALEXBANK',
-                        style: AppTypography.titleMedium.copyWith(
-                          color: AppColors.primary,
-                          fontWeight: FontWeight.w800,
-                          fontSize: 14,
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          'ALEXBANK',
+                          style: AppTypography.titleMedium.copyWith(
+                            color: AppColors.primary,
+                            fontWeight: FontWeight.w800,
+                            fontSize: 14,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
-                      ),
-                      Text(
-                        'Transit — Driver Portal',
-                        style: AppTypography.caption.copyWith(
-                          color: AppColors.textMid,
-                          fontSize: 10,
+                        Text(
+                          'Transit — Driver Portal',
+                          style: AppTypography.caption.copyWith(
+                            color: AppColors.textMid,
+                            fontSize: 10,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ],
               ),
@@ -312,7 +321,7 @@ class _DriverPageState extends State<DriverPage> {
   }
 
   // ─── TAB 0: LIVE TRIP HUD ──────────────────────────────────────────────────
-  Widget _buildTripHudView(DriverCubit cubit, dynamic trip) {
+  Widget _buildTripHudView(DriverCubit cubit, DriverTripModel trip) {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(AppSpacing.md),
       child: Column(
@@ -492,8 +501,8 @@ class _DriverPageState extends State<DriverPage> {
   }
 
   // ─── TAB 1: PASSENGER MANIFEST & ROSTER ──────────────────────────────────
-  Widget _buildManifestView(DriverCubit cubit, dynamic trip) {
-    final filteredPassengers = trip.passengers.where((p) {
+  Widget _buildManifestView(DriverCubit cubit, DriverTripModel trip) {
+    final filteredPassengers = trip.passengers.where((TripManifestItemModel p) {
       if (_manifestFilter == 1) return !p.isBoarded;
       if (_manifestFilter == 2) return p.isBoarded;
       return true;

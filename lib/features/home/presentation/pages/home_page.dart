@@ -103,27 +103,35 @@ class _HomePageState extends State<HomePage> {
         titleSpacing: AppSpacing.md,
         title: Row(
           children: [
-            const AlexLogo(size: 34),
-            const SizedBox(width: AppSpacing.sm),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'ALEXBANK',
-                  style: AppTypography.labelMedium.copyWith(
-                    color: AppColors.primary,
-                    fontWeight: FontWeight.w800,
-                    letterSpacing: 1.2,
+            const AlexLogo(size: 32),
+            const SizedBox(width: AppSpacing.xs),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'ALEXBANK',
+                    style: AppTypography.labelMedium.copyWith(
+                      color: AppColors.primary,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: 1.2,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                ),
-                Text(
-                  'Transit — Employee Portal',
-                  style: AppTypography.caption.copyWith(
-                    color: AppColors.textMid,
-                    fontWeight: FontWeight.w500,
+                  Text(
+                    'Transit — Employee Portal',
+                    style: AppTypography.caption.copyWith(
+                      color: AppColors.textMid,
+                      fontWeight: FontWeight.w500,
+                      fontSize: 10,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ],
         ),
@@ -132,24 +140,39 @@ class _HomePageState extends State<HomePage> {
             label: 'EMPLOYEE',
             type: StatusPillType.active,
           ),
-          const SizedBox(width: AppSpacing.xs),
-          IconButton(
+          PopupMenuButton<String>(
             icon: const Icon(
-              Icons.badge_outlined,
-              color: AppColors.accentGold,
-              size: 20,
-            ),
-            tooltip: 'Driver Captain Portal',
-            onPressed: () => context.go('/driver'),
-          ),
-          IconButton(
-            icon: const Icon(
-              Icons.admin_panel_settings_outlined,
+              Icons.swap_horiz_rounded,
               color: AppColors.primary,
-              size: 20,
+              size: 22,
             ),
-            tooltip: 'Admin Operations Console',
-            onPressed: () => context.go('/admin'),
+            tooltip: 'Switch Operations Role',
+            onSelected: (val) {
+              if (val == 'driver') context.go('/driver');
+              if (val == 'admin') context.go('/admin');
+            },
+            itemBuilder: (ctx) => [
+              const PopupMenuItem(
+                value: 'driver',
+                child: Row(
+                  children: [
+                    Icon(Icons.badge_outlined, color: AppColors.accentGold, size: 20),
+                    SizedBox(width: AppSpacing.sm),
+                    Text('Driver Captain Portal'),
+                  ],
+                ),
+              ),
+              const PopupMenuItem(
+                value: 'admin',
+                child: Row(
+                  children: [
+                    Icon(Icons.admin_panel_settings_outlined, color: AppColors.primary, size: 20),
+                    SizedBox(width: AppSpacing.sm),
+                    Text('Admin Operations Console'),
+                  ],
+                ),
+              ),
+            ],
           ),
           IconButton(
             icon: const Icon(
