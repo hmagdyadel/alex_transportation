@@ -12,6 +12,7 @@ class AppButton extends StatelessWidget {
   final Widget? leadingIcon;
   final bool isExpanded;
   final double height;
+  final EdgeInsetsGeometry? padding;
 
   const AppButton({
     super.key,
@@ -21,6 +22,7 @@ class AppButton extends StatelessWidget {
     this.leadingIcon,
     this.isExpanded = true,
     this.height = 50,
+    this.padding,
   });
 
   @override
@@ -62,11 +64,17 @@ class AppButton extends StatelessWidget {
           leadingIcon!,
           const SizedBox(width: AppSpacing.xs),
         ],
-        Text(
-          label,
-          style: AppTypography.labelLarge.copyWith(
-            color: foregroundColor,
-            fontWeight: FontWeight.w600,
+        Flexible(
+          child: FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Text(
+              label,
+              style: AppTypography.labelLarge.copyWith(
+                color: foregroundColor,
+                fontWeight: FontWeight.w600,
+              ),
+              maxLines: 1,
+            ),
           ),
         ),
       ],
@@ -85,7 +93,7 @@ class AppButton extends StatelessWidget {
         child: InkWell(
           onTap: onPressed,
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+            padding: padding ?? const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
             child: content,
           ),
         ),
