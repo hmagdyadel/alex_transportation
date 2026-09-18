@@ -29,7 +29,7 @@ class PassengerManifestTile extends StatelessWidget {
       ),
       child: Row(
         children: [
-          // Seat Number Badge
+          // Passenger Icon Badge
           Container(
             width: 44,
             height: 44,
@@ -41,27 +41,10 @@ class PassengerManifestTile extends StatelessWidget {
                 color: isBoarded ? AppColors.primary : AppColors.accentGold.withValues(alpha: 0.5),
               ),
             ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  'SEAT',
-                  style: AppTypography.caption.copyWith(
-                    fontSize: 8,
-                    fontWeight: FontWeight.w700,
-                    color: isBoarded ? Colors.white70 : AppColors.accentGold,
-                    letterSpacing: 0.5,
-                  ),
-                ),
-                Text(
-                  '#${passenger.seatNumber}',
-                  style: AppTypography.bodySmall.copyWith(
-                    fontWeight: FontWeight.w800,
-                    color: isBoarded ? Colors.white : AppColors.textPrimary,
-                    fontSize: 12,
-                  ),
-                ),
-              ],
+            child: Icon(
+              Icons.airline_seat_recline_normal_rounded,
+              color: isBoarded ? Colors.white : AppColors.accentGold,
+              size: 22,
             ),
           ),
           const SizedBox(width: AppSpacing.sm),

@@ -280,7 +280,7 @@ class DriverCubit extends Cubit<DriverStates> {
     _activeTrip = trip.copyWith(passengers: updatedList);
 
     if (newStatus == 'boarded') {
-      safeEmit(DriverStates.success('${passenger.employeeName} checked in (Seat #${passenger.seatNumber})'));
+      safeEmit(DriverStates.success('${passenger.employeeName} checked in on board'));
     } else {
       safeEmit(DriverStates.success('${passenger.employeeName} check-in reverted'));
     }

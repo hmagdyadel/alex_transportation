@@ -439,7 +439,7 @@ class _BusesPageState extends State<BusesPage> {
                     )
                   else
                     AppButton(
-                      label: isFull ? 'Route Full' : 'Book Seat on ${route.routeNumber}',
+                      label: isFull ? 'Route Full' : 'Reserve Spot on ${route.routeNumber}',
                       onPressed: isFull
                           ? null
                           : () {
@@ -476,16 +476,16 @@ class _BusesPageState extends State<BusesPage> {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppRadius.lg),
         ),
-        title: Text('Cancel Seat Reservation', style: AppTypography.titleLarge),
+        title: Text('Cancel Reservation', style: AppTypography.titleLarge),
         content: Text(
-          'Are you sure you want to cancel your shuttle seat? Your reserved seat will be released to other colleagues.',
+          'Are you sure you want to cancel your shuttle reservation? Your spot will be released to other colleagues.',
           style: AppTypography.bodyMedium,
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(dialogContext).pop(),
             child: Text(
-              'Keep Seat',
+              'Keep Reservation',
               style: AppTypography.labelLarge.copyWith(
                 color: AppColors.textMid,
               ),

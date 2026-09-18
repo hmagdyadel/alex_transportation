@@ -114,7 +114,7 @@ class BusBoardingPassCard extends StatelessWidget {
                       child: Column(
                         children: [
                           Text(
-                            'SEAT',
+                            'SEATING',
                             style: AppTypography.caption.copyWith(
                               fontSize: 9,
                               fontWeight: FontWeight.w700,
@@ -123,7 +123,7 @@ class BusBoardingPassCard extends StatelessWidget {
                             ),
                           ),
                           Text(
-                            '#${pass.seatNumber}',
+                            'Free',
                             style: AppTypography.titleMedium.copyWith(
                               color: AppColors.textPrimary,
                               fontWeight: FontWeight.w800,
@@ -258,8 +258,8 @@ class BusBoardingPassCard extends StatelessWidget {
                           children: [
                             Text(
                               isBoarded
-                                  ? 'Boarded — Seat ${pass.seatNumber} Occupied'
-                                  : 'Seat ${pass.seatNumber} Confirmed',
+                                  ? 'Boarded — Sit in any free seat'
+                                  : 'Spot Reserved — Free Seating',
                               style: AppTypography.bodySmall.copyWith(
                                 fontWeight: FontWeight.w700,
                                 color: isBoarded
@@ -270,8 +270,8 @@ class BusBoardingPassCard extends StatelessWidget {
                             const SizedBox(height: 2),
                             Text(
                               isBoarded
-                                  ? 'Passenger checked in on ${pass.routeNumber}'
-                                  : 'Tap below to confirm boarding when entering',
+                                  ? 'Passenger on board ${pass.routeNumber}'
+                                  : 'Open seating — you can sit in any free seat',
                               style: AppTypography.caption.copyWith(
                                 color: AppColors.textMid,
                                 fontSize: 10,
