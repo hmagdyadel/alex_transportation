@@ -5,11 +5,12 @@ import 'package:go_router/go_router.dart';
 import 'package:alex_transportation/core/design_system/tokens.dart';
 import 'package:alex_transportation/core/di/injector.dart';
 import 'package:alex_transportation/core/widgets/alex_logo.dart';
-import 'package:alex_transportation/core/widgets/app_card.dart';
 import 'package:alex_transportation/core/widgets/status_pill.dart';
 import 'package:alex_transportation/features/auth/presentation/bloc/auth_cubit.dart';
 import 'package:alex_transportation/features/buses/presentation/bloc/bus_cubit.dart';
 import 'package:alex_transportation/features/buses/presentation/pages/buses_page.dart';
+import 'package:alex_transportation/features/errand_cars/presentation/bloc/errand_car_cubit.dart';
+import 'package:alex_transportation/features/errand_cars/presentation/pages/errand_cars_page.dart';
 import 'package:alex_transportation/features/garage/presentation/bloc/garage_cubit.dart';
 import 'package:alex_transportation/features/garage/presentation/pages/garage_page.dart';
 
@@ -41,7 +42,7 @@ class _HomePageState extends State<HomePage> {
     _ModuleInfo(
       title: 'Errand Cars',
       icon: Icons.directions_car_rounded,
-      badge: 'Phase 4',
+      badge: 'Active',
     ),
   ];
 
@@ -250,83 +251,12 @@ class _HomePageState extends State<HomePage> {
             child: const BusesPage(),
           ),
 
-          // Module 2: Errand Car Request (Phase 4 - Coming Soon)
-          _buildComingSoonView(
-            title: 'Official Errand Cars',
-            phase: 'Phase 4',
-            icon: Icons.directions_car_rounded,
-            description:
-                'On-demand official bank vehicle booking for daytime corporate tasks, supervisor approvals, and mileage logs.',
+          // Module 2: Errand Cars (Phase 4 - Live)
+          BlocProvider<ErrandCarCubit>(
+            create: (_) => sl<ErrandCarCubit>()..loadFleet(),
+            child: const ErrandCarsPage(),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildComingSoonView({
-    required String title,
-    required String phase,
-    required IconData icon,
-    required String description,
-  }) {
-    return Center(
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.all(AppSpacing.xl),
-        child: AppCard(
-          padding: const EdgeInsets.all(AppSpacing.xl),
-          backgroundColor: AppColors.surface,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                width: 72,
-                height: 72,
-                decoration: const BoxDecoration(
-                  color: AppColors.greenLight,
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(
-                  icon,
-                  size: 36,
-                  color: AppColors.primary,
-                ),
-              ),
-              const SizedBox(height: AppSpacing.md),
-              StatusPill(
-                label: phase.toUpperCase(),
-                type: StatusPillType.gold,
-              ),
-              const SizedBox(height: AppSpacing.sm),
-              Text(
-                title,
-                textAlign: TextAlign.center,
-                style: AppTypography.titleLarge,
-              ),
-              const SizedBox(height: AppSpacing.xs),
-              Text(
-                description,
-                textAlign: TextAlign.center,
-                style: AppTypography.bodySmall.copyWith(
-                  height: 1.5,
-                ),
-              ),
-              const SizedBox(height: AppSpacing.lg),
-              OutlinedButton.icon(
-                icon: const Icon(Icons.local_parking_rounded, size: 18),
-                label: const Text('Go to Garage Module'),
-                style: OutlinedButton.styleFrom(
-                  foregroundColor: AppColors.primary,
-                  side: const BorderSide(color: AppColors.primary),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: AppSpacing.md,
-                    vertical: AppSpacing.sm,
-                  ),
-                ),
-                onPressed: () => setState(() => _selectedModuleIndex = 0),
-              ),
-            ],
-          ),
-        ),
       ),
     );
   }

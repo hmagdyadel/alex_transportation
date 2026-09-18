@@ -56,13 +56,16 @@ extension ErrandCarStatesPatterns<T> on ErrandCarStates<T> {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( _Initial<T> value)?  initial,TResult Function( Loading<T> value)?  loading,TResult Function( SubmittingRequest<T> value)?  submittingRequest,TResult Function( Loaded<T> value)?  loaded,TResult Function( Empty<T> value)?  empty,TResult Function( Success<T> value)?  success,TResult Function( Error<T> value)?  error,required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( _Initial<T> value)?  initial,TResult Function( Loading<T> value)?  loading,TResult Function( SubmittingRequest<T> value)?  submittingRequest,TResult Function( CancellingRequest<T> value)?  cancellingRequest,TResult Function( StartingMission<T> value)?  startingMission,TResult Function( EndingMission<T> value)?  endingMission,TResult Function( Loaded<T> value)?  loaded,TResult Function( Empty<T> value)?  empty,TResult Function( Success<T> value)?  success,TResult Function( Error<T> value)?  error,required TResult orElse(),}){
 final _that = this;
 switch (_that) {
 case _Initial() when initial != null:
 return initial(_that);case Loading() when loading != null:
 return loading(_that);case SubmittingRequest() when submittingRequest != null:
-return submittingRequest(_that);case Loaded() when loaded != null:
+return submittingRequest(_that);case CancellingRequest() when cancellingRequest != null:
+return cancellingRequest(_that);case StartingMission() when startingMission != null:
+return startingMission(_that);case EndingMission() when endingMission != null:
+return endingMission(_that);case Loaded() when loaded != null:
 return loaded(_that);case Empty() when empty != null:
 return empty(_that);case Success() when success != null:
 return success(_that);case Error() when error != null:
@@ -84,13 +87,16 @@ return error(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( _Initial<T> value)  initial,required TResult Function( Loading<T> value)  loading,required TResult Function( SubmittingRequest<T> value)  submittingRequest,required TResult Function( Loaded<T> value)  loaded,required TResult Function( Empty<T> value)  empty,required TResult Function( Success<T> value)  success,required TResult Function( Error<T> value)  error,}){
+@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( _Initial<T> value)  initial,required TResult Function( Loading<T> value)  loading,required TResult Function( SubmittingRequest<T> value)  submittingRequest,required TResult Function( CancellingRequest<T> value)  cancellingRequest,required TResult Function( StartingMission<T> value)  startingMission,required TResult Function( EndingMission<T> value)  endingMission,required TResult Function( Loaded<T> value)  loaded,required TResult Function( Empty<T> value)  empty,required TResult Function( Success<T> value)  success,required TResult Function( Error<T> value)  error,}){
 final _that = this;
 switch (_that) {
 case _Initial():
 return initial(_that);case Loading():
 return loading(_that);case SubmittingRequest():
-return submittingRequest(_that);case Loaded():
+return submittingRequest(_that);case CancellingRequest():
+return cancellingRequest(_that);case StartingMission():
+return startingMission(_that);case EndingMission():
+return endingMission(_that);case Loaded():
 return loaded(_that);case Empty():
 return empty(_that);case Success():
 return success(_that);case Error():
@@ -111,13 +117,16 @@ return error(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( _Initial<T> value)?  initial,TResult? Function( Loading<T> value)?  loading,TResult? Function( SubmittingRequest<T> value)?  submittingRequest,TResult? Function( Loaded<T> value)?  loaded,TResult? Function( Empty<T> value)?  empty,TResult? Function( Success<T> value)?  success,TResult? Function( Error<T> value)?  error,}){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( _Initial<T> value)?  initial,TResult? Function( Loading<T> value)?  loading,TResult? Function( SubmittingRequest<T> value)?  submittingRequest,TResult? Function( CancellingRequest<T> value)?  cancellingRequest,TResult? Function( StartingMission<T> value)?  startingMission,TResult? Function( EndingMission<T> value)?  endingMission,TResult? Function( Loaded<T> value)?  loaded,TResult? Function( Empty<T> value)?  empty,TResult? Function( Success<T> value)?  success,TResult? Function( Error<T> value)?  error,}){
 final _that = this;
 switch (_that) {
 case _Initial() when initial != null:
 return initial(_that);case Loading() when loading != null:
 return loading(_that);case SubmittingRequest() when submittingRequest != null:
-return submittingRequest(_that);case Loaded() when loaded != null:
+return submittingRequest(_that);case CancellingRequest() when cancellingRequest != null:
+return cancellingRequest(_that);case StartingMission() when startingMission != null:
+return startingMission(_that);case EndingMission() when endingMission != null:
+return endingMission(_that);case Loaded() when loaded != null:
 return loaded(_that);case Empty() when empty != null:
 return empty(_that);case Success() when success != null:
 return success(_that);case Error() when error != null:
@@ -138,12 +147,15 @@ return error(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  initial,TResult Function()?  loading,TResult Function()?  submittingRequest,TResult Function()?  loaded,TResult Function()?  empty,TResult Function( T data)?  success,TResult Function( String message)?  error,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  initial,TResult Function()?  loading,TResult Function()?  submittingRequest,TResult Function()?  cancellingRequest,TResult Function()?  startingMission,TResult Function()?  endingMission,TResult Function()?  loaded,TResult Function()?  empty,TResult Function( T data)?  success,TResult Function( String message)?  error,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Initial() when initial != null:
 return initial();case Loading() when loading != null:
 return loading();case SubmittingRequest() when submittingRequest != null:
-return submittingRequest();case Loaded() when loaded != null:
+return submittingRequest();case CancellingRequest() when cancellingRequest != null:
+return cancellingRequest();case StartingMission() when startingMission != null:
+return startingMission();case EndingMission() when endingMission != null:
+return endingMission();case Loaded() when loaded != null:
 return loaded();case Empty() when empty != null:
 return empty();case Success() when success != null:
 return success(_that.data);case Error() when error != null:
@@ -165,12 +177,15 @@ return error(_that.message);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  initial,required TResult Function()  loading,required TResult Function()  submittingRequest,required TResult Function()  loaded,required TResult Function()  empty,required TResult Function( T data)  success,required TResult Function( String message)  error,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  initial,required TResult Function()  loading,required TResult Function()  submittingRequest,required TResult Function()  cancellingRequest,required TResult Function()  startingMission,required TResult Function()  endingMission,required TResult Function()  loaded,required TResult Function()  empty,required TResult Function( T data)  success,required TResult Function( String message)  error,}) {final _that = this;
 switch (_that) {
 case _Initial():
 return initial();case Loading():
 return loading();case SubmittingRequest():
-return submittingRequest();case Loaded():
+return submittingRequest();case CancellingRequest():
+return cancellingRequest();case StartingMission():
+return startingMission();case EndingMission():
+return endingMission();case Loaded():
 return loaded();case Empty():
 return empty();case Success():
 return success(_that.data);case Error():
@@ -191,12 +206,15 @@ return error(_that.message);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  initial,TResult? Function()?  loading,TResult? Function()?  submittingRequest,TResult? Function()?  loaded,TResult? Function()?  empty,TResult? Function( T data)?  success,TResult? Function( String message)?  error,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  initial,TResult? Function()?  loading,TResult? Function()?  submittingRequest,TResult? Function()?  cancellingRequest,TResult? Function()?  startingMission,TResult? Function()?  endingMission,TResult? Function()?  loaded,TResult? Function()?  empty,TResult? Function( T data)?  success,TResult? Function( String message)?  error,}) {final _that = this;
 switch (_that) {
 case _Initial() when initial != null:
 return initial();case Loading() when loading != null:
 return loading();case SubmittingRequest() when submittingRequest != null:
-return submittingRequest();case Loaded() when loaded != null:
+return submittingRequest();case CancellingRequest() when cancellingRequest != null:
+return cancellingRequest();case StartingMission() when startingMission != null:
+return startingMission();case EndingMission() when endingMission != null:
+return endingMission();case Loaded() when loaded != null:
 return loaded();case Empty() when empty != null:
 return empty();case Success() when success != null:
 return success(_that.data);case Error() when error != null:
@@ -296,6 +314,102 @@ int get hashCode => runtimeType.hashCode;
 @override
 String toString() {
     return 'ErrandCarStates<$T>.submittingRequest()';
+}
+
+
+}
+
+
+
+
+/// @nodoc
+
+
+class CancellingRequest<T> implements ErrandCarStates<T> {
+  const CancellingRequest();
+  
+
+
+
+
+
+
+@override
+bool operator ==(Object other) {
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is CancellingRequest<T>);
+}
+
+
+@override
+int get hashCode => runtimeType.hashCode;
+
+@override
+String toString() {
+    return 'ErrandCarStates<$T>.cancellingRequest()';
+}
+
+
+}
+
+
+
+
+/// @nodoc
+
+
+class StartingMission<T> implements ErrandCarStates<T> {
+  const StartingMission();
+  
+
+
+
+
+
+
+@override
+bool operator ==(Object other) {
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is StartingMission<T>);
+}
+
+
+@override
+int get hashCode => runtimeType.hashCode;
+
+@override
+String toString() {
+    return 'ErrandCarStates<$T>.startingMission()';
+}
+
+
+}
+
+
+
+
+/// @nodoc
+
+
+class EndingMission<T> implements ErrandCarStates<T> {
+  const EndingMission();
+  
+
+
+
+
+
+
+@override
+bool operator ==(Object other) {
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is EndingMission<T>);
+}
+
+
+@override
+int get hashCode => runtimeType.hashCode;
+
+@override
+String toString() {
+    return 'ErrandCarStates<$T>.endingMission()';
 }
 
 

@@ -11,6 +11,15 @@ class ErrandCarStates<T> with _$ErrandCarStates<T> {
   /// Submitting a new errand car request.
   const factory ErrandCarStates.submittingRequest() = SubmittingRequest;
 
+  /// Cancelling a pending request.
+  const factory ErrandCarStates.cancellingRequest() = CancellingRequest;
+
+  /// Starting an approved mission (recording departure mileage).
+  const factory ErrandCarStates.startingMission() = StartingMission;
+
+  /// Ending an active mission (recording return mileage).
+  const factory ErrandCarStates.endingMission() = EndingMission;
+
   const factory ErrandCarStates.loaded() = Loaded;
 
   const factory ErrandCarStates.empty() = Empty;
