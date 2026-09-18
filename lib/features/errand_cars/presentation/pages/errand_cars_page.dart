@@ -32,7 +32,7 @@ class _ErrandCarsPageState extends State<ErrandCarsPage> {
   // Request Form Controllers
   final _nameController = TextEditingController();
   final _islController = TextEditingController();
-  final _pickupController = TextEditingController(text: 'Smart Village Operations Hub');
+  final _pickupController = TextEditingController();
   final _destinationController = TextEditingController();
   final _purposeController = TextEditingController();
   final _supervisorController = TextEditingController();

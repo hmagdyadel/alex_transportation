@@ -108,6 +108,7 @@ void main() {
         'employeeName': 'Test',
         'employeeIsl': '99999',
         'department': 'HR',
+        'pickupLocation': 'New Cairo Branch Hub',
         'destination': 'Branch X',
         'purpose': 'Delivery',
         'requestedDate': '01 Jan 2026',

@@ -12,8 +12,7 @@ ErrandRequestModel _$ErrandRequestModelFromJson(Map<String, dynamic> json) =>
       employeeName: json['employeeName'] as String,
       employeeIsl: json['employeeIsl'] as String,
       department: json['department'] as String,
-      pickupLocation:
-          json['pickupLocation'] as String? ?? 'Smart Village Operations Hub',
+      pickupLocation: json['pickupLocation'] as String,
       destination: json['destination'] as String,
       purpose: json['purpose'] as String,
       requestedDate: json['requestedDate'] as String,

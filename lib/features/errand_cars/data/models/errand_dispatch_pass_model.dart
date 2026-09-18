@@ -10,7 +10,6 @@ class ErrandDispatchPassModel {
   final String requestId;
   final String missionCode;
   final String employeeName;
-  @JsonKey(defaultValue: 'Smart Village Operations Hub')
   final String pickupLocation;
   final String destination;
   final String carPlate;
@@ -27,7 +26,7 @@ class ErrandDispatchPassModel {
     required this.requestId,
     required this.missionCode,
     required this.employeeName,
-    this.pickupLocation = 'Smart Village Operations Hub',
+    required this.pickupLocation,
     required this.destination,
     required this.carPlate,
     required this.carMake,

@@ -13,8 +13,7 @@ ErrandDispatchPassModel _$ErrandDispatchPassModelFromJson(
   requestId: json['requestId'] as String,
   missionCode: json['missionCode'] as String,
   employeeName: json['employeeName'] as String,
-  pickupLocation:
-      json['pickupLocation'] as String? ?? 'Smart Village Operations Hub',
+  pickupLocation: json['pickupLocation'] as String,
   destination: json['destination'] as String,
   carPlate: json['carPlate'] as String,
   carMake: json['carMake'] as String,
