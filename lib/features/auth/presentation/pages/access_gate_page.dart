@@ -181,13 +181,25 @@ class _AccessGatePageState extends State<AccessGatePage> {
                                     ),
                                   ),
                                   ActionChip(
-                                    label: const Text('ALEX26'),
+                                    label: const Text('ALEX26 (Employee)'),
                                     onPressed: () {
                                       _codeController.text = 'ALEX26';
                                     },
                                     backgroundColor: AppColors.greenLight,
                                     labelStyle: AppTypography.labelSmall.copyWith(
                                       color: AppColors.primaryMid,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                    padding: EdgeInsets.zero,
+                                  ),
+                                  ActionChip(
+                                    label: const Text('DRIVER'),
+                                    onPressed: () {
+                                      _codeController.text = 'DRIVER';
+                                    },
+                                    backgroundColor: AppColors.greenLight,
+                                    labelStyle: AppTypography.labelSmall.copyWith(
+                                      color: AppColors.primary,
                                       fontWeight: FontWeight.w600,
                                     ),
                                     padding: EdgeInsets.zero,

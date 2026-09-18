@@ -144,6 +144,15 @@ class _DriverPageState extends State<DriverPage> {
                 ),
                 IconButton(
                   icon: const Icon(
+                    Icons.person_outline_rounded,
+                    color: AppColors.primary,
+                    size: 20,
+                  ),
+                  tooltip: 'Employee Portal',
+                  onPressed: () => context.go('/home'),
+                ),
+                IconButton(
+                  icon: const Icon(
                     Icons.logout_rounded,
                     color: AppColors.textMid,
                     size: 20,

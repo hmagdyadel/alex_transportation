@@ -135,6 +135,15 @@ class _HomePageState extends State<HomePage> {
           const SizedBox(width: AppSpacing.xs),
           IconButton(
             icon: const Icon(
+              Icons.badge_outlined,
+              color: AppColors.accentGold,
+              size: 20,
+            ),
+            tooltip: 'Driver Captain Portal',
+            onPressed: () => context.go('/driver'),
+          ),
+          IconButton(
+            icon: const Icon(
               Icons.admin_panel_settings_outlined,
               color: AppColors.primary,
               size: 20,
