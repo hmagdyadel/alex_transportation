@@ -273,3 +273,30 @@
   - Expanded test suite: **93/93 tests passing** (including unit tests for registration, persistence, and unknown ISL rejection).
   - `flutter analyze`: **0 issues found**.
 
+---
+
+## Phase 8 — Firebase Sync, Push Notifications, UI/UX Polish & Release Merge
+**Date:** 2026-09-18
+**Branch:** `phase-6` & `main`
+
+### Built
+- **Cloud Firestore Real-Time Synchronization Layer**:
+  - `FirestoreSyncService`: Singleton managing cloud document sync for user accounts, garage subscriptions, bus bookings, errand requests, and driver trips.
+  - Resilient offline fallback: seamlessly handles missing Firebase credentials or network disconnects with encrypted local persistence (`SharedPreferences` & `FlutterSecureStorage`).
+  - Wired live sync hooks into `AuthCubit`, `GarageCubit`, `BusCubit`, and `ErrandCarCubit`.
+- **FCM Push Notifications & Foreground Banner Overlay**:
+  - `PushNotificationService`: Firebase Cloud Messaging client with permission handling, FCM device token management, and foreground message stream.
+  - `TransitNotificationBanner`: Floating animated in-app notification banner with auto-dismiss and swipe dismissal.
+  - Demo notification dispatcher with interactive triggers (Bus Approaching, Errand Request Approved, Garage Subscription Renewed).
+  - Bell action in `HomePage` AppBar with demo notification trigger popup menu.
+- **UI/UX Polish & Motion Tokens**:
+  - `AppShadow`: Subtle elevation, card, and floating modal shadows in `tokens.dart`.
+  - `AppDuration`: Standardized micro-interaction, transition, and animation durations.
+  - Haptic feedback and smooth module transitions.
+- **Trilingual Notification Localization**:
+  - Notification titles, bodies, and connection restored alerts localized across English (`en`), Egyptian Arabic (`ar`), and Italian (`it`).
+- **Release Verification & Main Merge**:
+  - Verified 0 linter issues via `flutter analyze`.
+  - Verified all 93 unit and widget tests pass.
+  - Clean merge of `phase-6` into `main` with changes pushed to `origin/main` and `origin/phase-6`.
+
