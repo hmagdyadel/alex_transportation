@@ -1187,4 +1187,53 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get connectionRestored => 'Internet connection restored.';
+
+  @override
+  String get notificationBusApproaching => 'Bus Approaching';
+
+  @override
+  String get notificationBusApproachingBody =>
+      'Route 101 (Maadi → Smart Village) is 5 minutes away from your pickup stop.';
+
+  @override
+  String get notificationErrandApproved => 'Errand Approved';
+
+  @override
+  String get notificationErrandApprovedBody =>
+      'Your vehicle request has been approved and a car has been assigned.';
+
+  @override
+  String get notificationGarageConfirmed => 'Parking Pass Confirmed';
+
+  @override
+  String get notificationGarageConfirmedBody =>
+      'Your monthly parking subscription is active.';
+
+  @override
+  String get notificationShiftReminder => 'Shift Reminder';
+
+  @override
+  String get notificationShiftReminderBody =>
+      'Your morning shift starts in 30 minutes. Please begin your pre-trip inspection.';
+
+  @override
+  String get notifications => 'Notifications';
+
+  @override
+  String get demoPushBusAlert => 'Bus Approaching Alert';
+
+  @override
+  String get demoPushErrandAlert => 'Errand Approved Alert';
+
+  @override
+  String get demoPushGarageAlert => 'Parking Pass Confirmed';
+
+  @override
+  String get syncStatusOnline => 'Cloud Synced';
+
+  @override
+  String get syncStatusOffline => 'Local Only';
+
+  @override
+  String get syncStatusSyncing => 'Syncing...';
 }

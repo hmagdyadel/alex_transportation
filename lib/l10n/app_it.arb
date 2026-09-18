@@ -382,5 +382,20 @@
   "tryAgainButton": "Riprova",
   "checkingConnection": "Verifica connessione in corso...",
   "stillNoConnection": "Ancora nessuna connessione internet. Verifica Wi-Fi o rete dati.",
-  "connectionRestored": "Connessione internet ripristinata."
+  "connectionRestored": "Connessione internet ripristinata.",
+  "notificationBusApproaching": "Autobus in arrivo",
+  "notificationBusApproachingBody": "Linea 101 (Maadi → Smart Village) è a 5 minuti dalla tua fermata.",
+  "notificationErrandApproved": "Commissione Approvata",
+  "notificationErrandApprovedBody": "La tua richiesta veicolo è stata approvata e un'auto è stata assegnata.",
+  "notificationGarageConfirmed": "Pass Parcheggio Confermato",
+  "notificationGarageConfirmedBody": "Il tuo abbonamento mensile di parcheggio è attivo.",
+  "notificationShiftReminder": "Promemoria Turno",
+  "notificationShiftReminderBody": "Il tuo turno mattutino inizia tra 30 minuti. Inizia l'ispezione pre-viaggio.",
+  "notifications": "Notifiche",
+  "demoPushBusAlert": "Avviso Autobus in Arrivo",
+  "demoPushErrandAlert": "Avviso Commissione Approvata",
+  "demoPushGarageAlert": "Pass Parcheggio Confermato",
+  "syncStatusOnline": "Sincronizzato Cloud",
+  "syncStatusOffline": "Solo Locale",
+  "syncStatusSyncing": "Sincronizzazione..."
 }

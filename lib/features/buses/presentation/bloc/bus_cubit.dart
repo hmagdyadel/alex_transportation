@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:alex_transportation/core/extensions/safe_emit_extension.dart';
+import 'package:alex_transportation/core/network/firestore_sync_service.dart';
 import 'package:alex_transportation/features/buses/data/models/bus_boarding_pass_model.dart';
 import 'package:alex_transportation/features/buses/data/models/bus_route_model.dart';
 import 'package:alex_transportation/features/buses/data/models/bus_stop_model.dart';
@@ -533,6 +534,17 @@ class BusCubit extends Cubit<BusStates> {
     );
 
     _activePass = newPass;
+
+    // Sync booking to Firestore (fire-and-forget)
+    FirestoreSyncService.instance.syncBusBooking(
+      passId: newPass.id,
+      routeId: route.id,
+      employeeName: newPass.employeeName,
+      stopName: newPass.stopName,
+      seatNumber: newPass.seatNumber,
+      status: 'active',
+    );
+
     safeEmit(BusStates.success(newPass));
     safeEmit(const BusStates.loaded());
     return true;
@@ -558,6 +570,17 @@ class BusCubit extends Cubit<BusStates> {
     }
 
     _activePass = null;
+
+    // Sync cancellation to Firestore
+    FirestoreSyncService.instance.syncBusBooking(
+      passId: passId,
+      routeId: '',
+      employeeName: '',
+      stopName: '',
+      seatNumber: 0,
+      status: 'cancelled',
+    );
+
     safeEmit(const BusStates.success('Seat reservation cancelled successfully'));
     safeEmit(const BusStates.loaded());
     return true;

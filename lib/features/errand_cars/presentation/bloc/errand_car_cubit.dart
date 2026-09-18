@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:alex_transportation/core/extensions/safe_emit_extension.dart';
+import 'package:alex_transportation/core/network/firestore_sync_service.dart';
 import 'package:alex_transportation/features/errand_cars/data/models/errand_car_model.dart';
 import 'package:alex_transportation/features/errand_cars/data/models/errand_dispatch_pass_model.dart';
 import 'package:alex_transportation/features/errand_cars/data/models/errand_request_model.dart';
@@ -266,6 +267,16 @@ class ErrandCarCubit extends Cubit<ErrandCarStates> {
       safeEmit(const ErrandCarStates.success(
           'Request submitted. Awaiting vehicle availability and supervisor approval.'));
     }
+
+    // Sync errand request to Firestore (fire-and-forget)
+    FirestoreSyncService.instance.syncErrandRequest(
+      requestId: requestId,
+      employeeName: employeeName.trim(),
+      pickupLocation: pickupLocation.trim(),
+      destination: destination.trim(),
+      purpose: purpose.trim(),
+      status: request.status,
+    );
 
     safeEmit(const ErrandCarStates.loaded());
     return true;

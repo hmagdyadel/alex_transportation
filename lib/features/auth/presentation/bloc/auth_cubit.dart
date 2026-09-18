@@ -6,6 +6,7 @@ import 'package:alex_transportation/core/extensions/safe_emit_extension.dart';
 import 'package:alex_transportation/core/services/biometric_helper.dart';
 import 'package:alex_transportation/core/services/secure_prefs.dart';
 import 'package:alex_transportation/features/auth/data/models/user_account_model.dart';
+import 'package:alex_transportation/core/network/firestore_sync_service.dart';
 import 'package:alex_transportation/features/auth/presentation/bloc/auth_states.dart';
 
 /// Manages ISL + Password authentication, User Registration, Session State, and Biometrics.
@@ -310,6 +311,14 @@ class AuthCubit extends Cubit<AuthStates> {
     await prefs.setString(_kUserIslKey, matchingAccount.isl);
     await prefs.setString(_kUserNameKey, matchingAccount.name);
     await prefs.setBool(_kIsAdminKey, isActuallyAdmin);
+
+    // Sync user account to Firestore (fire-and-forget)
+    FirestoreSyncService.instance.syncUserAccount(
+      isl: matchingAccount.isl,
+      name: matchingAccount.name,
+      department: matchingAccount.department,
+      role: resolvedRole,
+    );
 
     safeEmit(AuthStates.success(resolvedRole));
   }

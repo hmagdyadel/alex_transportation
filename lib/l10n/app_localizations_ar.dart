@@ -1182,4 +1182,52 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get connectionRestored => 'تمت استعادة الاتصال بالإنترنت.';
+
+  @override
+  String get notificationBusApproaching => 'الحافلة تقترب';
+
+  @override
+  String get notificationBusApproachingBody =>
+      'خط 101 (المعادي → القرية الذكية) على بُعد 5 دقائق من محطة الركوب الخاصة بك.';
+
+  @override
+  String get notificationErrandApproved => 'تمت الموافقة على المأمورية';
+
+  @override
+  String get notificationErrandApprovedBody =>
+      'تمت الموافقة على طلب السيارة الخاص بك وتم تعيين مركبة.';
+
+  @override
+  String get notificationGarageConfirmed => 'تأكيد تصريح الانتظار';
+
+  @override
+  String get notificationGarageConfirmedBody => 'اشتراكك الشهري في الجراج نشط.';
+
+  @override
+  String get notificationShiftReminder => 'تذكير بالوردية';
+
+  @override
+  String get notificationShiftReminderBody =>
+      'وردية الصباح تبدأ خلال 30 دقيقة. يرجى بدء الفحص قبل الرحلة.';
+
+  @override
+  String get notifications => 'الإشعارات';
+
+  @override
+  String get demoPushBusAlert => 'تنبيه اقتراب الحافلة';
+
+  @override
+  String get demoPushErrandAlert => 'تنبيه الموافقة على المأمورية';
+
+  @override
+  String get demoPushGarageAlert => 'تأكيد تصريح الانتظار';
+
+  @override
+  String get syncStatusOnline => 'متزامن مع السحابة';
+
+  @override
+  String get syncStatusOffline => 'محلي فقط';
+
+  @override
+  String get syncStatusSyncing => 'جاري المزامنة...';
 }

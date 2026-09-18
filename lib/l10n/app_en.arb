@@ -382,5 +382,20 @@
   "tryAgainButton": "Try Again",
   "checkingConnection": "Checking Connection...",
   "stillNoConnection": "Still no internet connection. Please verify Wi-Fi or Mobile Data.",
-  "connectionRestored": "Internet connection restored."
+  "connectionRestored": "Internet connection restored.",
+  "notificationBusApproaching": "Bus Approaching",
+  "notificationBusApproachingBody": "Route 101 (Maadi → Smart Village) is 5 minutes away from your pickup stop.",
+  "notificationErrandApproved": "Errand Approved",
+  "notificationErrandApprovedBody": "Your vehicle request has been approved and a car has been assigned.",
+  "notificationGarageConfirmed": "Parking Pass Confirmed",
+  "notificationGarageConfirmedBody": "Your monthly parking subscription is active.",
+  "notificationShiftReminder": "Shift Reminder",
+  "notificationShiftReminderBody": "Your morning shift starts in 30 minutes. Please begin your pre-trip inspection.",
+  "notifications": "Notifications",
+  "demoPushBusAlert": "Bus Approaching Alert",
+  "demoPushErrandAlert": "Errand Approved Alert",
+  "demoPushGarageAlert": "Parking Pass Confirmed",
+  "syncStatusOnline": "Cloud Synced",
+  "syncStatusOffline": "Local Only",
+  "syncStatusSyncing": "Syncing..."
 }

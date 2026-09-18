@@ -1204,4 +1204,53 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get connectionRestored => 'Connessione internet ripristinata.';
+
+  @override
+  String get notificationBusApproaching => 'Autobus in arrivo';
+
+  @override
+  String get notificationBusApproachingBody =>
+      'Linea 101 (Maadi → Smart Village) è a 5 minuti dalla tua fermata.';
+
+  @override
+  String get notificationErrandApproved => 'Commissione Approvata';
+
+  @override
+  String get notificationErrandApprovedBody =>
+      'La tua richiesta veicolo è stata approvata e un\'auto è stata assegnata.';
+
+  @override
+  String get notificationGarageConfirmed => 'Pass Parcheggio Confermato';
+
+  @override
+  String get notificationGarageConfirmedBody =>
+      'Il tuo abbonamento mensile di parcheggio è attivo.';
+
+  @override
+  String get notificationShiftReminder => 'Promemoria Turno';
+
+  @override
+  String get notificationShiftReminderBody =>
+      'Il tuo turno mattutino inizia tra 30 minuti. Inizia l\'ispezione pre-viaggio.';
+
+  @override
+  String get notifications => 'Notifiche';
+
+  @override
+  String get demoPushBusAlert => 'Avviso Autobus in Arrivo';
+
+  @override
+  String get demoPushErrandAlert => 'Avviso Commissione Approvata';
+
+  @override
+  String get demoPushGarageAlert => 'Pass Parcheggio Confermato';
+
+  @override
+  String get syncStatusOnline => 'Sincronizzato Cloud';
+
+  @override
+  String get syncStatusOffline => 'Solo Locale';
+
+  @override
+  String get syncStatusSyncing => 'Sincronizzazione...';
 }

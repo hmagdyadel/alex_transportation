@@ -382,5 +382,20 @@
   "tryAgainButton": "إعادة المحاولة",
   "checkingConnection": "جاري التحقق من الاتصال...",
   "stillNoConnection": "لا يزال لا يوجد اتصال بالإنترنت. يرجى التحقق من الواي فاي أو بيانات الهاتف.",
-  "connectionRestored": "تمت استعادة الاتصال بالإنترنت."
+  "connectionRestored": "تمت استعادة الاتصال بالإنترنت.",
+  "notificationBusApproaching": "الحافلة تقترب",
+  "notificationBusApproachingBody": "خط 101 (المعادي → القرية الذكية) على بُعد 5 دقائق من محطة الركوب الخاصة بك.",
+  "notificationErrandApproved": "تمت الموافقة على المأمورية",
+  "notificationErrandApprovedBody": "تمت الموافقة على طلب السيارة الخاص بك وتم تعيين مركبة.",
+  "notificationGarageConfirmed": "تأكيد تصريح الانتظار",
+  "notificationGarageConfirmedBody": "اشتراكك الشهري في الجراج نشط.",
+  "notificationShiftReminder": "تذكير بالوردية",
+  "notificationShiftReminderBody": "وردية الصباح تبدأ خلال 30 دقيقة. يرجى بدء الفحص قبل الرحلة.",
+  "notifications": "الإشعارات",
+  "demoPushBusAlert": "تنبيه اقتراب الحافلة",
+  "demoPushErrandAlert": "تنبيه الموافقة على المأمورية",
+  "demoPushGarageAlert": "تأكيد تصريح الانتظار",
+  "syncStatusOnline": "متزامن مع السحابة",
+  "syncStatusOffline": "محلي فقط",
+  "syncStatusSyncing": "جاري المزامنة..."
 }

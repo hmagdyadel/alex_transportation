@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:alex_transportation/core/extensions/safe_emit_extension.dart';
+import 'package:alex_transportation/core/network/firestore_sync_service.dart';
 import 'package:alex_transportation/features/garage/data/models/garage_subscription_model.dart';
 import 'package:alex_transportation/features/garage/presentation/bloc/garage_states.dart';
 
@@ -155,6 +156,14 @@ class GarageCubit extends Cubit<GarageStates> {
     }
 
     safeEmit(GarageStates.success(newSub));
+
+    // Sync subscription to Firestore (fire-and-forget)
+    FirestoreSyncService.instance.syncGarageEvent(
+      isl: cleanIsl,
+      eventType: 'subscribe',
+      slotLabel: assignedSlot,
+    );
+
     safeEmit(const GarageStates.loaded());
   }
 
@@ -186,6 +195,14 @@ class GarageCubit extends Cubit<GarageStates> {
         : 'Checked out successfully. Have a safe drive!';
 
     safeEmit(GarageStates.success(message));
+
+    // Sync check-in/out event to Firestore
+    FirestoreSyncService.instance.syncGarageEvent(
+      isl: updated.isl,
+      eventType: isCheckingIn ? 'check_in' : 'check_out',
+      slotLabel: updated.slotLabel,
+    );
+
     safeEmit(const GarageStates.loaded());
   }
 
@@ -214,6 +231,13 @@ class GarageCubit extends Cubit<GarageStates> {
     }
 
     safeEmit(const GarageStates.success('Cancellation request submitted for admin review'));
+
+    // Sync cancellation event to Firestore
+    FirestoreSyncService.instance.syncGarageEvent(
+      isl: cleanIsl,
+      eventType: 'cancel',
+    );
+
     safeEmit(const GarageStates.loaded());
   }
 

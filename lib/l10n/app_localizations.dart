@@ -2295,6 +2295,96 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Internet connection restored.'**
   String get connectionRestored;
+
+  /// No description provided for @notificationBusApproaching.
+  ///
+  /// In en, this message translates to:
+  /// **'Bus Approaching'**
+  String get notificationBusApproaching;
+
+  /// No description provided for @notificationBusApproachingBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Route 101 (Maadi → Smart Village) is 5 minutes away from your pickup stop.'**
+  String get notificationBusApproachingBody;
+
+  /// No description provided for @notificationErrandApproved.
+  ///
+  /// In en, this message translates to:
+  /// **'Errand Approved'**
+  String get notificationErrandApproved;
+
+  /// No description provided for @notificationErrandApprovedBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Your vehicle request has been approved and a car has been assigned.'**
+  String get notificationErrandApprovedBody;
+
+  /// No description provided for @notificationGarageConfirmed.
+  ///
+  /// In en, this message translates to:
+  /// **'Parking Pass Confirmed'**
+  String get notificationGarageConfirmed;
+
+  /// No description provided for @notificationGarageConfirmedBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Your monthly parking subscription is active.'**
+  String get notificationGarageConfirmedBody;
+
+  /// No description provided for @notificationShiftReminder.
+  ///
+  /// In en, this message translates to:
+  /// **'Shift Reminder'**
+  String get notificationShiftReminder;
+
+  /// No description provided for @notificationShiftReminderBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Your morning shift starts in 30 minutes. Please begin your pre-trip inspection.'**
+  String get notificationShiftReminderBody;
+
+  /// No description provided for @notifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get notifications;
+
+  /// No description provided for @demoPushBusAlert.
+  ///
+  /// In en, this message translates to:
+  /// **'Bus Approaching Alert'**
+  String get demoPushBusAlert;
+
+  /// No description provided for @demoPushErrandAlert.
+  ///
+  /// In en, this message translates to:
+  /// **'Errand Approved Alert'**
+  String get demoPushErrandAlert;
+
+  /// No description provided for @demoPushGarageAlert.
+  ///
+  /// In en, this message translates to:
+  /// **'Parking Pass Confirmed'**
+  String get demoPushGarageAlert;
+
+  /// No description provided for @syncStatusOnline.
+  ///
+  /// In en, this message translates to:
+  /// **'Cloud Synced'**
+  String get syncStatusOnline;
+
+  /// No description provided for @syncStatusOffline.
+  ///
+  /// In en, this message translates to:
+  /// **'Local Only'**
+  String get syncStatusOffline;
+
+  /// No description provided for @syncStatusSyncing.
+  ///
+  /// In en, this message translates to:
+  /// **'Syncing...'**
+  String get syncStatusSyncing;
 }
 
 class _AppLocalizationsDelegate

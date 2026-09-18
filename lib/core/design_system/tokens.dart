@@ -239,3 +239,64 @@ abstract final class AppLayout {
   /// Tablet breakpoint
   static const double tabletBreakpoint = 600;
 }
+
+// ─── Shadows ───────────────────────────────────────────────────────────────
+
+abstract final class AppShadow {
+  /// Subtle card shadow
+  static List<BoxShadow> get card => [
+        BoxShadow(
+          color: Colors.black.withValues(alpha: 0.04),
+          blurRadius: 6,
+          offset: const Offset(0, 2),
+        ),
+      ];
+
+  /// Elevated floating element shadow
+  static List<BoxShadow> get elevated => [
+        BoxShadow(
+          color: Colors.black.withValues(alpha: 0.08),
+          blurRadius: 12,
+          offset: const Offset(0, 4),
+        ),
+        BoxShadow(
+          color: Colors.black.withValues(alpha: 0.04),
+          blurRadius: 4,
+          offset: const Offset(0, 1),
+        ),
+      ];
+
+  /// Modal / overlay shadow
+  static List<BoxShadow> get modal => [
+        BoxShadow(
+          color: Colors.black.withValues(alpha: 0.15),
+          blurRadius: 24,
+          offset: const Offset(0, 8),
+        ),
+      ];
+
+  /// Brand primary glow
+  static List<BoxShadow> get primaryGlow => [
+        BoxShadow(
+          color: AppColors.primary.withValues(alpha: 0.25),
+          blurRadius: 12,
+          offset: const Offset(0, 4),
+        ),
+      ];
+}
+
+// ─── Animation Durations ───────────────────────────────────────────────────
+
+abstract final class AppDuration {
+  /// Quick micro-interaction (button press, toggle)
+  static const Duration fast = Duration(milliseconds: 150);
+
+  /// Standard transition (card expand, tab switch)
+  static const Duration normal = Duration(milliseconds: 250);
+
+  /// Smooth entrance animation
+  static const Duration slow = Duration(milliseconds: 400);
+
+  /// Page transition or modal entrance
+  static const Duration pageTransition = Duration(milliseconds: 350);
+}

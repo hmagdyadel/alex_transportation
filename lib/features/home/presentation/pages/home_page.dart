@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
@@ -8,6 +9,7 @@ import 'package:alex_transportation/core/extensions/l10n_extension.dart';
 import 'package:alex_transportation/core/widgets/alex_logo.dart';
 import 'package:alex_transportation/core/widgets/language_selector_button.dart';
 import 'package:alex_transportation/core/widgets/status_pill.dart';
+import 'package:alex_transportation/core/services/push_notification_service.dart';
 import 'package:alex_transportation/features/auth/presentation/bloc/auth_cubit.dart';
 import 'package:alex_transportation/features/buses/presentation/bloc/bus_cubit.dart';
 import 'package:alex_transportation/features/buses/presentation/pages/buses_page.dart';
@@ -142,6 +144,7 @@ class _HomePageState extends State<HomePage> {
         ),
         actions: [
           const LanguageSelectorButton(),
+          _NotificationBell(),
           StatusPill(
             label: isAdmin
                 ? (userRole == 'employee' ? l10n.roleAdminUserMode : l10n.roleAdminBadge)
@@ -193,7 +196,10 @@ class _HomePageState extends State<HomePage> {
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 4),
                     child: InkWell(
-                      onTap: () => setState(() => _selectedModuleIndex = index),
+                      onTap: () {
+                        HapticFeedback.lightImpact();
+                        setState(() => _selectedModuleIndex = index);
+                      },
                       borderRadius: BorderRadius.circular(AppRadius.md),
                       child: AnimatedContainer(
                         duration: const Duration(milliseconds: 200),
@@ -281,6 +287,93 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
       ),
+    );
+  }
+}
+
+/// Notification bell icon with demo push trigger menu.
+class _NotificationBell extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return PopupMenuButton<String>(
+      icon: const Icon(
+        Icons.notifications_outlined,
+        color: AppColors.textMid,
+        size: 21,
+      ),
+      tooltip: 'Notifications',
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(AppRadius.lg),
+        side: const BorderSide(color: AppColors.border, width: 1),
+      ),
+      elevation: 8,
+      position: PopupMenuPosition.under,
+      offset: const Offset(0, 8),
+      onSelected: (value) {
+        HapticFeedback.mediumImpact();
+        final svc = PushNotificationService.instance;
+        switch (value) {
+          case 'bus':
+            svc.demoBusArrival();
+          case 'errand':
+            svc.demoErrandApproval();
+          case 'garage':
+            svc.demoGarageConfirmed();
+        }
+      },
+      itemBuilder: (_) => [
+        PopupMenuItem(
+          value: 'bus',
+          child: Row(
+            children: [
+              const Text('🚌', style: TextStyle(fontSize: 16)),
+              const SizedBox(width: AppSpacing.xs),
+              Expanded(
+                child: Text(
+                  'Bus Approaching Alert',
+                  style: AppTypography.bodySmall.copyWith(
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        PopupMenuItem(
+          value: 'errand',
+          child: Row(
+            children: [
+              const Text('🚗', style: TextStyle(fontSize: 16)),
+              const SizedBox(width: AppSpacing.xs),
+              Expanded(
+                child: Text(
+                  'Errand Approved Alert',
+                  style: AppTypography.bodySmall.copyWith(
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        PopupMenuItem(
+          value: 'garage',
+          child: Row(
+            children: [
+              const Text('🅿️', style: TextStyle(fontSize: 16)),
+              const SizedBox(width: AppSpacing.xs),
+              Expanded(
+                child: Text(
+                  'Parking Pass Confirmed',
+                  style: AppTypography.bodySmall.copyWith(
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }
