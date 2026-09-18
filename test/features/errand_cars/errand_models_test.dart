@@ -52,6 +52,7 @@ void main() {
       'employeeName': 'Ahmed Hassan',
       'employeeIsl': '10234',
       'department': 'IT',
+      'pickupLocation': 'Smart Village Operations Hub',
       'destination': 'Finance Hub Branch',
       'purpose': 'Deliver documents',
       'requestedDate': '18 Sep 2026',
@@ -73,6 +74,7 @@ void main() {
       expect(model.employeeName, 'Ahmed Hassan');
       expect(model.employeeIsl, '10234');
       expect(model.department, 'IT');
+      expect(model.pickupLocation, 'Smart Village Operations Hub');
       expect(model.destination, 'Finance Hub Branch');
       expect(model.purpose, 'Deliver documents');
       expect(model.status, 'approved');
@@ -129,6 +131,7 @@ void main() {
       'requestId': 'ERQ-3942',
       'missionCode': 'CPT-912',
       'employeeName': 'Ahmed Hassan',
+      'pickupLocation': 'Smart Village Operations Hub',
       'destination': 'Finance Hub Branch',
       'carPlate': 'أ ب ج 4567',
       'carMake': 'Mercedes-Benz E-Class',
@@ -145,6 +148,7 @@ void main() {
       expect(model.requestId, 'ERQ-3942');
       expect(model.missionCode, 'CPT-912');
       expect(model.employeeName, 'Ahmed Hassan');
+      expect(model.pickupLocation, 'Smart Village Operations Hub');
       expect(model.destination, 'Finance Hub Branch');
       expect(model.carPlate, 'أ ب ج 4567');
       expect(model.carMake, 'Mercedes-Benz E-Class');

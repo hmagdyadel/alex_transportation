@@ -10,6 +10,8 @@ class ErrandRequestModel {
   final String employeeName;
   final String employeeIsl;
   final String department;
+  @JsonKey(defaultValue: 'Smart Village Operations Hub')
+  final String pickupLocation;
   final String destination;
   final String purpose;
   final String requestedDate;
@@ -29,6 +31,7 @@ class ErrandRequestModel {
     required this.employeeName,
     required this.employeeIsl,
     required this.department,
+    this.pickupLocation = 'Smart Village Operations Hub',
     required this.destination,
     required this.purpose,
     required this.requestedDate,
@@ -54,6 +57,7 @@ class ErrandRequestModel {
     String? employeeName,
     String? employeeIsl,
     String? department,
+    String? pickupLocation,
     String? destination,
     String? purpose,
     String? requestedDate,
@@ -73,6 +77,7 @@ class ErrandRequestModel {
       employeeName: employeeName ?? this.employeeName,
       employeeIsl: employeeIsl ?? this.employeeIsl,
       department: department ?? this.department,
+      pickupLocation: pickupLocation ?? this.pickupLocation,
       destination: destination ?? this.destination,
       purpose: purpose ?? this.purpose,
       requestedDate: requestedDate ?? this.requestedDate,

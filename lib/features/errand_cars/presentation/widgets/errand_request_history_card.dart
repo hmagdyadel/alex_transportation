@@ -98,13 +98,52 @@ class ErrandRequestHistoryCard extends StatelessWidget {
           ),
           const SizedBox(height: AppSpacing.sm),
 
-          // Destination + Purpose
-          Text(
-            request.destination,
-            style: AppTypography.bodySmall.copyWith(
-              fontWeight: FontWeight.w700,
-              color: AppColors.textPrimary,
-            ),
+          // Pickup -> Destination + Purpose
+          Row(
+            children: [
+              const Icon(
+                Icons.trip_origin_rounded,
+                size: 14,
+                color: AppColors.accentGold,
+              ),
+              const SizedBox(width: 4),
+              Expanded(
+                child: Text(
+                  request.pickupLocation,
+                  style: AppTypography.caption.copyWith(
+                    color: AppColors.textMid,
+                    fontWeight: FontWeight.w600,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 4),
+                child: Icon(
+                  Icons.arrow_forward_rounded,
+                  size: 12,
+                  color: AppColors.textSecondary,
+                ),
+              ),
+              const Icon(
+                Icons.location_on_rounded,
+                size: 14,
+                color: AppColors.primary,
+              ),
+              const SizedBox(width: 4),
+              Expanded(
+                child: Text(
+                  request.destination,
+                  style: AppTypography.bodySmall.copyWith(
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.textPrimary,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
           ),
           const SizedBox(height: 2),
           Text(

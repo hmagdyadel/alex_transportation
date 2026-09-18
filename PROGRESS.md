@@ -168,7 +168,75 @@
 - Interactive vertical stepper timeline used for stop manifests.
 
 ### Open for Next Phase
-- Phase 4: Employee Errand Cars Module (on-demand official vehicle requests, supervisor approvals, mileage logs).
+- Phase 4 completed on branch `phase-4`
+- Phase 5 completed on branch `phase-5`
+- Phase 6 completed on branch `phase-6`
 
+---
 
+## Phase 4 — Employee Errand Cars Module
+**Date:** 2026-09-17
+**Branch:** `phase-4`
 
+### Built
+- **Data Models (Pure `json_serializable`)**:
+  - `ErrandCarModel`: Fleet vehicle specifications, license plate, status, odometer reading.
+  - `ErrandRequestModel`: Dual-point errand mission request (pickupLocation, destination, purpose, departure & return schedule, supervisor approval).
+  - `ErrandDispatchPassModel`: Official executive dispatch pass with start/end mileage, driver assignment, and dual-point journey route.
+- **Cubit Logic**:
+  - `ErrandCarCubit`: Fleet management, request submission with dual-point routing validation, vehicle assignment, mission start, and mileage completion.
+- **Widgets & UI**:
+  - `ErrandCarsPage`: Fleet availability bar, active missions tab, request submission form with quick hub chips, and request history.
+  - `ErrandDispatchPassCard`: Executive smart pass displaying Pickup $\rightarrow$ Destination, departure/return schedule, and mileage tracker.
+  - `ErrandRequestHistoryCard`: History card displaying dual-point route journey.
+
+---
+
+## Phase 5 — Driver Captain Portal (`/driver`)
+**Date:** 2026-09-18
+**Branch:** `phase-5`
+
+### Built
+- **Data Models (Pure `json_serializable`)**:
+  - `DriverProfileModel`: Driver identity, commercial license, assigned vehicle and route.
+  - `DriverTripModel`: Active trip status, route details, and boarding manifest.
+  - `TripManifestItemModel`: Passenger boarding manifest item.
+- **Cubit Logic**:
+  - `DriverCubit`: Safety inspection checklist, trip departure, sequential stop progression, passenger check-in toggle, trip completion.
+- **Widgets & UI**:
+  - `DriverPage`: Hero profile banner, 6-point vehicle safety inspection checklist, active trip controls, upcoming stop navigator, and passenger boarding roster.
+- **Routing**:
+  - `/driver` wired to `DriverPage` in `AppRouter`.
+
+---
+
+## Phase 6 — Enterprise Operations Admin Console (`/admin`)
+**Date:** 2026-09-18
+**Branch:** `phase-6`
+
+### Built
+- **Data Models & State**:
+  - `InviteCodeModel`: Pure `json_serializable` model for access tokens with role, department, usage counter, and active status.
+  - `AdminCubit` & `AdminStates`: Tab management, invite code generation/revocation, driver roster, and operational metrics.
+- **Bus Transit Bidirectional Routing**:
+  - 8 bidirectional routes: 4 morning lines terminating at **Smart Village (AlexBank HQ)** and 4 mirrored evening lines originating at **Smart Village (AlexBank HQ)** returning to Cairo/Giza in reverse order.
+  - Admin controls in `BusCubit`: `addStationToRoute`, `removeStationFromRoute`, `updateStationTime`, and `generateReverseEveningRoute` (1-tap mirrored evening return synchronization).
+- **Dynamic Garage Monthly Fee (User Requirement #7)**:
+  - Configured and adjustable by admin in `GarageCubit` and `GarageAdminCubit` (default 1,200 EGP, with $\pm 100$ steppers and direct tariff updates).
+  - Pure button check-in / check-out (zero QR code scanning).
+- **Dual-Point Errand Routing (User Requirement #10)**:
+  - Both Pickup Location and Destination captured and prominently displayed across all cards, forms, and admin manifests.
+- **Admin Portal Views (`lib/features/admin/presentation/widgets/`)**:
+  - `BusAdminView`: Route manifest timetable, station adding/removal, time editing, and 1-tap mirrored return route sync.
+  - `GarageAdminView`: Dynamic monthly fee stepper, facility capacity overview, and active subscriptions manifest.
+  - `ErrandAdminView`: Mission request manifest with dual-point route cards (Pickup $\rightarrow$ Destination) and fleet availability matrix.
+  - `DriverAdminView`: Transportation captains and chauffeurs roster with ratings, vehicle plates, and route assignments.
+  - `AccessAdminView`: Secure invite code generator, active codes table with active/inactive toggle, and quick test role switcher (Employee / Driver / Admin).
+  - `AdminPage`: Master console page coordinating all 5 pillars with AlexBank branding and TabBar navigation.
+- **Routing & Navigation**:
+  - Wired `/admin` in `AppRouter`.
+  - Updated `AccessGatePage` to route role `admin` to `/admin`, `driver` to `/driver`, and `employee` to `/home`.
+  - Added Admin Console shortcut icon in `HomePage` header.
+- **Testing & Verification**:
+  - Full test suite: **86/86 tests passing across all features**.
+  - `flutter analyze`: **0 issues found**.

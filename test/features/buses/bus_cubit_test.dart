@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 
+import 'package:alex_transportation/features/buses/data/models/bus_stop_model.dart';
 import 'package:alex_transportation/features/buses/presentation/bloc/bus_cubit.dart';
 import 'package:alex_transportation/features/buses/presentation/bloc/bus_states.dart';
 
@@ -17,10 +18,18 @@ void main() {
 
     test('initial state and default mock routes', () {
       expect(cubit.state, const BusStates.initial());
-      expect(cubit.routes.length, 5);
+      expect(cubit.routes.length, 8);
       expect(cubit.activePass, isNotNull);
       expect(cubit.activePass!.routeNumber, 'Route 101');
       expect(cubit.activePass!.seatNumber, 14);
+
+      // Verify bidirectional terminus
+      final morningR101 = cubit.routes.firstWhere((r) => r.id == 'R101');
+      expect(morningR101.stops.last.name, 'Smart Village (AlexBank HQ)');
+
+      final eveningR201 = cubit.routes.firstWhere((r) => r.id == 'R201');
+      expect(eveningR201.stops.first.name, 'Smart Village (AlexBank HQ)');
+      expect(eveningR201.stops.last.name, 'Victoria Square');
     });
 
     test('filterShift correctly filters morning and evening routes', () {
@@ -29,11 +38,11 @@ void main() {
       expect(cubit.filteredRoutes.every((r) => r.shift == 'Morning'), isTrue);
 
       cubit.filterShift('Evening');
-      expect(cubit.filteredRoutes.length, 1);
-      expect(cubit.filteredRoutes.first.routeNumber, 'Route 201');
+      expect(cubit.filteredRoutes.length, 4);
+      expect(cubit.filteredRoutes.every((r) => r.shift == 'Evening'), isTrue);
 
       cubit.filterShift('All');
-      expect(cubit.filteredRoutes.length, 5);
+      expect(cubit.filteredRoutes.length, 8);
     });
 
     test('checkInForToday marks pass as boarded', () async {
@@ -90,6 +99,42 @@ void main() {
       );
 
       expect(success, isFalse);
+    });
+
+    test('addStationToRoute adds station and updates route manifest', () {
+      final initialStopCount = cubit.routes.firstWhere((r) => r.id == 'R101').stops.length;
+      cubit.addStationToRoute(
+        'R101',
+        const BusStopModel(
+          id: 'S101-NEW',
+          name: 'South Ring Road Overpass',
+          scheduledTime: '08:15 AM',
+          order: 5,
+        ),
+      );
+
+      final updated = cubit.routes.firstWhere((r) => r.id == 'R101');
+      expect(updated.stops.length, initialStopCount + 1);
+      expect(updated.stops.any((s) => s.id == 'S101-NEW'), isTrue);
+    });
+
+    test('removeStationFromRoute removes station from route', () {
+      cubit.removeStationFromRoute('R101', 'S101-3');
+      final updated = cubit.routes.firstWhere((r) => r.id == 'R101');
+      expect(updated.stops.any((s) => s.id == 'S101-3'), isFalse);
+    });
+
+    test('updateStationTime updates scheduled time of station', () {
+      cubit.updateStationTime('R101', 'S101-1', '07:10 AM');
+      final updated = cubit.routes.firstWhere((r) => r.id == 'R101');
+      expect(updated.stops.firstWhere((s) => s.id == 'S101-1').scheduledTime, '07:10 AM');
+    });
+
+    test('generateReverseEveningRoute mirrors morning line in reverse from Smart Village HQ', () {
+      final mirrored = cubit.generateReverseEveningRoute('R102');
+      expect(mirrored.shift, 'Evening');
+      expect(mirrored.stops.first.name, 'Smart Village (AlexBank HQ)');
+      expect(mirrored.stops.last.name, '90th Street North');
     });
   });
 }

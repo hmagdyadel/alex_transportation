@@ -67,12 +67,12 @@ class AuthCubit extends Cubit<AuthStates> {
       await Future.delayed(const Duration(milliseconds: 1200));
 
       final upper = cleanCode.toUpperCase();
-      if (upper == 'ADMIN' || upper == 'ALEXADMIN') {
+      if (upper == 'ADMIN' || upper == 'ALEXADMIN' || upper.startsWith('ADM')) {
         final prefs = await SharedPreferences.getInstance();
         await prefs.setString(_kAuthTokenKey, upper);
         await prefs.setString(_kUserRoleKey, 'admin');
         safeEmit(const AuthStates.success('admin'));
-      } else if (upper == 'DRIVER' || upper == 'ALEXDRIVER') {
+      } else if (upper == 'DRIVER' || upper == 'ALEXDRIVER' || upper.startsWith('DRV')) {
         final prefs = await SharedPreferences.getInstance();
         await prefs.setString(_kAuthTokenKey, upper);
         await prefs.setString(_kUserRoleKey, 'driver');
@@ -89,6 +89,12 @@ class AuthCubit extends Cubit<AuthStates> {
     } catch (e) {
       safeEmit(AuthStates.error(message: 'Verification failed: ${e.toString()}'));
     }
+  }
+
+  /// Gets the currently active session role.
+  Future<String> getUserRole() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(_kUserRoleKey) ?? 'employee';
   }
 
   /// Sign out / clear session.

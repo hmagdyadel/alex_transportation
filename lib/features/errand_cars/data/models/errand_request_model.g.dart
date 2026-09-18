@@ -12,6 +12,8 @@ ErrandRequestModel _$ErrandRequestModelFromJson(Map<String, dynamic> json) =>
       employeeName: json['employeeName'] as String,
       employeeIsl: json['employeeIsl'] as String,
       department: json['department'] as String,
+      pickupLocation:
+          json['pickupLocation'] as String? ?? 'Smart Village Operations Hub',
       destination: json['destination'] as String,
       purpose: json['purpose'] as String,
       requestedDate: json['requestedDate'] as String,
@@ -35,6 +37,7 @@ Map<String, dynamic> _$ErrandRequestModelToJson(ErrandRequestModel instance) =>
       'employeeName': instance.employeeName,
       'employeeIsl': instance.employeeIsl,
       'department': instance.department,
+      'pickupLocation': instance.pickupLocation,
       'destination': instance.destination,
       'purpose': instance.purpose,
       'requestedDate': instance.requestedDate,

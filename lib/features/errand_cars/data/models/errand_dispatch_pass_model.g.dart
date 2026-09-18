@@ -13,6 +13,8 @@ ErrandDispatchPassModel _$ErrandDispatchPassModelFromJson(
   requestId: json['requestId'] as String,
   missionCode: json['missionCode'] as String,
   employeeName: json['employeeName'] as String,
+  pickupLocation:
+      json['pickupLocation'] as String? ?? 'Smart Village Operations Hub',
   destination: json['destination'] as String,
   carPlate: json['carPlate'] as String,
   carMake: json['carMake'] as String,
@@ -31,6 +33,7 @@ Map<String, dynamic> _$ErrandDispatchPassModelToJson(
   'requestId': instance.requestId,
   'missionCode': instance.missionCode,
   'employeeName': instance.employeeName,
+  'pickupLocation': instance.pickupLocation,
   'destination': instance.destination,
   'carPlate': instance.carPlate,
   'carMake': instance.carMake,

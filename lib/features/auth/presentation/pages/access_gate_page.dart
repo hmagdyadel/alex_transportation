@@ -46,8 +46,14 @@ class _AccessGatePageState extends State<AccessGatePage> {
       child: BlocConsumer<AuthCubit, AuthStates>(
         listener: (context, state) {
           switch (state) {
-            case Success():
-              context.go('/home');
+            case Success(:final data):
+              if (data == 'admin') {
+                context.go('/admin');
+              } else if (data == 'driver') {
+                context.go('/driver');
+              } else {
+                context.go('/home');
+              }
             case Error(:final message):
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(

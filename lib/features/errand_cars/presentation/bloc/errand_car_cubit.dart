@@ -85,6 +85,7 @@ class ErrandCarCubit extends Cubit<ErrandCarStates> {
         employeeName: 'Ahmed Hassan',
         employeeIsl: '10234',
         department: 'IT',
+        pickupLocation: 'Smart Village Operations Hub',
         destination: 'Finance Hub Branch',
         purpose: 'Deliver signed audit documents to Finance Hub for quarterly review',
         requestedDate: '18 Sep 2026',
@@ -104,6 +105,7 @@ class ErrandCarCubit extends Cubit<ErrandCarStates> {
         employeeName: 'Ahmed Hassan',
         employeeIsl: '10234',
         department: 'IT',
+        pickupLocation: 'AlexBank Downtown Cairo HQ',
         destination: 'Central Bank of Egypt',
         purpose: 'Submit regulatory compliance forms',
         requestedDate: '15 Sep 2026',
@@ -122,6 +124,7 @@ class ErrandCarCubit extends Cubit<ErrandCarStates> {
         employeeName: 'Ahmed Hassan',
         employeeIsl: '10234',
         department: 'IT',
+        pickupLocation: 'Smart Village Operations Hub',
         destination: 'Nasr City Branch',
         purpose: 'IT equipment delivery and installation',
         requestedDate: '12 Sep 2026',
@@ -139,6 +142,7 @@ class ErrandCarCubit extends Cubit<ErrandCarStates> {
       requestId: 'ERQ-3942',
       missionCode: 'CPT-912',
       employeeName: 'Ahmed Hassan',
+      pickupLocation: 'Smart Village Operations Hub',
       destination: 'Finance Hub Branch',
       carPlate: 'أ ب ج 4567',
       carMake: 'Mercedes-Benz E-Class',
@@ -162,6 +166,7 @@ class ErrandCarCubit extends Cubit<ErrandCarStates> {
     required String employeeName,
     required String employeeIsl,
     required String department,
+    required String pickupLocation,
     required String destination,
     required String purpose,
     required String requestedDate,
@@ -176,6 +181,10 @@ class ErrandCarCubit extends Cubit<ErrandCarStates> {
     }
     if (employeeIsl.trim().isEmpty || employeeIsl.trim().length < 4) {
       safeEmit(const ErrandCarStates.error(message: 'Valid Bank ISL (4-8 digits) is required'));
+      return false;
+    }
+    if (pickupLocation.trim().isEmpty) {
+      safeEmit(const ErrandCarStates.error(message: 'Pickup location is required'));
       return false;
     }
     if (destination.trim().isEmpty) {
@@ -213,6 +222,7 @@ class ErrandCarCubit extends Cubit<ErrandCarStates> {
       employeeName: employeeName.trim(),
       employeeIsl: employeeIsl.trim(),
       department: department,
+      pickupLocation: pickupLocation.trim(),
       destination: destination.trim(),
       purpose: purpose.trim(),
       requestedDate: requestedDate,
@@ -239,6 +249,7 @@ class ErrandCarCubit extends Cubit<ErrandCarStates> {
         requestId: requestId,
         missionCode: missionCode,
         employeeName: employeeName.trim(),
+        pickupLocation: pickupLocation.trim(),
         destination: destination.trim(),
         carPlate: assignedCar.plateNumber,
         carMake: assignedCar.make,

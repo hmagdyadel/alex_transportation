@@ -32,6 +32,7 @@ class _ErrandCarsPageState extends State<ErrandCarsPage> {
   // Request Form Controllers
   final _nameController = TextEditingController();
   final _islController = TextEditingController();
+  final _pickupController = TextEditingController(text: 'Smart Village Operations Hub');
   final _destinationController = TextEditingController();
   final _purposeController = TextEditingController();
   final _supervisorController = TextEditingController();
@@ -40,6 +41,13 @@ class _ErrandCarsPageState extends State<ErrandCarsPage> {
   String _requestedDate = '';
   String _requestedTime = '10:00 AM';
   String _estimatedReturn = '02:00 PM';
+
+  static const List<String> _commonLocations = [
+    'Smart Village Operations Hub',
+    'AlexBank Downtown Cairo HQ',
+    'New Cairo Branch Hub',
+    'Alexandria Main Branch',
+  ];
 
   static const List<String> _departments = [
     'IT',
@@ -96,6 +104,7 @@ class _ErrandCarsPageState extends State<ErrandCarsPage> {
   void dispose() {
     _nameController.dispose();
     _islController.dispose();
+    _pickupController.dispose();
     _destinationController.dispose();
     _purposeController.dispose();
     _supervisorController.dispose();
@@ -108,6 +117,7 @@ class _ErrandCarsPageState extends State<ErrandCarsPage> {
           employeeName: _nameController.text,
           employeeIsl: _islController.text,
           department: _selectedDept,
+          pickupLocation: _pickupController.text,
           destination: _destinationController.text,
           purpose: _purposeController.text,
           requestedDate: _requestedDate,
@@ -548,11 +558,75 @@ class _ErrandCarsPageState extends State<ErrandCarsPage> {
           ),
           const SizedBox(height: AppSpacing.sm),
 
+          // Pickup Location
+          AppTextField(
+            controller: _pickupController,
+            label: 'PICKUP LOCATION',
+            hint: 'e.g. Smart Village Operations Hub',
+            prefixIcon: const Icon(Icons.trip_origin_rounded, color: AppColors.accentGold, size: 20),
+          ),
+          const SizedBox(height: AppSpacing.xs),
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: _commonLocations.map((loc) {
+                final isSelected = _pickupController.text == loc;
+                return Padding(
+                  padding: const EdgeInsets.only(right: AppSpacing.xs),
+                  child: ActionChip(
+                    label: Text(loc, style: TextStyle(fontSize: 11, color: isSelected ? Colors.white : AppColors.textPrimary)),
+                    backgroundColor: isSelected ? AppColors.primary : AppColors.surface,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(AppRadius.sm),
+                      side: BorderSide(
+                        color: isSelected ? AppColors.primary : AppColors.border,
+                      ),
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        _pickupController.text = loc;
+                      });
+                    },
+                  ),
+                );
+              }).toList(),
+            ),
+          ),
+          const SizedBox(height: AppSpacing.sm),
+
           // Destination
           AppTextField(
             controller: _destinationController,
             label: 'DESTINATION',
-            hint: 'e.g. Finance Hub Branch',
+            hint: 'e.g. Alexandria Main Branch',
+            prefixIcon: const Icon(Icons.location_on_rounded, color: AppColors.primary, size: 20),
+          ),
+          const SizedBox(height: AppSpacing.xs),
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: _commonLocations.map((loc) {
+                final isSelected = _destinationController.text == loc;
+                return Padding(
+                  padding: const EdgeInsets.only(right: AppSpacing.xs),
+                  child: ActionChip(
+                    label: Text(loc, style: TextStyle(fontSize: 11, color: isSelected ? Colors.white : AppColors.textPrimary)),
+                    backgroundColor: isSelected ? AppColors.primary : AppColors.surface,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(AppRadius.sm),
+                      side: BorderSide(
+                        color: isSelected ? AppColors.primary : AppColors.border,
+                      ),
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        _destinationController.text = loc;
+                      });
+                    },
+                  ),
+                );
+              }).toList(),
+            ),
           ),
           const SizedBox(height: AppSpacing.sm),
 

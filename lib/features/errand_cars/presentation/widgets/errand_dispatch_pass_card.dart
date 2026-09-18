@@ -141,7 +141,7 @@ class ErrandDispatchPassCard extends StatelessWidget {
                             ),
                           ),
                           Text(
-                            'Destination: ${pass.destination}',
+                            '${pass.pickupLocation} → ${pass.destination}',
                             style: AppTypography.caption.copyWith(
                               color: Colors.white70,
                               fontSize: 10,
@@ -277,6 +277,90 @@ class ErrandDispatchPassCard extends StatelessWidget {
                               style: AppTypography.caption.copyWith(
                                 color: AppColors.textMid,
                               ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                const SizedBox(height: AppSpacing.sm),
+
+                // Journey Route (Pickup -> Destination)
+                Container(
+                  padding: const EdgeInsets.all(AppSpacing.sm),
+                  decoration: BoxDecoration(
+                    color: AppColors.background,
+                    borderRadius: BorderRadius.circular(AppRadius.md),
+                    border: Border.all(color: AppColors.border),
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(
+                        Icons.trip_origin_rounded,
+                        size: 16,
+                        color: AppColors.accentGold,
+                      ),
+                      const SizedBox(width: AppSpacing.xs),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'PICKUP',
+                              style: AppTypography.caption.copyWith(
+                                fontSize: 9,
+                                fontWeight: FontWeight.w700,
+                                color: AppColors.textSecondary,
+                              ),
+                            ),
+                            Text(
+                              pass.pickupLocation,
+                              style: AppTypography.bodySmall.copyWith(
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.textPrimary,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ],
+                        ),
+                      ),
+                      const Padding(
+                        padding: EdgeInsets.symmetric(horizontal: AppSpacing.xs),
+                        child: Icon(
+                          Icons.arrow_forward_rounded,
+                          size: 16,
+                          color: AppColors.primaryMid,
+                        ),
+                      ),
+                      const Icon(
+                        Icons.location_on_rounded,
+                        size: 16,
+                        color: AppColors.primary,
+                      ),
+                      const SizedBox(width: AppSpacing.xs),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'DESTINATION',
+                              style: AppTypography.caption.copyWith(
+                                fontSize: 9,
+                                fontWeight: FontWeight.w700,
+                                color: AppColors.textSecondary,
+                              ),
+                            ),
+                            Text(
+                              pass.destination,
+                              style: AppTypography.bodySmall.copyWith(
+                                fontWeight: FontWeight.w700,
+                                color: AppColors.textPrimary,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ],
                         ),

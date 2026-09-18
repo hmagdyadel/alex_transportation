@@ -62,6 +62,7 @@ void main() {
         employeeName: '',
         employeeIsl: '10234',
         department: 'IT',
+        pickupLocation: 'Smart Village Operations Hub',
         destination: 'Branch X',
         purpose: 'Delivery',
         requestedDate: '20 Sep 2026',
@@ -79,6 +80,24 @@ void main() {
         employeeName: 'Test User',
         employeeIsl: '12',
         department: 'IT',
+        pickupLocation: 'Smart Village Operations Hub',
+        destination: 'Branch X',
+        purpose: 'Delivery',
+        requestedDate: '20 Sep 2026',
+        requestedTime: '10:00 AM',
+        estimatedReturnTime: '02:00 PM',
+        supervisorName: 'Manager',
+      );
+
+      expect(result, false);
+    });
+
+    test('rejects empty pickup location', () async {
+      final result = await cubit.submitRequest(
+        employeeName: 'Test User',
+        employeeIsl: '10234',
+        department: 'IT',
+        pickupLocation: '',
         destination: 'Branch X',
         purpose: 'Delivery',
         requestedDate: '20 Sep 2026',
@@ -95,6 +114,7 @@ void main() {
         employeeName: 'Test User',
         employeeIsl: '10234',
         department: 'IT',
+        pickupLocation: 'Smart Village Operations Hub',
         destination: '',
         purpose: 'Delivery',
         requestedDate: '20 Sep 2026',
@@ -114,6 +134,7 @@ void main() {
         employeeName: 'Sara Hassan',
         employeeIsl: '20456',
         department: 'Finance',
+        pickupLocation: 'AlexBank Downtown Cairo HQ',
         destination: 'Central Bank',
         purpose: 'Regulatory submission',
         requestedDate: '20 Sep 2026',
@@ -125,6 +146,7 @@ void main() {
       expect(result, true);
       expect(cubit.myRequests.length, initialRequests + 1);
       expect(cubit.myRequests.first.status, 'approved');
+      expect(cubit.myRequests.first.pickupLocation, 'AlexBank Downtown Cairo HQ');
       expect(cubit.myRequests.first.assignedCarId, isNotNull);
       expect(cubit.availableCars, initialAvailable - 1);
     });
@@ -137,6 +159,7 @@ void main() {
         employeeName: 'Cancel Test',
         employeeIsl: '30567',
         department: 'HR',
+        pickupLocation: 'Smart Village Operations Hub',
         destination: 'Test Branch',
         purpose: 'Testing',
         requestedDate: '20 Sep 2026',

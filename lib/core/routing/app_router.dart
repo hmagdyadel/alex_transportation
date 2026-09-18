@@ -10,6 +10,7 @@ import 'package:alex_transportation/features/auth/presentation/pages/onboarding_
 import 'package:alex_transportation/features/auth/presentation/pages/splash_page.dart';
 import 'package:alex_transportation/features/driver/presentation/bloc/driver_cubit.dart';
 import 'package:alex_transportation/features/driver/presentation/pages/driver_page.dart';
+import 'package:alex_transportation/features/admin/presentation/pages/admin_page.dart';
 import 'package:alex_transportation/features/home/presentation/pages/home_page.dart';
 
 /// App-wide router configuration.
@@ -82,8 +83,7 @@ class AppRouter {
       GoRoute(
         path: '/admin',
         name: 'admin',
-        builder: (context, state) =>
-            const _PlaceholderScreen(title: 'Admin Panel'),
+        builder: (context, state) => const AdminPage(),
       ),
     ],
   );
