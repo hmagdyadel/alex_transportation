@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:alex_transportation/core/design_system/tokens.dart';
 import 'package:alex_transportation/core/di/injector.dart';
+import 'package:alex_transportation/features/auth/presentation/bloc/auth_cubit.dart';
 import 'package:alex_transportation/features/auth/presentation/pages/access_gate_page.dart';
 import 'package:alex_transportation/features/auth/presentation/pages/onboarding_page.dart';
 import 'package:alex_transportation/features/auth/presentation/pages/splash_page.dart';
@@ -19,6 +20,43 @@ class AppRouter {
 
   static final GoRouter router = GoRouter(
     initialLocation: '/splash',
+    redirect: (BuildContext context, GoRouterState state) async {
+      final authCubit = sl<AuthCubit>();
+      final path = state.uri.path;
+
+      // Public routes that do not require authentication
+      if (path == '/splash' || path == '/onboarding' || path == '/access') {
+        return null;
+      }
+
+      final hasSession = await authCubit.hasActiveSession();
+      if (!hasSession) {
+        return '/access';
+      }
+
+      final role = await authCubit.getUserRole();
+      final isAdmin = authCubit.isAdmin;
+
+      // Role-Based Route Guards:
+      if (isAdmin) {
+        // Admin has dual access to /admin and /home (employee services)
+        return null;
+      }
+
+      if (role == 'employee') {
+        // Employees can only access /home and its subroutes
+        if (!path.startsWith('/home')) {
+          return '/home';
+        }
+      } else if (role == 'driver') {
+        // Drivers can only access /driver
+        if (!path.startsWith('/driver')) {
+          return '/driver';
+        }
+      }
+
+      return null;
+    },
     routes: [
       GoRoute(
         path: '/splash',

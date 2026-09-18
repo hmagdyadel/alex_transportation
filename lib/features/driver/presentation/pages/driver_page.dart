@@ -99,6 +99,8 @@ class _DriverPageState extends State<DriverPage> {
             state is BoardingPassenger ||
             state is CompletingTrip;
 
+        final isAdmin = context.watch<AuthCubit>().isAdmin;
+
         return ModalProgressHUD(
           inAsyncCall: isLoading,
           progressIndicator: const CustomLoadingIndicator(size: 64),
@@ -151,15 +153,16 @@ class _DriverPageState extends State<DriverPage> {
                     type: StatusPillType.gold,
                   ),
                 ),
-                IconButton(
-                  icon: const Icon(
-                    Icons.person_outline_rounded,
-                    color: AppColors.primary,
-                    size: 20,
+                if (isAdmin)
+                  IconButton(
+                    icon: const Icon(
+                      Icons.admin_panel_settings_outlined,
+                      color: AppColors.primary,
+                      size: 20,
+                    ),
+                    tooltip: 'Return to Admin Console',
+                    onPressed: () => context.go('/admin'),
                   ),
-                  tooltip: 'Employee Portal',
-                  onPressed: () => context.go('/home'),
-                ),
                 IconButton(
                   icon: const Icon(
                     Icons.logout_rounded,

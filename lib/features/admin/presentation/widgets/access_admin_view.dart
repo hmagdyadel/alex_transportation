@@ -9,10 +9,11 @@ import 'package:alex_transportation/core/widgets/app_text_field.dart';
 import 'package:alex_transportation/core/widgets/status_pill.dart';
 import 'package:alex_transportation/features/admin/presentation/bloc/admin_cubit.dart';
 import 'package:alex_transportation/features/admin/presentation/bloc/admin_states.dart';
+import 'package:alex_transportation/features/auth/presentation/bloc/auth_cubit.dart';
 
 /// Access & Security administration view.
-/// Allows generating secure invite codes, managing user roles,
-/// toggling code validity, and instant role switching for tests.
+/// Allows provisioning new Admin accounts, toggling to employee mode (dual-access),
+/// generating invite codes, and managing security.
 class AccessAdminView extends StatefulWidget {
   const AccessAdminView({super.key});
 
@@ -32,8 +33,138 @@ class _AccessAdminViewState extends State<AccessAdminView> {
     super.dispose();
   }
 
+  void _showAddAdminDialog(BuildContext context) {
+    final nameCtrl = TextEditingController();
+    final islCtrl = TextEditingController(text: 'ADM-');
+    final deptCtrl = TextEditingController();
+    final passCtrl = TextEditingController(text: 'alex123');
+
+    showDialog<void>(
+      context: context,
+      builder: (dlgCtx) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.lg)),
+        title: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(AppSpacing.xs),
+              decoration: BoxDecoration(
+                color: AppColors.goldLight,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: const Icon(
+                Icons.admin_panel_settings_rounded,
+                color: AppColors.accentGold,
+                size: 22,
+              ),
+            ),
+            const SizedBox(width: AppSpacing.sm),
+            const Expanded(
+              child: Text(
+                'Provision New Admin',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+            ),
+          ],
+        ),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(
+                'Create an authorized administrator account with full console management access.',
+                style: AppTypography.bodySmall.copyWith(color: AppColors.textMid),
+              ),
+              const SizedBox(height: AppSpacing.md),
+              AppTextField(
+                controller: nameCtrl,
+                label: 'ADMIN FULL NAME',
+                hint: 'e.g. Tamer El-Sayed',
+                textInputAction: TextInputAction.next,
+              ),
+              const SizedBox(height: AppSpacing.sm),
+              AppTextField(
+                controller: islCtrl,
+                label: 'BANK STAFF ISL',
+                hint: 'e.g. ADM-9003',
+                textInputAction: TextInputAction.next,
+              ),
+              const SizedBox(height: AppSpacing.sm),
+              AppTextField(
+                controller: deptCtrl,
+                label: 'DEPARTMENT / DIVISION',
+                hint: 'e.g. Corporate Security & IT',
+                textInputAction: TextInputAction.next,
+              ),
+              const SizedBox(height: AppSpacing.sm),
+              AppTextField(
+                controller: passCtrl,
+                label: 'INITIAL PASSWORD',
+                hint: 'Minimum 4 characters',
+                textInputAction: TextInputAction.done,
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dlgCtx).pop(),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.primary,
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.sm)),
+            ),
+            onPressed: () async {
+              final name = nameCtrl.text.trim();
+              final isl = islCtrl.text.trim();
+              final dept = deptCtrl.text.trim();
+              final pass = passCtrl.text.trim();
+
+              if (name.isEmpty || isl.isEmpty || pass.isEmpty) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Please fill in Name, ISL, and Password'),
+                    backgroundColor: AppColors.danger,
+                    behavior: SnackBarBehavior.floating,
+                  ),
+                );
+                return;
+              }
+
+              await context.read<AuthCubit>().registerNewAdmin(
+                    isl: isl,
+                    name: name,
+                    department: dept.isEmpty ? 'Central Operations' : dept,
+                    password: pass,
+                  );
+
+              if (context.mounted) {
+                Navigator.of(dlgCtx).pop();
+                setState(() {});
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Admin $name ($isl) provisioned successfully!'),
+                    backgroundColor: AppColors.primary,
+                    behavior: SnackBarBehavior.floating,
+                  ),
+                );
+              }
+            },
+            child: const Text('Provision Admin'),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final authCubit = context.watch<AuthCubit>();
+    final adminAccounts = authCubit.adminAccounts;
+
     return BlocBuilder<AdminCubit, AdminStates>(
       builder: (context, state) {
         final adminCubit = context.read<AdminCubit>();
@@ -44,59 +175,182 @@ class _AccessAdminViewState extends State<AccessAdminView> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // Role Switcher Test Bar
+              // Admin Dual Access / Staff Mode Switcher Card
               AppCard(
                 padding: const EdgeInsets.all(AppSpacing.md),
                 backgroundColor: AppColors.surface,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      'TEST ROLE SWITCHER',
-                      style: AppTypography.labelSmall.copyWith(
-                        letterSpacing: 0.8,
-                        fontWeight: FontWeight.w700,
-                      ),
+                    Row(
+                      children: [
+                        const Icon(
+                          Icons.swap_horiz_rounded,
+                          color: AppColors.accentGold,
+                          size: 20,
+                        ),
+                        const SizedBox(width: AppSpacing.xs),
+                        Text(
+                          'ADMIN DUAL ACCESS & MOBILITY',
+                          style: AppTypography.labelSmall.copyWith(
+                            letterSpacing: 0.8,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: 2),
+                    const SizedBox(height: 4),
                     Text(
-                      'Instantly preview the app as different enterprise roles:',
-                      style: AppTypography.caption.copyWith(color: AppColors.textSecondary),
+                      'As an Administrator, you can switch to Employee Mode to park in the garage, book bus lines, or request errand cars — and return to this console anytime.',
+                      style: AppTypography.bodySmall.copyWith(
+                        color: AppColors.textSecondary,
+                        height: 1.3,
+                      ),
                     ),
                     const SizedBox(height: AppSpacing.sm),
                     Row(
                       children: [
                         Expanded(
                           child: AppButton(
-                            label: 'Employee',
-                            leadingIcon: const Icon(Icons.person_rounded, size: 16),
-                            variant: AppButtonVariant.secondary,
-                            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xs),
+                            label: 'Open Staff Services (Garage/Buses)',
+                            leadingIcon: const Icon(Icons.directions_bus_rounded, size: 16),
+                            variant: AppButtonVariant.primary,
                             onPressed: () => context.go('/home'),
                           ),
                         ),
-                        const SizedBox(width: AppSpacing.xs),
-                        Expanded(
-                          child: AppButton(
-                            label: 'Driver',
-                            leadingIcon: const Icon(Icons.directions_bus_rounded, size: 16),
-                            variant: AppButtonVariant.secondary,
-                            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xs),
-                            onPressed: () => context.go('/driver'),
-                          ),
-                        ),
-                        const SizedBox(width: AppSpacing.xs),
-                        Expanded(
-                          child: AppButton(
-                            label: 'Admin',
-                            leadingIcon: const Icon(Icons.admin_panel_settings_rounded, size: 16),
-                            variant: AppButtonVariant.primary,
-                            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xs),
-                            onPressed: () => context.go('/admin'),
-                          ),
+                        const SizedBox(width: AppSpacing.sm),
+                        AppButton(
+                          label: 'Inspect Driver HUD',
+                          leadingIcon: const Icon(Icons.speed_rounded, size: 16),
+                          variant: AppButtonVariant.secondary,
+                          onPressed: () => context.go('/driver'),
                         ),
                       ],
                     ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: AppSpacing.md),
+
+              // Admin Accounts Management Section
+              AppCard(
+                padding: const EdgeInsets.all(AppSpacing.md),
+                backgroundColor: AppColors.surface,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'ADMINISTRATOR ACCOUNTS (${adminAccounts.length})',
+                              style: AppTypography.labelSmall.copyWith(
+                                letterSpacing: 0.8,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              'Staff members with full fleet administration access',
+                              style: AppTypography.caption.copyWith(color: AppColors.textSecondary),
+                            ),
+                          ],
+                        ),
+                        ElevatedButton.icon(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.primary,
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                            textStyle: AppTypography.labelSmall.copyWith(fontWeight: FontWeight.w700),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                          ),
+                          icon: const Icon(Icons.person_add_rounded, size: 16),
+                          label: const Text('+ Add Admin'),
+                          onPressed: () => _showAddAdminDialog(context),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: AppSpacing.sm),
+                    const Divider(),
+                    const SizedBox(height: AppSpacing.xs),
+                    ...adminAccounts.map((admin) {
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: AppSpacing.xs),
+                        child: Container(
+                          padding: const EdgeInsets.all(AppSpacing.sm),
+                          decoration: BoxDecoration(
+                            color: AppColors.background,
+                            borderRadius: BorderRadius.circular(AppRadius.sm),
+                            border: Border.all(color: AppColors.border),
+                          ),
+                          child: Row(
+                            children: [
+                              CircleAvatar(
+                                radius: 18,
+                                backgroundColor: AppColors.goldLight,
+                                child: Text(
+                                  admin.name.isNotEmpty ? admin.name[0] : 'A',
+                                  style: AppTypography.labelMedium.copyWith(
+                                    color: AppColors.accentGold,
+                                    fontWeight: FontWeight.w800,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: AppSpacing.sm),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Text(
+                                          admin.name,
+                                          style: AppTypography.bodySmall.copyWith(
+                                            fontWeight: FontWeight.w700,
+                                            color: AppColors.textPrimary,
+                                          ),
+                                        ),
+                                        const SizedBox(width: AppSpacing.xs),
+                                        Container(
+                                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                          decoration: BoxDecoration(
+                                            color: AppColors.primary.withValues(alpha: 0.1),
+                                            borderRadius: BorderRadius.circular(4),
+                                          ),
+                                          child: Text(
+                                            admin.isl,
+                                            style: AppTypography.caption.copyWith(
+                                              fontWeight: FontWeight.w800,
+                                              color: AppColors.primary,
+                                              fontSize: 10,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 2),
+                                    Text(
+                                      'Dept: ${admin.department}',
+                                      style: AppTypography.caption.copyWith(
+                                        color: AppColors.textSecondary,
+                                        fontSize: 11,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const StatusPill(
+                                label: 'ACTIVE ADMIN',
+                                type: StatusPillType.gold,
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    }),
                   ],
                 ),
               ),
@@ -126,7 +380,7 @@ class _AccessAdminViewState extends State<AccessAdminView> {
                     const SizedBox(height: 4),
                     SegmentedButton<String>(
                       segments: const [
-                        ButtonSegment(value: 'employee', label: Text('Employee')),
+                        ButtonSegment(value: 'employee', label: Text('Normal User')),
                         ButtonSegment(value: 'driver', label: Text('Driver')),
                         ButtonSegment(value: 'admin', label: Text('Admin')),
                       ],

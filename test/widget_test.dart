@@ -45,16 +45,16 @@ void main() {
           home: Scaffold(
             body: AppTextField(
               controller: controller,
-              label: 'INVITE CODE',
-              hint: 'Enter code',
+              label: 'BANK STAFF ISL',
+              hint: 'Enter ISL',
             ),
           ),
         ),
       );
 
-      expect(find.text('INVITE CODE'), findsOneWidget);
-      await tester.enterText(find.byType(TextField), 'ALEX26');
-      expect(controller.text, 'ALEX26');
+      expect(find.text('BANK STAFF ISL'), findsOneWidget);
+      await tester.enterText(find.byType(TextField), '10492');
+      expect(controller.text, '10492');
     });
 
     testWidgets('AppCard renders child content', (tester) async {
@@ -96,36 +96,108 @@ void main() {
       );
 
       expect(find.byType(CustomLoadingIndicator), findsOneWidget);
-      // Advance single frame
       await tester.pump(const Duration(milliseconds: 100));
     });
   });
 
-  group('AuthCubit Unit Tests', () {
-    test('Verify valid employee code ALEX26 succeeds', () async {
+  group('AuthCubit RBAC & ISL Login Tests', () {
+    test('Login as Normal User with ISL 10492 succeeds and locks to employee', () async {
       final cubit = AuthCubit();
-      await cubit.verifyInviteCode('ALEX26');
+      await cubit.loginWithIsl(
+        isl: '10492',
+        password: 'alex123',
+        role: 'employee',
+      );
       expect(cubit.state is Success<dynamic>, isTrue);
-      if (cubit.state is Success<dynamic>) {
-        expect((cubit.state as Success<dynamic>).data, 'employee');
-      }
+      expect(cubit.currentRole, 'employee');
+      expect(cubit.isAdmin, isFalse);
       await cubit.close();
     });
 
-    test('Verify ADMIN code succeeds with admin role', () async {
+    test('Normal User ISL attempting to login as Admin is rejected with error', () async {
       final cubit = AuthCubit();
-      await cubit.verifyInviteCode('ADMIN');
-      expect(cubit.state is Success<dynamic>, isTrue);
-      if (cubit.state is Success<dynamic>) {
-        expect((cubit.state as Success<dynamic>).data, 'admin');
-      }
-      await cubit.close();
-    });
-
-    test('Short code emits error', () async {
-      final cubit = AuthCubit();
-      await cubit.verifyInviteCode('AB');
+      await cubit.loginWithIsl(
+        isl: '10492',
+        password: 'alex123',
+        role: 'admin',
+      );
       expect(cubit.state is Error, isTrue);
+      await cubit.close();
+    });
+
+    test('Login as Driver Captain with ISL DRV-2001 succeeds', () async {
+      final cubit = AuthCubit();
+      await cubit.loginWithIsl(
+        isl: 'DRV-2001',
+        password: 'alex123',
+        role: 'driver',
+      );
+      expect(cubit.state is Success<dynamic>, isTrue);
+      expect(cubit.currentRole, 'driver');
+      expect(cubit.isAdmin, isFalse);
+      await cubit.close();
+    });
+
+    test('Login as Admin with ISL ADM-9001 succeeds with admin role', () async {
+      final cubit = AuthCubit();
+      await cubit.loginWithIsl(
+        isl: 'ADM-9001',
+        password: 'alex123',
+        role: 'admin',
+      );
+      expect(cubit.state is Success<dynamic>, isTrue);
+      expect(cubit.currentRole, 'admin');
+      expect(cubit.isAdmin, isTrue);
+      await cubit.close();
+    });
+
+    test('Admin can log in as Employee to use Garage/Buses while retaining isAdmin', () async {
+      final cubit = AuthCubit();
+      await cubit.loginWithIsl(
+        isl: 'ADM-9001',
+        password: 'alex123',
+        role: 'employee',
+      );
+      expect(cubit.state is Success<dynamic>, isTrue);
+      expect(cubit.currentRole, 'employee');
+      expect(cubit.isAdmin, isTrue);
+      await cubit.close();
+    });
+
+    test('Admin provisioning registers new admin account and allows authentication', () async {
+      final cubit = AuthCubit();
+      await cubit.registerNewAdmin(
+        isl: 'ADM-9999',
+        name: 'New Fleet Admin',
+        department: 'Corporate Logistics',
+        password: 'alex123',
+      );
+      expect(cubit.state is Success<dynamic>, isTrue);
+      expect(cubit.adminAccounts.any((a) => a.isl == 'ADM-9999'), isTrue);
+
+      // Now authenticate with newly provisioned admin
+      await cubit.loginWithIsl(
+        isl: 'ADM-9999',
+        password: 'alex123',
+        role: 'admin',
+      );
+      expect(cubit.currentRole, 'admin');
+      expect(cubit.isAdmin, isTrue);
+      await cubit.close();
+    });
+
+    test('SignOut clears role and session', () async {
+      final cubit = AuthCubit();
+      await cubit.loginWithIsl(
+        isl: 'ADM-9001',
+        password: 'alex123',
+        role: 'admin',
+      );
+      expect(cubit.currentRole, 'admin');
+      expect(cubit.isAdmin, isTrue);
+      await cubit.signOut();
+      expect(cubit.currentRole, 'employee');
+      expect(cubit.isAdmin, isFalse);
       await cubit.close();
     });
   });

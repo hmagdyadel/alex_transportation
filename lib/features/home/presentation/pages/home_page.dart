@@ -93,6 +93,10 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final authCubit = context.watch<AuthCubit>();
+    final userRole = authCubit.currentRole;
+    final isAdmin = authCubit.isAdmin;
+
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
@@ -121,7 +125,7 @@ class _HomePageState extends State<HomePage> {
                     overflow: TextOverflow.ellipsis,
                   ),
                   Text(
-                    'Transit — Employee Portal',
+                    isAdmin ? 'Transit — Admin (Employee Mode)' : 'Transit — Employee Portal',
                     style: AppTypography.caption.copyWith(
                       color: AppColors.textMid,
                       fontWeight: FontWeight.w500,
@@ -136,44 +140,22 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
         actions: [
-          const StatusPill(
-            label: 'EMPLOYEE',
-            type: StatusPillType.active,
+          StatusPill(
+            label: isAdmin
+                ? (userRole == 'employee' ? 'ADMIN (USER MODE)' : 'ADMIN')
+                : 'EMPLOYEE',
+            type: isAdmin ? StatusPillType.gold : StatusPillType.active,
           ),
-          PopupMenuButton<String>(
-            icon: const Icon(
-              Icons.swap_horiz_rounded,
-              color: AppColors.primary,
-              size: 22,
+          if (isAdmin)
+            IconButton(
+              icon: const Icon(
+                Icons.admin_panel_settings_rounded,
+                color: AppColors.accentGold,
+                size: 22,
+              ),
+              tooltip: 'Return to Admin Console',
+              onPressed: () => context.go('/admin'),
             ),
-            tooltip: 'Switch Operations Role',
-            onSelected: (val) {
-              if (val == 'driver') context.go('/driver');
-              if (val == 'admin') context.go('/admin');
-            },
-            itemBuilder: (ctx) => [
-              const PopupMenuItem(
-                value: 'driver',
-                child: Row(
-                  children: [
-                    Icon(Icons.badge_outlined, color: AppColors.accentGold, size: 20),
-                    SizedBox(width: AppSpacing.sm),
-                    Text('Driver Captain Portal'),
-                  ],
-                ),
-              ),
-              const PopupMenuItem(
-                value: 'admin',
-                child: Row(
-                  children: [
-                    Icon(Icons.admin_panel_settings_outlined, color: AppColors.primary, size: 20),
-                    SizedBox(width: AppSpacing.sm),
-                    Text('Admin Operations Console'),
-                  ],
-                ),
-              ),
-            ],
-          ),
           IconButton(
             icon: const Icon(
               Icons.logout_rounded,

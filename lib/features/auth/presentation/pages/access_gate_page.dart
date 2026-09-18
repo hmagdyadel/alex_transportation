@@ -13,8 +13,8 @@ import 'package:alex_transportation/core/widgets/custom_loading_indicator.dart';
 import 'package:alex_transportation/features/auth/presentation/bloc/auth_cubit.dart';
 import 'package:alex_transportation/features/auth/presentation/bloc/auth_states.dart';
 
-/// Invite-code gate screen verifying employee credentials.
-/// Implements the user's required ModalProgressHUD + CustomLoadingIndicator loading standard.
+/// Bank Staff ISL + Password login screen with role selection.
+/// Strictly segregates access between Normal User, Driver, and Admin.
 class AccessGatePage extends StatefulWidget {
   const AccessGatePage({super.key});
 
@@ -23,18 +23,61 @@ class AccessGatePage extends StatefulWidget {
 }
 
 class _AccessGatePageState extends State<AccessGatePage> {
-  final TextEditingController _codeController = TextEditingController();
+  final TextEditingController _islController = TextEditingController(text: '10492');
+  final TextEditingController _passwordController = TextEditingController(text: 'alex123');
+  String _selectedRole = 'employee'; // 'employee', 'driver', 'admin'
+  bool _obscurePassword = true;
 
   @override
   void dispose() {
-    _codeController.dispose();
+    _islController.dispose();
+    _passwordController.dispose();
     super.dispose();
   }
 
-  void _submitCode() {
-    final code = _codeController.text.trim();
-    if (code.isEmpty) return;
-    context.read<AuthCubit>().verifyInviteCode(code);
+  void _submitLogin() {
+    final isl = _islController.text.trim();
+    final password = _passwordController.text.trim();
+
+    if (isl.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please enter your Bank Staff ISL'),
+          backgroundColor: AppColors.danger,
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+      return;
+    }
+
+    if (password.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please enter your password'),
+          backgroundColor: AppColors.danger,
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+      return;
+    }
+
+    context.read<AuthCubit>().loginWithIsl(
+          isl: isl,
+          password: password,
+          role: _selectedRole,
+        );
+  }
+
+  void _applyDemoCredentials({
+    required String isl,
+    required String password,
+    required String role,
+  }) {
+    setState(() {
+      _islController.text = isl;
+      _passwordController.text = password;
+      _selectedRole = role;
+    });
   }
 
   @override
@@ -117,13 +160,13 @@ class _AccessGatePageState extends State<AccessGatePage> {
                         ),
                         const SizedBox(height: AppSpacing.xxs),
                         Text(
-                          'Employee Transport & Mobility Portal',
+                          'Staff Transportation & Corporate Fleet Management',
                           textAlign: TextAlign.center,
                           style: AppTypography.bodySmall.copyWith(
                             color: AppColors.textSecondary,
                           ),
                         ),
-                        const SizedBox(height: AppSpacing.xxl),
+                        const SizedBox(height: AppSpacing.xl),
 
                         // Form Card
                         AppCard(
@@ -132,7 +175,7 @@ class _AccessGatePageState extends State<AccessGatePage> {
                             crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
                               Text(
-                                'Employee Verification',
+                                'Sign In to Transit Portal',
                                 style: AppTypography.titleMedium.copyWith(
                                   color: AppColors.textPrimary,
                                   fontWeight: FontWeight.w700,
@@ -140,7 +183,7 @@ class _AccessGatePageState extends State<AccessGatePage> {
                               ),
                               const SizedBox(height: AppSpacing.xxs),
                               Text(
-                                'Enter your invite code provided by Fleet Management to unlock parking, buses, and errand dispatch.',
+                                'Select your role and enter your Bank ISL & Password.',
                                 style: AppTypography.bodySmall.copyWith(
                                   color: AppColors.textMid,
                                   height: 1.4,
@@ -148,42 +191,115 @@ class _AccessGatePageState extends State<AccessGatePage> {
                               ),
                               const SizedBox(height: AppSpacing.lg),
 
-                              // Invite Code Input
+                              // Role Selection
+                              Text(
+                                'SELECT PORTAL ROLE',
+                                style: AppTypography.labelSmall.copyWith(
+                                  color: AppColors.textMid,
+                                  fontWeight: FontWeight.w700,
+                                  letterSpacing: 0.8,
+                                ),
+                              ),
+                              const SizedBox(height: AppSpacing.xs),
+                              SegmentedButton<String>(
+                                segments: const [
+                                  ButtonSegment(
+                                    value: 'employee',
+                                    icon: Icon(Icons.person_rounded, size: 16),
+                                    label: Text('Normal User'),
+                                  ),
+                                  ButtonSegment(
+                                    value: 'driver',
+                                    icon: Icon(Icons.directions_bus_rounded, size: 16),
+                                    label: Text('Driver'),
+                                  ),
+                                  ButtonSegment(
+                                    value: 'admin',
+                                    icon: Icon(Icons.admin_panel_settings_rounded, size: 16),
+                                    label: Text('Admin'),
+                                  ),
+                                ],
+                                selected: {_selectedRole},
+                                onSelectionChanged: (Set<String> newSelection) {
+                                  setState(() {
+                                    _selectedRole = newSelection.first;
+                                  });
+                                },
+                                style: ButtonStyle(
+                                  textStyle: WidgetStateProperty.all(
+                                    AppTypography.caption.copyWith(fontWeight: FontWeight.w700),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: AppSpacing.lg),
+
+                              // Bank Staff ISL Input
                               AppTextField(
-                                controller: _codeController,
-                                label: 'INVITE CODE',
-                                hint: 'e.g. ALEX26',
+                                controller: _islController,
+                                label: 'BANK STAFF ISL',
+                                hint: 'e.g. 10492 or ADM-9001',
                                 prefixIcon: const Icon(
-                                  Icons.vpn_key_rounded,
+                                  Icons.badge_outlined,
                                   color: AppColors.accentGold,
                                   size: 20,
                                 ),
-                                textInputAction: TextInputAction.done,
+                                textInputAction: TextInputAction.next,
                                 inputFormatters: [
-                                  FilteringTextInputFormatter.allow(
-                                    RegExp(r'[a-zA-Z0-9]'),
-                                  ),
                                   UpperCaseTextFormatter(),
                                 ],
-                                onSubmitted: (_) => _submitCode(),
                               ),
                               const SizedBox(height: AppSpacing.md),
 
-                              // Quick demo helper chips for testing
+                              // Password Input
+                              AppTextField(
+                                controller: _passwordController,
+                                label: 'PASSWORD',
+                                hint: '••••••••',
+                                obscureText: _obscurePassword,
+                                prefixIcon: const Icon(
+                                  Icons.lock_outline_rounded,
+                                  color: AppColors.accentGold,
+                                  size: 20,
+                                ),
+                                suffixIcon: IconButton(
+                                  icon: Icon(
+                                    _obscurePassword
+                                        ? Icons.visibility_off_outlined
+                                        : Icons.visibility_outlined,
+                                    color: AppColors.textSecondary,
+                                    size: 20,
+                                  ),
+                                  onPressed: () {
+                                    setState(() {
+                                      _obscurePassword = !_obscurePassword;
+                                    });
+                                  },
+                                ),
+                                textInputAction: TextInputAction.done,
+                                onSubmitted: (_) => _submitLogin(),
+                              ),
+                              const SizedBox(height: AppSpacing.md),
+
+                              // Quick demo helper chips for instant role testing
                               Wrap(
                                 spacing: AppSpacing.xs,
+                                runSpacing: AppSpacing.xs,
                                 crossAxisAlignment: WrapCrossAlignment.center,
                                 children: [
                                   Text(
-                                    'Demo codes:',
+                                    'Quick Fill:',
                                     style: AppTypography.labelSmall.copyWith(
                                       color: AppColors.textSecondary,
                                     ),
                                   ),
                                   ActionChip(
-                                    label: const Text('ALEX26 (Employee)'),
+                                    label: const Text('Normal User (10492)'),
                                     onPressed: () {
-                                      _codeController.text = 'ALEX26';
+                                      _applyDemoCredentials(
+                                        isl: '10492',
+                                        password: 'alex123',
+                                        role: 'employee',
+                                      );
                                     },
                                     backgroundColor: AppColors.greenLight,
                                     labelStyle: AppTypography.labelSmall.copyWith(
@@ -193,9 +309,13 @@ class _AccessGatePageState extends State<AccessGatePage> {
                                     padding: EdgeInsets.zero,
                                   ),
                                   ActionChip(
-                                    label: const Text('DRIVER'),
+                                    label: const Text('Driver (DRV-2001)'),
                                     onPressed: () {
-                                      _codeController.text = 'DRIVER';
+                                      _applyDemoCredentials(
+                                        isl: 'DRV-2001',
+                                        password: 'alex123',
+                                        role: 'driver',
+                                      );
                                     },
                                     backgroundColor: AppColors.greenLight,
                                     labelStyle: AppTypography.labelSmall.copyWith(
@@ -205,9 +325,13 @@ class _AccessGatePageState extends State<AccessGatePage> {
                                     padding: EdgeInsets.zero,
                                   ),
                                   ActionChip(
-                                    label: const Text('ADMIN'),
+                                    label: const Text('Admin (ADM-9001)'),
                                     onPressed: () {
-                                      _codeController.text = 'ADMIN';
+                                      _applyDemoCredentials(
+                                        isl: 'ADM-9001',
+                                        password: 'alex123',
+                                        role: 'admin',
+                                      );
                                     },
                                     backgroundColor: AppColors.goldLight,
                                     labelStyle: AppTypography.labelSmall.copyWith(
@@ -222,11 +346,11 @@ class _AccessGatePageState extends State<AccessGatePage> {
 
                               // Submit Button
                               AppButton(
-                                label: 'Verify Code',
+                                label: 'Sign In to Transit',
                                 variant: AppButtonVariant.primary,
-                                onPressed: _submitCode,
+                                onPressed: _submitLogin,
                                 leadingIcon: const Icon(
-                                  Icons.check_circle_outline_rounded,
+                                  Icons.login_rounded,
                                   color: Colors.white,
                                   size: 20,
                                 ),

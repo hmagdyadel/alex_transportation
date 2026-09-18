@@ -60,7 +60,15 @@ class _SplashPageState extends State<SplashPage>
     if (!mounted) return;
 
     if (hasSession) {
-      context.go('/home');
+      final role = await authCubit.getUserRole();
+      if (!mounted) return;
+      if (role == 'driver') {
+        context.go('/driver');
+      } else if (role == 'admin') {
+        context.go('/admin');
+      } else {
+        context.go('/home');
+      }
     } else {
       context.go('/access');
     }
