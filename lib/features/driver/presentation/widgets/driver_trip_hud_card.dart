@@ -36,7 +36,7 @@ class DriverTripHudCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final currentStop = trip.currentStop;
-    final isLastStop = trip.currentStopIndex >= trip.stops.length - 1;
+    final isLastStop = trip.isAtLastActiveStop;
 
     return AppCard(
       padding: EdgeInsets.zero,
@@ -111,6 +111,43 @@ class DriverTripHudCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
+                // Route Optimization Notice Banner
+                if (trip.isRouteOptimized && currentStop != null) ...[
+                  Container(
+                    margin: const EdgeInsets.only(bottom: AppSpacing.sm),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AppSpacing.sm,
+                      vertical: 6,
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppColors.greenLight,
+                      borderRadius: BorderRadius.circular(AppRadius.sm),
+                      border: Border.all(
+                        color: AppColors.primaryLight.withValues(alpha: 0.3),
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(
+                          Icons.route_rounded,
+                          size: 16,
+                          color: AppColors.primary,
+                        ),
+                        const SizedBox(width: 6),
+                        Expanded(
+                          child: Text(
+                            '⚡ Route Optimized: Starts at ${currentStop.name} • ${trip.skippedStopsCount} empty stops skipped',
+                            style: AppTypography.caption.copyWith(
+                              color: AppColors.primary,
+                              fontWeight: FontWeight.w700,
+                              fontSize: 10,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
                 // Route Title + Bus Plate
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,

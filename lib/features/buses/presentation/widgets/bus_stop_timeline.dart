@@ -116,11 +116,23 @@ class BusStopTimeline extends StatelessWidget {
                               fontSize: 10,
                             ),
                           ),
-                        if (stop.isCurrent) ...[
+                        if (stop.isSkipped) ...[
+                          const SizedBox(height: 4),
+                          const StatusPill(
+                            label: 'SKIPPED (0 RIDERS)',
+                            type: StatusPillType.neutral,
+                          ),
+                        ] else if (stop.isCurrent) ...[
                           const SizedBox(height: 4),
                           const StatusPill(
                             label: 'BUS CURRENTLY HERE',
                             type: StatusPillType.gold,
+                          ),
+                        ] else if (stop.riderCount > 0 && !stop.isCompleted) ...[
+                          const SizedBox(height: 4),
+                          StatusPill(
+                            label: '${stop.riderCount} RIDERS BOOKED',
+                            type: StatusPillType.active,
                           ),
                         ] else if (stop.latitude != null && !stop.isCompleted) ...[
                           const SizedBox(height: 4),
@@ -156,6 +168,23 @@ class BusStopTimeline extends StatelessWidget {
   }
 
   Widget _buildNodeIndicator(BusStopModel stop) {
+    if (stop.isSkipped) {
+      return Container(
+        width: 18,
+        height: 18,
+        decoration: BoxDecoration(
+          color: AppColors.background,
+          shape: BoxShape.circle,
+          border: Border.all(color: AppColors.textSecondary.withValues(alpha: 0.5), width: 1.5),
+        ),
+        child: const Icon(
+          Icons.redo_rounded,
+          size: 10,
+          color: AppColors.textSecondary,
+        ),
+      );
+    }
+
     if (stop.isCurrent) {
       return Container(
         width: 24,

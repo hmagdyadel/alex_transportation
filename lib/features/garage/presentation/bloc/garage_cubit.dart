@@ -1,11 +1,13 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:alex_transportation/core/extensions/safe_emit_extension.dart';
+import 'package:alex_transportation/core/network/firestore_data_seeder.dart';
 import 'package:alex_transportation/core/network/firestore_sync_service.dart';
 import 'package:alex_transportation/features/garage/data/models/garage_subscription_model.dart';
 import 'package:alex_transportation/features/garage/presentation/bloc/garage_states.dart';
 
-/// Manages garage parking subscriptions, live capacity, check-in/out, and cancellation.
+/// Manages garage parking subscriptions, live capacity, check-in/out, and cancellation
+/// backed directly by Cloud Firestore collections.
 class GarageCubit extends Cubit<GarageStates> {
   static const int totalCapacity = 300;
   static const int vipSlots = 10;
@@ -37,57 +39,75 @@ class GarageCubit extends Cubit<GarageStates> {
   }
 
   int _availableSlots = 42;
-  int _waitingCount = 4;
+  int _waitingCount = 0;
   GarageSubscriptionModel? _currentSubscription;
-
-  // In-memory registered subscriptions for demonstration & offline resilience
-  final List<GarageSubscriptionModel> _subscriptions = [
-    GarageSubscriptionModel(
-      id: 'S001',
-      name: 'Sara Hassan',
-      nationalId: '29001011234567',
-      isl: '10234',
-      dept: 'IT',
-      email: 's.hassan@alexbank.com',
-      priorityTier: 'standard',
-      slotLabel: 'P1-014',
-      status: 'active',
-      checkedIn: false,
-      submittedAt: DateTime(2026, 3, 1, 9, 0),
-    ),
-    GarageSubscriptionModel(
-      id: 'S002',
-      name: 'Mohamed Ali',
-      nationalId: '28808051234567',
-      isl: '10512',
-      dept: 'Finance',
-      email: 'm.ali@alexbank.com',
-      priorityTier: 'senior',
-      slotLabel: 'P1-002',
-      status: 'active',
-      checkedIn: true,
-      checkedInAt: DateTime.now().subtract(const Duration(hours: 2, minutes: 15)),
-      submittedAt: DateTime(2026, 3, 2, 8, 30),
-    ),
-  ];
+  final List<GarageSubscriptionModel> _subscriptions = [];
 
   GarageCubit() : super(const GarageStates.initial()) {
-    // Default active subscription for instant demonstration
-    _currentSubscription = _subscriptions.first;
+    _initFromCache();
+  }
+
+  void _initFromCache() {
+    final sync = FirestoreSyncService.instance;
+    final subs = sync.getCachedGarageSubscriptions();
+    _subscriptions.clear();
+    _subscriptions.addAll(subs);
+    _availableSlots = 42;
+    _waitingCount = subs.where((s) => s.status == 'waiting').length;
+    if (subs.isNotEmpty) {
+      _currentSubscription = subs.first;
+    }
   }
 
   int get availableSlots => _availableSlots;
   int get waitingCount => _waitingCount;
   GarageSubscriptionModel? get currentSubscription => _currentSubscription;
+  List<GarageSubscriptionModel> get subscriptions => List.unmodifiable(_subscriptions);
 
-  /// Loads garage status and active subscriptions.
-  Future<void> loadGarageData() async {
+  /// Loads garage status and active subscriptions directly from Cloud Firestore.
+  Future<void> loadGarageData({String? userIsl}) async {
     safeEmit(const GarageStates.loading());
-    await Future.delayed(const Duration(milliseconds: 500));
+
+    final sync = FirestoreSyncService.instance;
+    var subs = await sync.getGarageSubscriptions();
+
+    if (subs.isEmpty) {
+      await FirestoreDataSeeder.seedInitialDataIfNeeded();
+      subs = await sync.getGarageSubscriptions();
+    }
+
+    _subscriptions.clear();
+    _subscriptions.addAll(subs);
+
+    _availableSlots = 42;
+    _waitingCount = subs.where((s) => s.status == 'waiting').length;
+
+    if (userIsl != null) {
+      final matches = subs.where((s) => s.isl == userIsl).toList();
+      _currentSubscription = matches.isNotEmpty ? matches.first : null;
+    } else if (subs.isNotEmpty) {
+      _currentSubscription = subs.first;
+    }
+
     safeEmit(const GarageStates.loaded());
   }
 
-  /// Submits a new parking subscription request.
+  /// Searches active and waiting subscriptions by ISL and optional email.
+  GarageSubscriptionModel? findSubscription(String isl, [String? email]) {
+    final cleanIsl = isl.trim().toLowerCase();
+    final cleanEmail = email?.trim().toLowerCase();
+    try {
+      return _subscriptions.firstWhere(
+        (s) =>
+            s.isl.toLowerCase() == cleanIsl &&
+            (cleanEmail == null || cleanEmail.isEmpty || s.email.toLowerCase() == cleanEmail),
+      );
+    } catch (_) {
+      return null;
+    }
+  }
+
+  /// Submits a new parking subscription request directly to Cloud Firestore.
   Future<void> submitSubscription({
     required String name,
     required String nationalId,
@@ -123,7 +143,6 @@ class GarageCubit extends Cubit<GarageStates> {
     }
 
     safeEmit(const GarageStates.submittingSubscription());
-    await Future.delayed(const Duration(milliseconds: 900));
 
     final newId = 'S00${_subscriptions.length + 1}';
     final slotNumber = (_subscriptions.length + 14).toString().padLeft(3, '0');
@@ -146,6 +165,10 @@ class GarageCubit extends Cubit<GarageStates> {
       licenseUrl: licenseUrl,
     );
 
+    // Save directly to Firestore collection
+    final sync = FirestoreSyncService.instance;
+    await sync.saveGarageSubscription(newSub);
+
     _subscriptions.add(newSub);
     _currentSubscription = newSub;
 
@@ -155,102 +178,108 @@ class GarageCubit extends Cubit<GarageStates> {
       _waitingCount++;
     }
 
-    safeEmit(GarageStates.success(newSub));
-
-    // Sync subscription to Firestore (fire-and-forget)
-    FirestoreSyncService.instance.syncGarageEvent(
+    await sync.syncGarageEvent(
       isl: cleanIsl,
       eventType: 'subscribe',
       slotLabel: assignedSlot,
     );
 
+    safeEmit(GarageStates.success(newSub));
     safeEmit(const GarageStates.loaded());
   }
 
-  /// Toggles check-in and check-out status for the active parking pass.
+  /// Toggles parking check-in / check-out and persists status to Firestore.
   Future<void> checkInOut() async {
     if (_currentSubscription == null) {
-      safeEmit(const GarageStates.error(message: 'No active parking subscription found'));
+      safeEmit(const GarageStates.error(message: 'No active subscription found'));
+      return;
+    }
+
+    if (_currentSubscription!.status != 'active') {
+      safeEmit(const GarageStates.error(message: 'Subscription is not active yet'));
       return;
     }
 
     safeEmit(const GarageStates.checkingInOut());
-    await Future.delayed(const Duration(milliseconds: 700));
 
-    final isCheckingIn = !_currentSubscription!.checkedIn;
+    final isCurrentlyCheckedIn = _currentSubscription!.checkedIn;
     final updated = _currentSubscription!.copyWith(
-      checkedIn: isCheckingIn,
-      checkedInAt: isCheckingIn ? DateTime.now() : null,
+      checkedIn: !isCurrentlyCheckedIn,
+      checkedInAt: !isCurrentlyCheckedIn ? DateTime.now() : null,
     );
 
     _currentSubscription = updated;
-    if (isCheckingIn) {
-      if (_availableSlots > 0) _availableSlots--;
-    } else {
-      if (_availableSlots < totalCapacity) _availableSlots++;
+
+    final index = _subscriptions.indexWhere((s) => s.id == updated.id);
+    if (index != -1) {
+      _subscriptions[index] = updated;
     }
 
-    final message = isCheckingIn
-        ? 'Welcome! Checked in to bay ${updated.slotLabel ?? "General"}'
-        : 'Checked out successfully. Have a safe drive!';
+    if (!isCurrentlyCheckedIn) {
+      _availableSlots = (_availableSlots - 1).clamp(0, totalCapacity);
+    } else {
+      _availableSlots = (_availableSlots + 1).clamp(0, totalCapacity);
+    }
 
-    safeEmit(GarageStates.success(message));
+    // Persist to Cloud Firestore
+    final sync = FirestoreSyncService.instance;
+    await sync.saveGarageSubscription(updated);
 
-    // Sync check-in/out event to Firestore
-    FirestoreSyncService.instance.syncGarageEvent(
+    await sync.syncGarageEvent(
       isl: updated.isl,
-      eventType: isCheckingIn ? 'check_in' : 'check_out',
+      eventType: !isCurrentlyCheckedIn ? 'check_in' : 'check_out',
       slotLabel: updated.slotLabel,
     );
 
+    final msg = !isCurrentlyCheckedIn
+        ? 'Checked in! Bay ${updated.slotLabel ?? "assigned"} is reserved.'
+        : 'Checked out! Have a safe trip.';
+
+    safeEmit(GarageStates.success(msg));
     safeEmit(const GarageStates.loaded());
   }
 
-  /// Submits a cancellation request.
+  /// Submits a subscription cancellation request to Cloud Firestore.
   Future<void> requestCancellation({
     required String isl,
     required String email,
   }) async {
+    if (_currentSubscription == null) {
+      safeEmit(const GarageStates.error(message: 'No subscription to cancel'));
+      return;
+    }
+
     final cleanIsl = isl.trim();
     final cleanEmail = email.trim().toLowerCase();
 
-    if (cleanIsl.isEmpty || !cleanEmail.endsWith('@alexbank.com')) {
-      safeEmit(const GarageStates.error(message: 'Enter valid ISL and @alexbank.com email'));
+    if (_currentSubscription!.isl != cleanIsl || _currentSubscription!.email.toLowerCase() != cleanEmail) {
+      safeEmit(const GarageStates.error(message: 'ISL and email must match your active subscription'));
       return;
     }
 
     safeEmit(const GarageStates.cancelling());
-    await Future.delayed(const Duration(milliseconds: 800));
 
-    if (_currentSubscription != null &&
-        _currentSubscription!.isl == cleanIsl &&
-        _currentSubscription!.email.toLowerCase() == cleanEmail) {
-      _currentSubscription = _currentSubscription!.copyWith(
-        status: 'cancellation_pending',
-      );
-    }
-
-    safeEmit(const GarageStates.success('Cancellation request submitted for admin review'));
-
-    // Sync cancellation event to Firestore
-    FirestoreSyncService.instance.syncGarageEvent(
-      isl: cleanIsl,
-      eventType: 'cancel',
+    final updated = _currentSubscription!.copyWith(
+      status: 'cancellation_pending',
     );
 
-    safeEmit(const GarageStates.loaded());
-  }
-
-  /// Searches for subscription status by ISL and email.
-  GarageSubscriptionModel? findSubscription(String isl, String email) {
-    final iT = isl.trim();
-    final eT = email.trim().toLowerCase();
-    try {
-      return _subscriptions.firstWhere(
-        (s) => s.isl == iT && s.email.toLowerCase() == eT,
-      );
-    } catch (_) {
-      return null;
+    _currentSubscription = updated;
+    final index = _subscriptions.indexWhere((s) => s.id == updated.id);
+    if (index != -1) {
+      _subscriptions[index] = updated;
     }
+
+    // Persist to Cloud Firestore
+    final sync = FirestoreSyncService.instance;
+    await sync.saveGarageSubscription(updated);
+
+    await sync.syncGarageEvent(
+      isl: cleanIsl,
+      eventType: 'cancel',
+      slotLabel: updated.slotLabel,
+    );
+
+    safeEmit(const GarageStates.success('Cancellation request submitted for payroll cut-off'));
+    safeEmit(const GarageStates.loaded());
   }
 }

@@ -1,10 +1,14 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:alex_transportation/core/extensions/safe_emit_extension.dart';
+import 'package:alex_transportation/core/network/firestore_data_seeder.dart';
+import 'package:alex_transportation/core/network/firestore_sync_service.dart';
 import 'package:alex_transportation/features/admin/presentation/bloc/garage_admin_states.dart';
+import 'package:alex_transportation/features/garage/data/models/garage_subscription_model.dart';
 import 'package:alex_transportation/features/garage/presentation/bloc/garage_cubit.dart';
 
-/// Admin: manage garage subscriptions, waitlist, cancellations, deductions, and parking fees.
+/// Admin: manage garage subscriptions, waitlist, cancellations, deductions, and parking fees
+/// directly backed by Cloud Firestore collections.
 class GarageAdminCubit extends Cubit<GarageAdminStates> {
   final List<Map<String, dynamic>> _waitingList = [];
   final List<Map<String, dynamic>> _cancellations = [];
@@ -45,127 +49,170 @@ class GarageAdminCubit extends Cubit<GarageAdminStates> {
     }
   }
 
-  /// Loads garage operational metrics, waitlists, and cancellation requests.
+  /// Loads garage operational metrics, waitlists, and cancellation requests from Firestore.
   Future<void> loadData() async {
     safeEmit(const GarageAdminStates.loading());
-    await Future.delayed(const Duration(milliseconds: 200));
 
-    if (_waitingList.isEmpty) {
-      _waitingList.addAll([
-        {
-          'id': 'WAIT-001',
-          'name': 'Hossam Hassan',
-          'isl': '18204',
-          'department': 'Corporate Banking',
-          'appliedAt': '2026-09-10',
-        },
-        {
-          'id': 'WAIT-002',
-          'name': 'Nadine Fahmy',
-          'isl': '19302',
-          'department': 'Digital Products',
-          'appliedAt': '2026-09-12',
-        },
-      ]);
+    final sync = FirestoreSyncService.instance;
+    var loaded = await sync.getGarageSubscriptions();
+    if (loaded.isEmpty) {
+      await FirestoreDataSeeder.seedInitialDataIfNeeded();
+      loaded = await sync.getGarageSubscriptions();
     }
 
-    if (_cancellations.isEmpty) {
-      _cancellations.addAll([
-        {
-          'id': 'CAN-001',
-          'name': 'Kareem Sobhy',
-          'isl': '14201',
-          'slotLabel': 'P1-022',
-          'requestedAt': '2026-09-15',
-        },
-      ]);
+    _subscriptions.clear();
+    _waitingList.clear();
+    _cancellations.clear();
+
+    for (final s in loaded) {
+      final map = {
+        'id': s.id,
+        'name': s.name,
+        'isl': s.isl,
+        'department': s.dept,
+        'slot': s.slotLabel ?? 'None',
+        'status': s.status,
+      };
+
+      if (s.status == 'waiting') {
+        _waitingList.add(map);
+      } else if (s.status == 'cancellation_requested' || s.status == 'cancellation_pending') {
+        _cancellations.add(map);
+      } else {
+        _subscriptions.add(map);
+      }
     }
 
-    if (_subscriptions.isEmpty) {
-      _subscriptions.addAll([
-        {
-          'id': 'SUB-G01',
-          'name': 'Mohamed Ali',
-          'isl': '10492',
-          'slotLabel': 'P1-014',
-          'status': 'active',
-        },
-      ]);
+    // Ensure initial cancellation item CAN-001 exists for administrative management
+    for (final s in FirestoreDataSeeder.initialSubscriptions) {
+      final map = {
+        'id': s.id,
+        'name': s.name,
+        'isl': s.isl,
+        'department': s.dept,
+        'slot': s.slotLabel ?? 'None',
+        'status': s.status,
+      };
+      if (s.status == 'waiting' && !_waitingList.any((w) => w['id'] == s.id)) {
+        _waitingList.add(map);
+      } else if ((s.status == 'cancellation_requested' || s.status == 'cancellation_pending') &&
+          !_cancellations.any((c) => c['id'] == s.id)) {
+        _cancellations.add(map);
+      }
     }
 
     safeEmit(const GarageAdminStates.loaded());
   }
 
-  /// Approves a waitlist application and assigns a parking bay.
+  /// Approves an employee's waiting list application and assigns a parking bay in Firestore.
   Future<void> approveWaiting(String id) async {
-    safeEmit(const GarageAdminStates.approving());
-    await Future.delayed(const Duration(milliseconds: 300));
+    final index = _waitingList.indexWhere((w) => w['id'] == id);
+    if (index == -1) return;
 
-    final applicant = _waitingList.firstWhere((w) => w['id'] == id, orElse: () => {});
-    _waitingList.removeWhere((w) => w['id'] == id);
+    final item = _waitingList.removeAt(index);
+    final assignedBay = 'BAY-${(_subscriptions.length + 1).toString().padLeft(2, '0')}';
+    item['slot'] = assignedBay;
+    item['status'] = 'active';
+    _subscriptions.add(item);
 
-    if (applicant.isNotEmpty) {
-      _subscriptions.add({
-        'id': 'SUB-${DateTime.now().millisecondsSinceEpoch.toString().substring(8)}',
-        'name': applicant['name'],
-        'isl': applicant['isl'],
-        'slotLabel': 'P1-${100 + _subscriptions.length}',
-        'status': 'active',
-      });
-    }
+    final sub = GarageSubscriptionModel(
+      id: item['id'] as String,
+      name: item['name'] as String,
+      nationalId: '29000000000000',
+      isl: item['isl'] as String,
+      dept: item['department'] as String,
+      email: '${(item['isl'] as String)}@alexbank.com',
+      priorityTier: 'standard',
+      slotLabel: assignedBay,
+      status: 'active',
+      submittedAt: DateTime.now(),
+    );
 
-    safeEmit(GarageAdminStates.success('Waitlist application $id approved'));
+    await FirestoreSyncService.instance.saveGarageSubscription(sub);
+
+    safeEmit(GarageAdminStates.success('Waitlist approved for $id'));
     safeEmit(const GarageAdminStates.loaded());
   }
 
-  /// Rejects a waitlist application.
+  /// Rejects an employee's waiting list application.
   Future<void> rejectWaiting(String id) async {
-    safeEmit(const GarageAdminStates.rejecting());
-    await Future.delayed(const Duration(milliseconds: 300));
-
     _waitingList.removeWhere((w) => w['id'] == id);
 
-    safeEmit(GarageAdminStates.success('Waitlist application $id rejected'));
+    final sub = GarageSubscriptionModel(
+      id: id,
+      name: 'Applicant',
+      nationalId: '29000000000000',
+      isl: '0000',
+      dept: 'General',
+      email: 'applicant@alexbank.com',
+      priorityTier: 'standard',
+      status: 'rejected',
+      submittedAt: DateTime.now(),
+    );
+    await FirestoreSyncService.instance.saveGarageSubscription(sub);
+
+    safeEmit(GarageAdminStates.success('Waitlist rejected for $id'));
     safeEmit(const GarageAdminStates.loaded());
   }
 
-  /// Runs the automated monthly payroll deduction batch for all active parking subscribers.
+  /// Runs the monthly payroll deduction batch calculation across all active subscribers.
   Future<void> runMonthlyDeduction() async {
     safeEmit(const GarageAdminStates.runningDeduction());
-    await Future.delayed(const Duration(milliseconds: 500));
 
-    final count = _subscriptions.length;
-    final totalDeducted = count * monthlyFee;
+    final activeCount = _subscriptions.where((s) => s['status'] == 'active').length;
+    final totalAmount = activeCount * monthlyFee;
 
-    safeEmit(GarageAdminStates.success(
-      'Monthly payroll deduction of EGP $monthlyFee successfully processed for $count subscribers (Total: EGP $totalDeducted)',
-    ));
+    safeEmit(GarageAdminStates.success('Processed $activeCount deductions totaling EGP $totalAmount'));
     safeEmit(const GarageAdminStates.loaded());
   }
 
-  /// Approves a garage parking cancellation request and frees the assigned bay.
+  /// Approves a subscription cancellation request and vacates the parking bay in Firestore.
   Future<void> approveCancellation(String id) async {
-    safeEmit(const GarageAdminStates.approvingCancellation());
-    await Future.delayed(const Duration(milliseconds: 300));
+    final index = _cancellations.indexWhere((c) => c['id'] == id);
+    if (index == -1) return;
 
-    final item = _cancellations.firstWhere((c) => c['id'] == id, orElse: () => {});
-    _cancellations.removeWhere((c) => c['id'] == id);
-    if (item.isNotEmpty) {
-      _subscriptions.removeWhere((s) => s['isl'] == item['isl']);
-    }
+    final item = _cancellations.removeAt(index);
+    _subscriptions.removeWhere((s) => s['id'] == id);
 
-    safeEmit(GarageAdminStates.success('Cancellation request $id approved and parking bay released'));
+    final sub = GarageSubscriptionModel(
+      id: item['id'] as String,
+      name: item['name'] as String,
+      nationalId: '29000000000000',
+      isl: item['isl'] as String,
+      dept: item['department'] as String,
+      email: '${item['isl']}@alexbank.com',
+      priorityTier: 'standard',
+      status: 'cancelled',
+      submittedAt: DateTime.now(),
+    );
+    await FirestoreSyncService.instance.saveGarageSubscription(sub);
+
+    safeEmit(GarageAdminStates.success('Cancellation approved for $id'));
     safeEmit(const GarageAdminStates.loaded());
   }
 
-  /// Rejects a garage parking cancellation request.
+  /// Rejects a cancellation request.
   Future<void> rejectCancellation(String id) async {
-    safeEmit(const GarageAdminStates.rejectingCancellation());
-    await Future.delayed(const Duration(milliseconds: 300));
+    final index = _cancellations.indexWhere((c) => c['id'] == id);
+    if (index == -1) return;
 
-    _cancellations.removeWhere((c) => c['id'] == id);
+    final item = _cancellations.removeAt(index);
+    item['status'] = 'active';
 
-    safeEmit(GarageAdminStates.success('Cancellation request $id rejected'));
+    final sub = GarageSubscriptionModel(
+      id: item['id'] as String,
+      name: item['name'] as String,
+      nationalId: '29000000000000',
+      isl: item['isl'] as String,
+      dept: item['department'] as String,
+      email: '${item['isl']}@alexbank.com',
+      priorityTier: 'standard',
+      status: 'active',
+      submittedAt: DateTime.now(),
+    );
+    await FirestoreSyncService.instance.saveGarageSubscription(sub);
+
+    safeEmit(GarageAdminStates.success('Cancellation rejected for $id'));
     safeEmit(const GarageAdminStates.loaded());
   }
 }

@@ -1,10 +1,12 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:alex_transportation/core/extensions/safe_emit_extension.dart';
+import 'package:alex_transportation/core/network/firestore_data_seeder.dart';
+import 'package:alex_transportation/core/network/firestore_sync_service.dart';
 import 'package:alex_transportation/features/admin/data/models/invite_code_model.dart';
 import 'package:alex_transportation/features/admin/presentation/bloc/access_admin_states.dart';
 
-/// Admin: manage invite codes for the test rollout access gate.
+/// Admin: manage invite codes backed directly by Cloud Firestore collections.
 class AccessAdminCubit extends Cubit<AccessAdminStates> {
   final List<InviteCodeModel> _codes = [];
 
@@ -14,95 +16,83 @@ class AccessAdminCubit extends Cubit<AccessAdminStates> {
 
   List<InviteCodeModel> get codes => List.unmodifiable(_codes);
 
-  /// Loads the active invite codes manifest.
+  /// Loads the active invite codes manifest directly from Cloud Firestore.
   Future<void> loadCodes() async {
     safeEmit(const AccessAdminStates.loading());
-    await Future.delayed(const Duration(milliseconds: 200));
 
-    if (_codes.isEmpty) {
-      _codes.addAll([
-        InviteCodeModel(
-          id: 'COD-101',
-          code: 'ADM-7788',
-          role: 'admin',
-          department: 'Operations & IT',
-          createdAt: DateTime(2026, 9, 1),
-          isActive: true,
-          useCount: 14,
-          note: 'Executive Transportation Admin Team',
-        ),
-        InviteCodeModel(
-          id: 'COD-102',
-          code: 'DRV-5521',
-          role: 'driver',
-          department: 'Fleet Transport',
-          createdAt: DateTime(2026, 9, 2),
-          isActive: true,
-          useCount: 28,
-          note: 'Authorized Captains & Chauffeurs',
-        ),
-        InviteCodeModel(
-          id: 'COD-103',
-          code: 'EMP-2026',
-          role: 'employee',
-          department: 'All Departments',
-          createdAt: DateTime(2026, 9, 5),
-          isActive: true,
-          useCount: 142,
-          note: 'General Employee Mobility Pass',
-        ),
-      ]);
+    final sync = FirestoreSyncService.instance;
+    var loaded = await sync.getInviteCodes();
+    if (loaded.isEmpty) {
+      await FirestoreDataSeeder.seedInitialDataIfNeeded();
+      loaded = await sync.getInviteCodes();
     }
+
+    _codes.clear();
+    _codes.addAll(loaded);
 
     safeEmit(const AccessAdminStates.loaded());
   }
 
-  /// Generates a new access invite code.
+  /// Generates a new access invite code and persists to Firestore.
   Future<void> generateCode({
-    String role = 'employee',
-    String department = 'Operations',
+    required String role,
+    required String department,
     String? note,
   }) async {
     safeEmit(const AccessAdminStates.generatingCode());
-    await Future.delayed(const Duration(milliseconds: 300));
 
-    final prefix = role == 'admin' ? 'ADM' : (role == 'driver' ? 'DRV' : 'EMP');
-    final randomNum = (1000 + DateTime.now().millisecondsSinceEpoch % 9000);
-    final code = '$prefix-$randomNum';
+    final prefix = role.toLowerCase() == 'admin'
+        ? 'ADM'
+        : role.toLowerCase() == 'driver'
+            ? 'DRV'
+            : 'EMP';
 
-    final newCode = InviteCodeModel(
-      id: 'COD-${DateTime.now().millisecondsSinceEpoch.toString().substring(8)}',
-      code: code,
-      role: role,
-      department: department,
+    final entropy = DateTime.now().millisecondsSinceEpoch.toString().substring(8);
+    final generatedCode = '$prefix-$entropy';
+
+    final newInvite = InviteCodeModel(
+      id: 'COD-${DateTime.now().millisecondsSinceEpoch}',
+      code: generatedCode,
+      role: role.toLowerCase(),
+      department: department.trim(),
       createdAt: DateTime.now(),
       isActive: true,
-      note: note,
+      useCount: 0,
+      note: note?.trim(),
     );
 
-    _codes.insert(0, newCode);
-    safeEmit(AccessAdminStates.success(newCode));
+    _codes.insert(0, newInvite);
+    await FirestoreSyncService.instance.saveInviteCode(newInvite);
+
+    safeEmit(AccessAdminStates.success(newInvite));
     safeEmit(const AccessAdminStates.loaded());
   }
 
-  /// Toggles active status of an invite code.
-  void toggleCodeStatus(String id) {
-    final index = _codes.indexWhere((c) => c.id == id);
+  /// Toggles an invite code's active status and updates Firestore.
+  Future<void> toggleCodeStatus(String codeId) async {
+    final index = _codes.indexWhere((c) => c.id == codeId);
     if (index == -1) return;
 
-    final current = _codes[index];
-    _codes[index] = current.copyWith(isActive: !current.isActive);
-    safeEmit(AccessAdminStates.success(
-      'Code ${current.code} is now ${!current.isActive ? "ACTIVE" : "INACTIVE"}',
-    ));
+    final existing = _codes[index];
+    final updated = existing.copyWith(isActive: !existing.isActive);
+    _codes[index] = updated;
+
+    await FirestoreSyncService.instance.saveInviteCode(updated);
+
+    final statusMsg = updated.isActive ? 'activated' : 'deactivated';
+    safeEmit(AccessAdminStates.success('Invite code ${updated.code} $statusMsg.'));
     safeEmit(const AccessAdminStates.loaded());
   }
 
-  /// Revokes an invite code.
-  void revokeCode(String id) {
-    final code = _codes.firstWhere((c) => c.id == id, orElse: () => _codes.first);
-    _codes.removeWhere((c) => c.id == id);
-    safeEmit(AccessAdminStates.success('Invite code ${code.code} has been revoked'));
+  /// Revokes an invite code and updates Firestore.
+  Future<void> revokeCode(String codeId) async {
+    final index = _codes.indexWhere((c) => c.id == codeId);
+    if (index == -1) return;
+
+    final existing = _codes.removeAt(index);
+    await FirestoreSyncService.instance.deleteInviteCode(codeId);
+
+    safeEmit(AccessAdminStates.success('Invite code ${existing.code} revoked.'));
     safeEmit(const AccessAdminStates.loaded());
   }
 }

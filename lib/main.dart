@@ -5,6 +5,7 @@ import 'package:alex_transportation/core/design_system/theme.dart';
 import 'package:alex_transportation/core/di/injector.dart';
 import 'package:alex_transportation/core/localization/locale_cubit.dart';
 import 'package:alex_transportation/core/network/firebase_client.dart';
+import 'package:alex_transportation/core/network/firestore_data_seeder.dart';
 import 'package:alex_transportation/core/network/firestore_sync_service.dart';
 import 'package:alex_transportation/core/routing/app_router.dart';
 import 'package:alex_transportation/core/services/network_connectivity_service.dart';
@@ -23,6 +24,7 @@ void main() async {
 
   // Firestore cloud sync — resilient layer on top of Firebase
   await FirestoreSyncService.instance.initialize();
+  await FirestoreDataSeeder.seedInitialDataIfNeeded();
 
   // Push notification service (FCM) — requests permissions, captures token
   await PushNotificationService.instance.initialize();

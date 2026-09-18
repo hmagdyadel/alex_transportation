@@ -1,21 +1,58 @@
+import 'dart:async';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:alex_transportation/core/extensions/safe_emit_extension.dart';
+import 'package:alex_transportation/core/network/firestore_data_seeder.dart';
 import 'package:alex_transportation/core/network/firestore_sync_service.dart';
 import 'package:alex_transportation/features/buses/data/models/bus_boarding_pass_model.dart';
 import 'package:alex_transportation/features/buses/data/models/bus_route_model.dart';
 import 'package:alex_transportation/features/buses/data/models/bus_stop_model.dart';
+import 'package:alex_transportation/features/buses/domain/services/bus_route_optimizer.dart';
 import 'package:alex_transportation/features/buses/presentation/bloc/bus_states.dart';
 
-/// Manages bus transit routes, stop manifests, seat booking, and boarding passes.
+/// Manages bus transit routes, dynamic stop optimization, seat booking, and boarding passes
+/// directly backed by Cloud Firestore collections.
 class BusCubit extends Cubit<BusStates> {
   List<BusRouteModel> _routes = [];
   BusRouteModel? _selectedRoute;
   BusBoardingPassModel? _activePass;
   String _selectedShift = 'All';
+  StreamSubscription? _routeSubscription;
 
   BusCubit() : super(const BusStates.initial()) {
-    _initMockData();
+    _initFromCache();
+  }
+
+  void _initFromCache() {
+    final sync = FirestoreSyncService.instance;
+    final cachedRoutes = sync.getCachedBusRoutes();
+    final allBookings = sync.getCachedBusBookings();
+
+    final optimizedRoutes = <BusRouteModel>[];
+    for (final route in cachedRoutes) {
+      final routeBookings = allBookings.where((b) => b.routeId == route.id).toList();
+      final bookedStops = routeBookings.map((b) => b.stopName).toList();
+
+      final plan = BusRouteOptimizer.optimizeRoute(
+        stops: route.stops,
+        bookedPickupStops: bookedStops,
+      );
+
+      final available = routeBookings.isNotEmpty
+          ? (route.totalSeats - routeBookings.length).clamp(0, route.totalSeats)
+          : route.availableSeats;
+
+      optimizedRoutes.add(route.copyWith(
+        stops: plan.optimizedStops,
+        availableSeats: available,
+      ));
+    }
+
+    _routes = optimizedRoutes;
+    if (allBookings.isNotEmpty) {
+      _activePass = allBookings.first;
+    }
   }
 
   List<BusRouteModel> get routes => List.unmodifiable(_routes);
@@ -28,465 +65,57 @@ class BusCubit extends Cubit<BusStates> {
     return _routes.where((r) => r.shift.toLowerCase() == _selectedShift.toLowerCase()).toList();
   }
 
-  void _initMockData() {
-    _routes = [
-      // MORNING ROUTES (Cairo / Giza -> Smart Village HQ)
-      const BusRouteModel(
-        id: 'R101',
-        routeNumber: 'Route 101',
-        name: 'Maadi — Smart Village HQ',
-        shift: 'Morning',
-        departureTime: '07:15 AM',
-        estimatedArrival: '08:30 AM',
-        totalSeats: 28,
-        availableSeats: 6,
-        driverName: 'Mahmoud Sayed',
-        driverPhone: '+20 100 123 4567',
-        busPlate: 'أ ب ج 1234',
-        status: 'en_route',
-        stops: [
-          BusStopModel(
-            id: 'S101-1',
-            name: 'Victoria Square',
-            nameAr: 'ميدان فيكتوريا',
-            scheduledTime: '07:15 AM',
-            isCompleted: true,
-            order: 1,
-            latitude: 29.9602,
-            longitude: 31.2568,
-          ),
-          BusStopModel(
-            id: 'S101-2',
-            name: 'Degla Center',
-            nameAr: 'سنتر دجلة',
-            scheduledTime: '07:30 AM',
-            isCompleted: true,
-            isCurrent: true,
-            order: 2,
-            latitude: 29.9575,
-            longitude: 31.2750,
-          ),
-          BusStopModel(
-            id: 'S101-3',
-            name: 'Arab Intersection',
-            nameAr: 'تقاطع العرب',
-            scheduledTime: '07:45 AM',
-            order: 3,
-            latitude: 29.9710,
-            longitude: 31.2820,
-          ),
-          BusStopModel(
-            id: 'S101-4',
-            name: 'Autostrad / Ring Road',
-            nameAr: 'الأوتوستراد والدائري',
-            scheduledTime: '08:05 AM',
-            order: 4,
-            latitude: 29.9850,
-            longitude: 31.3050,
-          ),
-          BusStopModel(
-            id: 'S101-5',
-            name: 'Smart Village (AlexBank HQ)',
-            nameAr: 'القرية الذكية - مقر بنك الإسكندرية',
-            scheduledTime: '08:30 AM',
-            order: 5,
-            latitude: 30.0715,
-            longitude: 31.0210,
-          ),
-        ],
-      ),
-      const BusRouteModel(
-        id: 'R102',
-        routeNumber: 'Route 102',
-        name: 'New Cairo & Tagamoa — Smart Village HQ',
-        shift: 'Morning',
-        departureTime: '07:00 AM',
-        estimatedArrival: '08:25 AM',
-        totalSeats: 28,
-        availableSeats: 3,
-        driverName: 'Tarek Fawzy',
-        driverPhone: '+20 102 987 6543',
-        busPlate: 'د هـ و 5678',
-        status: 'on_time',
-        stops: [
-          BusStopModel(
-            id: 'S102-1',
-            name: '90th Street North',
-            nameAr: 'شمال التسعين',
-            scheduledTime: '07:00 AM',
-            order: 1,
-            latitude: 30.0315,
-            longitude: 31.4720,
-          ),
-          BusStopModel(
-            id: 'S102-2',
-            name: 'Concord Plaza',
-            nameAr: 'كونكورد بلازا',
-            scheduledTime: '07:20 AM',
-            order: 2,
-            latitude: 30.0270,
-            longitude: 31.4920,
-          ),
-          BusStopModel(
-            id: 'S102-3',
-            name: 'Choueifat Junction',
-            nameAr: 'تقاطع الشويفات',
-            scheduledTime: '07:40 AM',
-            order: 3,
-            latitude: 30.0120,
-            longitude: 31.4350,
-          ),
-          BusStopModel(
-            id: 'S102-4',
-            name: 'Ring Road — Katameya',
-            nameAr: 'الدائري والقطامية',
-            scheduledTime: '08:00 AM',
-            order: 4,
-            latitude: 29.9980,
-            longitude: 31.3850,
-          ),
-          BusStopModel(
-            id: 'S102-5',
-            name: 'Smart Village (AlexBank HQ)',
-            nameAr: 'القرية الذكية - مقر بنك الإسكندرية',
-            scheduledTime: '08:25 AM',
-            order: 5,
-            latitude: 30.0715,
-            longitude: 31.0210,
-          ),
-        ],
-      ),
-      const BusRouteModel(
-        id: 'R103',
-        routeNumber: 'Route 103',
-        name: 'Heliopolis & Nasr City — Smart Village HQ',
-        shift: 'Morning',
-        departureTime: '07:20 AM',
-        estimatedArrival: '08:35 AM',
-        totalSeats: 28,
-        availableSeats: 0,
-        driverName: 'Essam Nabil',
-        driverPhone: '+20 111 555 8899',
-        busPlate: 'س ع ص 9012',
-        status: 'on_time',
-        stops: [
-          BusStopModel(
-            id: 'S103-1',
-            name: 'Korba Square',
-            nameAr: 'ميدان الكوربة',
-            scheduledTime: '07:20 AM',
-            order: 1,
-          ),
-          BusStopModel(
-            id: 'S103-2',
-            name: 'Roxy Plaza',
-            nameAr: 'روكسي',
-            scheduledTime: '07:35 AM',
-            order: 2,
-          ),
-          BusStopModel(
-            id: 'S103-3',
-            name: 'Abbas El Akkad',
-            nameAr: 'عباس العقاد',
-            scheduledTime: '07:55 AM',
-            order: 3,
-          ),
-          BusStopModel(
-            id: 'S103-4',
-            name: 'Tayaran Intersection',
-            nameAr: 'تقاطع الطيران',
-            scheduledTime: '08:10 AM',
-            order: 4,
-          ),
-          BusStopModel(
-            id: 'S103-5',
-            name: 'Smart Village (AlexBank HQ)',
-            nameAr: 'القرية الذكية - مقر بنك الإسكندرية',
-            scheduledTime: '08:35 AM',
-            order: 5,
-          ),
-        ],
-      ),
-      const BusRouteModel(
-        id: 'R104',
-        routeNumber: 'Route 104',
-        name: '6th of October & Zayed — Smart Village HQ',
-        shift: 'Morning',
-        departureTime: '06:45 AM',
-        estimatedArrival: '08:20 AM',
-        totalSeats: 28,
-        availableSeats: 8,
-        driverName: 'Sameh Refaat',
-        driverPhone: '+20 122 333 4411',
-        busPlate: 'ط ي ك 3456',
-        status: 'on_time',
-        stops: [
-          BusStopModel(
-            id: 'S104-1',
-            name: 'Hosary Mosque',
-            nameAr: 'جامع الحصري',
-            scheduledTime: '06:45 AM',
-            order: 1,
-          ),
-          BusStopModel(
-            id: 'S104-2',
-            name: 'Sheikh Zayed Entrance 1',
-            nameAr: 'مدخل زايد 1',
-            scheduledTime: '07:05 AM',
-            order: 2,
-          ),
-          BusStopModel(
-            id: 'S104-3',
-            name: 'Hyper One',
-            nameAr: 'هايبر وان',
-            scheduledTime: '07:25 AM',
-            order: 3,
-          ),
-          BusStopModel(
-            id: 'S104-4',
-            name: 'Mehwar Axis',
-            nameAr: 'محور 26 يوليو',
-            scheduledTime: '07:45 AM',
-            order: 4,
-          ),
-          BusStopModel(
-            id: 'S104-5',
-            name: 'Smart Village (AlexBank HQ)',
-            nameAr: 'القرية الذكية - مقر بنك الإسكندرية',
-            scheduledTime: '08:20 AM',
-            order: 5,
-          ),
-        ],
-      ),
-
-      // MIRRORED EVENING ROUTES (Smart Village HQ -> Cairo / Giza in reverse order)
-      const BusRouteModel(
-        id: 'R201',
-        routeNumber: 'Route 201',
-        name: 'Smart Village HQ — Maadi Return',
-        shift: 'Evening',
-        departureTime: '04:45 PM',
-        estimatedArrival: '06:00 PM',
-        totalSeats: 28,
-        availableSeats: 12,
-        driverName: 'Mahmoud Sayed',
-        driverPhone: '+20 100 123 4567',
-        busPlate: 'أ ب ج 1234',
-        status: 'on_time',
-        stops: [
-          BusStopModel(
-            id: 'S201-1',
-            name: 'Smart Village (AlexBank HQ)',
-            nameAr: 'القرية الذكية - مقر بنك الإسكندرية',
-            scheduledTime: '04:45 PM',
-            order: 1,
-          ),
-          BusStopModel(
-            id: 'S201-2',
-            name: 'Autostrad / Ring Road',
-            nameAr: 'الأوتوستراد والدائري',
-            scheduledTime: '05:10 PM',
-            order: 2,
-          ),
-          BusStopModel(
-            id: 'S201-3',
-            name: 'Arab Intersection',
-            nameAr: 'تقاطع العرب',
-            scheduledTime: '05:30 PM',
-            order: 3,
-          ),
-          BusStopModel(
-            id: 'S201-4',
-            name: 'Degla Center',
-            nameAr: 'سنتر دجلة',
-            scheduledTime: '05:45 PM',
-            order: 4,
-          ),
-          BusStopModel(
-            id: 'S201-5',
-            name: 'Victoria Square',
-            nameAr: 'ميدان فيكتوريا',
-            scheduledTime: '06:00 PM',
-            order: 5,
-          ),
-        ],
-      ),
-      const BusRouteModel(
-        id: 'R202',
-        routeNumber: 'Route 202',
-        name: 'Smart Village HQ — New Cairo Return',
-        shift: 'Evening',
-        departureTime: '04:45 PM',
-        estimatedArrival: '06:15 PM',
-        totalSeats: 28,
-        availableSeats: 15,
-        driverName: 'Tarek Fawzy',
-        driverPhone: '+20 102 987 6543',
-        busPlate: 'د هـ و 5678',
-        status: 'on_time',
-        stops: [
-          BusStopModel(
-            id: 'S202-1',
-            name: 'Smart Village (AlexBank HQ)',
-            nameAr: 'القرية الذكية - مقر بنك الإسكندرية',
-            scheduledTime: '04:45 PM',
-            order: 1,
-          ),
-          BusStopModel(
-            id: 'S202-2',
-            name: 'Ring Road — Katameya',
-            nameAr: 'الدائري والقطامية',
-            scheduledTime: '05:15 PM',
-            order: 2,
-          ),
-          BusStopModel(
-            id: 'S202-3',
-            name: 'Choueifat Junction',
-            nameAr: 'تقاطع الشويفات',
-            scheduledTime: '05:35 PM',
-            order: 3,
-          ),
-          BusStopModel(
-            id: 'S202-4',
-            name: 'Concord Plaza',
-            nameAr: 'كونكورد بلازا',
-            scheduledTime: '05:55 PM',
-            order: 4,
-          ),
-          BusStopModel(
-            id: 'S202-5',
-            name: '90th Street North',
-            nameAr: 'شمال التسعين',
-            scheduledTime: '06:15 PM',
-            order: 5,
-          ),
-        ],
-      ),
-      const BusRouteModel(
-        id: 'R203',
-        routeNumber: 'Route 203',
-        name: 'Smart Village HQ — Heliopolis & Nasr City Return',
-        shift: 'Evening',
-        departureTime: '04:45 PM',
-        estimatedArrival: '06:10 PM',
-        totalSeats: 28,
-        availableSeats: 10,
-        driverName: 'Essam Nabil',
-        driverPhone: '+20 111 555 8899',
-        busPlate: 'س ع ص 9012',
-        status: 'on_time',
-        stops: [
-          BusStopModel(
-            id: 'S203-1',
-            name: 'Smart Village (AlexBank HQ)',
-            nameAr: 'القرية الذكية - مقر بنك الإسكندرية',
-            scheduledTime: '04:45 PM',
-            order: 1,
-          ),
-          BusStopModel(
-            id: 'S203-2',
-            name: 'Tayaran Intersection',
-            nameAr: 'تقاطع الطيران',
-            scheduledTime: '05:20 PM',
-            order: 2,
-          ),
-          BusStopModel(
-            id: 'S203-3',
-            name: 'Abbas El Akkad',
-            nameAr: 'عباس العقاد',
-            scheduledTime: '05:35 PM',
-            order: 3,
-          ),
-          BusStopModel(
-            id: 'S203-4',
-            name: 'Roxy Plaza',
-            nameAr: 'روكسي',
-            scheduledTime: '05:50 PM',
-            order: 4,
-          ),
-          BusStopModel(
-            id: 'S203-5',
-            name: 'Korba Square',
-            nameAr: 'ميدان الكوربة',
-            scheduledTime: '06:10 PM',
-            order: 5,
-          ),
-        ],
-      ),
-      const BusRouteModel(
-        id: 'R204',
-        routeNumber: 'Route 204',
-        name: 'Smart Village HQ — 6th of October & Zayed Return',
-        shift: 'Evening',
-        departureTime: '04:45 PM',
-        estimatedArrival: '05:55 PM',
-        totalSeats: 28,
-        availableSeats: 14,
-        driverName: 'Sameh Refaat',
-        driverPhone: '+20 122 333 4411',
-        busPlate: 'ط ي ك 3456',
-        status: 'on_time',
-        stops: [
-          BusStopModel(
-            id: 'S204-1',
-            name: 'Smart Village (AlexBank HQ)',
-            nameAr: 'القرية الذكية - مقر بنك الإسكندرية',
-            scheduledTime: '04:45 PM',
-            order: 1,
-          ),
-          BusStopModel(
-            id: 'S204-2',
-            name: 'Mehwar Axis',
-            nameAr: 'محور 26 يوليو',
-            scheduledTime: '05:05 PM',
-            order: 2,
-          ),
-          BusStopModel(
-            id: 'S204-3',
-            name: 'Hyper One',
-            nameAr: 'هايبر وان',
-            scheduledTime: '05:20 PM',
-            order: 3,
-          ),
-          BusStopModel(
-            id: 'S204-4',
-            name: 'Sheikh Zayed Entrance 1',
-            nameAr: 'مدخل زايد 1',
-            scheduledTime: '05:35 PM',
-            order: 4,
-          ),
-          BusStopModel(
-            id: 'S204-5',
-            name: 'Hosary Mosque',
-            nameAr: 'جامع الحصري',
-            scheduledTime: '05:55 PM',
-            order: 5,
-          ),
-        ],
-      ),
-    ];
-
-    // Default demonstration active pass
-    _activePass = BusBoardingPassModel(
-      id: 'PASS-88214',
-      routeId: 'R101',
-      routeName: 'Maadi — HQ Express',
-      routeNumber: 'Route 101',
-      busNumber: 'Bus #14',
-      stopName: 'Victoria Square',
-      seatNumber: 14,
-      employeeName: 'Ahmed Hassan',
-      departureTime: '07:15 AM',
-      status: 'active',
-      qrPayload: 'ALEXBANK-TRANSIT:ROUTE-101:SEAT-14:AHMED-HASSAN:PASS-88214',
-      bookedAt: DateTime(2026, 9, 17, 6, 30),
-    );
-  }
-
-  /// Loads routes and passes with brief network delay simulation.
-  Future<void> loadBuses() async {
+  /// Loads official bus routes from Firestore and optimizes stops based on active passenger bookings.
+  Future<void> loadRoutes({String? employeeName}) async {
     safeEmit(const BusStates.loading());
-    await Future.delayed(const Duration(milliseconds: 500));
+
+    final sync = FirestoreSyncService.instance;
+    var loadedRoutes = await sync.getBusRoutes();
+
+    // If Firestore collections are newly initialized/empty, seed initial records
+    if (loadedRoutes.isEmpty) {
+      await FirestoreDataSeeder.seedInitialDataIfNeeded();
+      loadedRoutes = await sync.getBusRoutes();
+    }
+
+    // Retrieve passenger bookings from Firestore to perform dynamic route optimization
+    final allBookings = await sync.getBusBookings();
+
+    final optimizedRoutes = <BusRouteModel>[];
+    for (final route in loadedRoutes) {
+      final routeBookings = allBookings.where((b) => b.routeId == route.id).toList();
+      final bookedStops = routeBookings.map((b) => b.stopName).toList();
+
+      final plan = BusRouteOptimizer.optimizeRoute(
+        stops: route.stops,
+        bookedPickupStops: bookedStops,
+      );
+
+      final available = routeBookings.isNotEmpty
+          ? (route.totalSeats - routeBookings.length).clamp(0, route.totalSeats)
+          : route.availableSeats;
+
+      optimizedRoutes.add(route.copyWith(
+        stops: plan.optimizedStops,
+        availableSeats: available,
+      ));
+    }
+
+    _routes = optimizedRoutes;
+
+    // Check for employee's active pass in Firestore
+    if (employeeName != null) {
+      final userBookings = await sync.getBusBookings(employeeName: employeeName);
+      _activePass = userBookings.isNotEmpty ? userBookings.first : null;
+    }
+
+    if (_selectedRoute != null) {
+      _selectedRoute = _routes.firstWhere(
+        (r) => r.id == _selectedRoute!.id,
+        orElse: () => _routes.first,
+      );
+    }
+
     safeEmit(const BusStates.loaded());
   }
 
@@ -502,7 +131,7 @@ class BusCubit extends Cubit<BusStates> {
     safeEmit(const BusStates.loaded());
   }
 
-  /// Reserves a seat on a selected route for the designated pickup stop.
+  /// Reserves a seat on a selected route for the designated pickup stop directly in Firestore.
   Future<bool> bookSeat({
     required String routeId,
     required String stopId,
@@ -528,7 +157,6 @@ class BusCubit extends Cubit<BusStates> {
     }
 
     safeEmit(const BusStates.bookingSeat());
-    await Future.delayed(const Duration(milliseconds: 800));
 
     final assignedSeat = (route.totalSeats - route.availableSeats) + 1;
     final passId = 'PASS-${DateTime.now().millisecondsSinceEpoch.toString().substring(7)}';
@@ -548,29 +176,24 @@ class BusCubit extends Cubit<BusStates> {
       bookedAt: DateTime.now(),
     );
 
-    // Update route seats
-    _routes[routeIndex] = route.copyWith(
-      availableSeats: route.availableSeats - 1,
+    // Save to Firestore collections
+    final sync = FirestoreSyncService.instance;
+    await sync.saveBusBooking(newPass);
+
+    final updatedRoute = route.copyWith(
+      availableSeats: (route.availableSeats - 1).clamp(0, route.totalSeats),
     );
+    _routes[routeIndex] = updatedRoute;
+    await sync.saveBusRoute(updatedRoute);
 
     _activePass = newPass;
-
-    // Sync booking to Firestore (fire-and-forget)
-    FirestoreSyncService.instance.syncBusBooking(
-      passId: newPass.id,
-      routeId: route.id,
-      employeeName: newPass.employeeName,
-      stopName: newPass.stopName,
-      seatNumber: newPass.seatNumber,
-      status: 'active',
-    );
 
     safeEmit(BusStates.success(newPass));
     safeEmit(const BusStates.loaded());
     return true;
   }
 
-  /// Cancels an active seat reservation.
+  /// Cancels an active seat reservation in Firestore and re-optimizes the route stops.
   Future<bool> cancelBooking(String passId) async {
     if (_activePass == null || _activePass!.id != passId) {
       safeEmit(const BusStates.error(message: 'Boarding pass not found'));
@@ -578,28 +201,23 @@ class BusCubit extends Cubit<BusStates> {
     }
 
     safeEmit(const BusStates.cancellingBooking());
-    await Future.delayed(const Duration(milliseconds: 700));
+
+    final savedRouteId = _activePass!.routeId;
+    final sync = FirestoreSyncService.instance;
+    await sync.cancelBusBooking(passId);
 
     // Restore seat on route
-    final routeIndex = _routes.indexWhere((r) => r.id == _activePass!.routeId);
+    final routeIndex = _routes.indexWhere((r) => r.id == savedRouteId);
     if (routeIndex != -1) {
       final route = _routes[routeIndex];
-      _routes[routeIndex] = route.copyWith(
+      final updatedRoute = route.copyWith(
         availableSeats: (route.availableSeats + 1).clamp(0, route.totalSeats),
       );
+      _routes[routeIndex] = updatedRoute;
+      await sync.saveBusRoute(updatedRoute);
     }
 
     _activePass = null;
-
-    // Sync cancellation to Firestore
-    FirestoreSyncService.instance.syncBusBooking(
-      passId: passId,
-      routeId: '',
-      employeeName: '',
-      stopName: '',
-      seatNumber: 0,
-      status: 'cancelled',
-    );
 
     safeEmit(const BusStates.success('Seat reservation cancelled successfully'));
     safeEmit(const BusStates.loaded());
@@ -614,16 +232,16 @@ class BusCubit extends Cubit<BusStates> {
     }
 
     safeEmit(const BusStates.checkingInToday());
-    await Future.delayed(const Duration(milliseconds: 600));
-
     _activePass = _activePass!.copyWith(status: 'boarded');
+    await FirestoreSyncService.instance.saveBusBooking(_activePass!);
+
     safeEmit(const BusStates.success('Checked in with driver! Enjoy your ride.'));
     safeEmit(const BusStates.loaded());
   }
 
   // ================= ADMIN ROUTE & SCHEDULE CONTROLS =================
 
-  /// Admin: Adds a new station to an existing route.
+  /// Admin: Adds a new station to an existing route directly in Firestore.
   void addStationToRoute(String routeId, BusStopModel newStop) {
     final index = _routes.indexWhere((r) => r.id == routeId);
     if (index == -1) return;
@@ -632,12 +250,15 @@ class BusCubit extends Cubit<BusStates> {
     final updatedStops = List<BusStopModel>.from(route.stops)..add(newStop);
     updatedStops.sort((a, b) => a.order.compareTo(b.order));
 
-    _routes[index] = route.copyWith(stops: updatedStops);
+    final updatedRoute = route.copyWith(stops: updatedStops);
+    _routes[index] = updatedRoute;
+    FirestoreSyncService.instance.saveBusRoute(updatedRoute);
+
     safeEmit(BusStates.success('Station "${newStop.name}" added to ${route.routeNumber}'));
     safeEmit(const BusStates.loaded());
   }
 
-  /// Admin: Removes a station from an existing route.
+  /// Admin: Removes a station from an existing route in Firestore.
   void removeStationFromRoute(String routeId, String stopId) {
     final index = _routes.indexWhere((r) => r.id == routeId);
     if (index == -1) return;
@@ -645,7 +266,10 @@ class BusCubit extends Cubit<BusStates> {
     final route = _routes[index];
     final updatedStops = route.stops.where((s) => s.id != stopId).toList();
 
-    _routes[index] = route.copyWith(stops: updatedStops);
+    final updatedRoute = route.copyWith(stops: updatedStops);
+    _routes[index] = updatedRoute;
+    FirestoreSyncService.instance.saveBusRoute(updatedRoute);
+
     safeEmit(BusStates.success('Station removed from ${route.routeNumber}'));
     safeEmit(const BusStates.loaded());
   }
@@ -663,7 +287,10 @@ class BusCubit extends Cubit<BusStates> {
       return s;
     }).toList();
 
-    _routes[index] = route.copyWith(stops: updatedStops);
+    final updatedRoute = route.copyWith(stops: updatedStops);
+    _routes[index] = updatedRoute;
+    FirestoreSyncService.instance.saveBusRoute(updatedRoute);
+
     safeEmit(BusStates.success('Station timing updated to $newTime'));
     safeEmit(const BusStates.loaded());
   }
@@ -680,15 +307,21 @@ class BusCubit extends Cubit<BusStates> {
     if (index == -1) return;
 
     final route = _routes[index];
-    _routes[index] = route.copyWith(
+    final updatedRoute = route.copyWith(
       departureTime: departureTime ?? route.departureTime,
       estimatedArrival: estimatedArrival ?? route.estimatedArrival,
       driverName: driverName ?? route.driverName,
       busPlate: busPlate ?? route.busPlate,
     );
+    _routes[index] = updatedRoute;
+    FirestoreSyncService.instance.saveBusRoute(updatedRoute);
+
     safeEmit(BusStates.success('Route details updated for ${route.routeNumber}'));
     safeEmit(const BusStates.loaded());
   }
+
+  /// Alias for loadRoutes to support existing screen callbacks.
+  Future<void> loadBuses() => loadRoutes();
 
   /// Admin: Automatically generates or syncs the mirrored evening return route
   /// originating from Smart Village (HQ) back to the Cairo departure stations in exact reverse order.
@@ -697,7 +330,10 @@ class BusCubit extends Cubit<BusStates> {
     String departureTime = '04:45 PM',
     String estimatedArrival = '06:00 PM',
   }) {
-    final morningRoute = _routes.firstWhere((r) => r.id == morningRouteId);
+    final morningRoute = _routes.firstWhere(
+      (r) => r.id == morningRouteId,
+      orElse: () => FirestoreDataSeeder.initialRoutes.firstWhere((r) => r.id == morningRouteId),
+    );
     final eveningRouteId = morningRoute.id.replaceFirst('R1', 'R2');
     final eveningRouteNumber = morningRoute.routeNumber.replaceFirst('10', '20');
 
@@ -750,8 +386,16 @@ class BusCubit extends Cubit<BusStates> {
       _routes.add(eveningRoute);
     }
 
+    FirestoreSyncService.instance.saveBusRoute(eveningRoute);
+
     safeEmit(BusStates.success('Mirrored evening return route synced for $eveningRouteNumber'));
     safeEmit(const BusStates.loaded());
     return eveningRoute;
+  }
+
+  @override
+  Future<void> close() {
+    _routeSubscription?.cancel();
+    return super.close();
   }
 }

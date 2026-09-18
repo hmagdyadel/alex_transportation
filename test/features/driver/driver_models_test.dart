@@ -145,5 +145,33 @@ void main() {
       expect(trip.currentStop?.name, 'AlexBank HQ');
       expect(trip.nextStop?.name, 'Innovation Park');
     });
+
+    test('Stop skipping: nextStop skips intermediate stops marked isSkipped', () {
+      // 10 stops, stops 1-5 and stop 7 are skipped
+      final stops = List.generate(10, (i) {
+        final stopNum = i + 1;
+        final isSkipped = (stopNum <= 5) || (stopNum == 7);
+        return BusStopModel(
+          id: 'S-$stopNum',
+          name: 'Stop $stopNum',
+          scheduledTime: '07:${stopNum * 5} AM',
+          order: stopNum,
+          isSkipped: isSkipped,
+          riderCount: isSkipped ? 0 : 2,
+        );
+      });
+
+      final optimizedTrip = trip.copyWith(
+        currentStopIndex: 5, // Stop 6 (index 5)
+        stops: stops,
+      );
+
+      expect(optimizedTrip.isRouteOptimized, isTrue);
+      expect(optimizedTrip.skippedStopsCount, equals(6));
+      expect(optimizedTrip.currentStop?.name, equals('Stop 6'));
+      // Next stop must be Stop 8 (skipping Stop 7!)
+      expect(optimizedTrip.nextStop?.name, equals('Stop 8'));
+      expect(optimizedTrip.nextActiveStopIndex, equals(7)); // index 7 is Stop 8
+    });
   });
 }

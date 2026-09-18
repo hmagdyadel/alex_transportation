@@ -16,6 +16,8 @@ class BusStopModel {
   final double? latitude;
   final double? longitude;
   final double radiusMeters;
+  final bool isSkipped;
+  final int riderCount;
 
   const BusStopModel({
     required this.id,
@@ -28,6 +30,8 @@ class BusStopModel {
     this.latitude,
     this.longitude,
     this.radiusMeters = 150.0,
+    this.isSkipped = false,
+    this.riderCount = 0,
   });
 
   factory BusStopModel.fromJson(Map<String, dynamic> json) =>
@@ -46,6 +50,8 @@ class BusStopModel {
     double? latitude,
     double? longitude,
     double? radiusMeters,
+    bool? isSkipped,
+    int? riderCount,
   }) {
     return BusStopModel(
       id: id ?? this.id,
@@ -58,6 +64,8 @@ class BusStopModel {
       latitude: latitude ?? this.latitude,
       longitude: longitude ?? this.longitude,
       radiusMeters: radiusMeters ?? this.radiusMeters,
+      isSkipped: isSkipped ?? this.isSkipped,
+      riderCount: riderCount ?? this.riderCount,
     );
   }
 }

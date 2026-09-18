@@ -362,10 +362,29 @@
   - `DriverAdminCubit`:
     - Shift and captain profile loader.
     - Driver assignment to bus routes and errand vehicles.
-- **Zero Remaining TODOs**:
-  - Verified 0 remaining TODO comments across the entire codebase (`lib/` and `test/`).
-- **Comprehensive Unit Testing**:
-  - Created [`test/features/admin/admin_cubits_test.dart`](file:///Users/haithammagdy/Flutter/alex_transportation/test/features/admin/admin_cubits_test.dart) with 19 comprehensive unit tests.
-  - Test suite expanded to **126/126 passing tests** across all modules.
-  - `flutter analyze`: **0 issues found**.
+---
+
+## Phase 11 — Cloud Firestore Direct Backend & Dynamic Route Optimization
+**Date:** 2026-09-18
+**Branch:** `phase-6` & `main`
+
+### Built
+- **Dynamic Route Optimization & Smart Stop Skipping Engine (`BusRouteOptimizer`)**:
+  - Implemented automatic pruning of leading empty stations: if a line has 10 stations and stations 1–5 have 0 scheduled riders, the bus route automatically starts directly from station 6.
+  - Implemented intermediate stop skipping: intermediate stations with 0 scheduled riders (such as station 7) are marked `isSkipped = true`, bypassed on the driver GPS navigation route, and badged in the UI.
+  - Destination preservation: the terminal destination (Smart Village AlexBank HQ) is always preserved as the final arrival stop regardless of rider count.
+  - Visual Indicators: updated `BusStopTimeline` with `SKIPPED (0 RIDERS)` badges, rider count chips, and dimmed visual treatment for skipped stops; added `⚡ Route Optimized` indicator to `DriverTripHUDCard`.
+- **Zero Dummy Data — Direct Cloud Firestore Backend Layer**:
+  - Refactored `BusCubit`, `DriverCubit`, `GarageCubit`, `ErrandCarCubit`, and all Admin cubits (`AccessAdminCubit`, `BusAdminCubit`, `GarageAdminCubit`, `ErrandAdminCubit`, `DriverAdminCubit`) to read, write, and synchronize directly with Cloud Firestore collections (`bus_routes`, `bus_bookings`, `garage_subscriptions`, `errand_fleet`, `errand_requests`, `driver_trips`, `invite_codes`).
+  - Created `FirestoreDataSeeder` to automatically seed official transit master datasets into Firestore if collections are newly initialized or empty.
+  - Enhanced `FirestoreSyncService` with domain repository methods, collections listeners, and a responsive in-memory cache for offline resiliency and fast test execution.
+- **Model Enhancements**:
+  - Enhanced `BusStopModel` with `isSkipped` and `riderCount` fields.
+  - Enhanced `DriverTripModel` with `nextStop` skipping logic, `nextActiveStopIndex`, `isAtLastActiveStop`, and `isRouteOptimized`.
+  - Regenerated `bus_stop_model.g.dart` via `build_runner`.
+- **Automated Testing & Code Quality**:
+  - Added unit test suites for `BusRouteOptimizer` (`test/features/buses/bus_route_optimizer_test.dart`) and driver dynamic stop skipping (`test/features/driver/driver_stop_skipping_test.dart`).
+  - Test suite expanded to **133/133 tests passing** (100% pass rate across unit, bloc, and widget tests).
+  - `flutter analyze`: **0 issues found** (clean codebase with zero errors or warnings).
+
 

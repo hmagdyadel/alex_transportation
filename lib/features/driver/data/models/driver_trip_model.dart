@@ -52,12 +52,32 @@ class DriverTripModel {
   }
 
   BusStopModel? get nextStop {
-    final nextIdx = currentStopIndex + 1;
-    if (nextIdx < stops.length) {
-      return stops[nextIdx];
+    for (int i = currentStopIndex + 1; i < stops.length; i++) {
+      if (!stops[i].isSkipped) {
+        return stops[i];
+      }
     }
     return null;
   }
+
+  /// Index of the next non-skipped active stop.
+  int? get nextActiveStopIndex {
+    for (int i = currentStopIndex + 1; i < stops.length; i++) {
+      if (!stops[i].isSkipped) {
+        return i;
+      }
+    }
+    return null;
+  }
+
+  /// Whether the current stop is the last active non-skipped stop.
+  bool get isAtLastActiveStop => nextStop == null;
+
+  /// Count of skipped stops on this route.
+  int get skippedStopsCount => stops.where((s) => s.isSkipped).length;
+
+  /// Whether the trip has any skipped stops due to route optimization.
+  bool get isRouteOptimized => skippedStopsCount > 0;
 
   factory DriverTripModel.fromJson(Map<String, dynamic> json) =>
       _$DriverTripModelFromJson(json);
