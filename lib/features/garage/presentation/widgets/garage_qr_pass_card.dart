@@ -145,7 +145,7 @@ class GarageQrPassCard extends StatelessWidget {
           ),
           const SizedBox(height: AppSpacing.xs),
           Text(
-            'Scan at barrier gate reader',
+            'Use button below to check in / out at barrier gate',
             textAlign: TextAlign.center,
             style: AppTypography.caption,
           ),

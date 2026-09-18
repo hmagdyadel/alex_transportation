@@ -56,14 +56,17 @@ extension DriverStatesPatterns<T> on DriverStates<T> {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( _Initial<T> value)?  initial,TResult Function( Loading<T> value)?  loading,TResult Function( Registering<T> value)?  registering,TResult Function( StartingTrip<T> value)?  startingTrip,TResult Function( Loaded<T> value)?  loaded,TResult Function( Empty<T> value)?  empty,TResult Function( Success<T> value)?  success,TResult Function( Error<T> value)?  error,required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( _Initial<T> value)?  initial,TResult Function( Loading<T> value)?  loading,TResult Function( Registering<T> value)?  registering,TResult Function( StartingTrip<T> value)?  startingTrip,TResult Function( AdvancingStop<T> value)?  advancingStop,TResult Function( BoardingPassenger<T> value)?  boardingPassenger,TResult Function( CompletingTrip<T> value)?  completingTrip,TResult Function( Loaded<T> value)?  loaded,TResult Function( Empty<T> value)?  empty,TResult Function( Success<T> value)?  success,TResult Function( Error<T> value)?  error,required TResult orElse(),}){
 final _that = this;
 switch (_that) {
 case _Initial() when initial != null:
 return initial(_that);case Loading() when loading != null:
 return loading(_that);case Registering() when registering != null:
 return registering(_that);case StartingTrip() when startingTrip != null:
-return startingTrip(_that);case Loaded() when loaded != null:
+return startingTrip(_that);case AdvancingStop() when advancingStop != null:
+return advancingStop(_that);case BoardingPassenger() when boardingPassenger != null:
+return boardingPassenger(_that);case CompletingTrip() when completingTrip != null:
+return completingTrip(_that);case Loaded() when loaded != null:
 return loaded(_that);case Empty() when empty != null:
 return empty(_that);case Success() when success != null:
 return success(_that);case Error() when error != null:
@@ -85,14 +88,17 @@ return error(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( _Initial<T> value)  initial,required TResult Function( Loading<T> value)  loading,required TResult Function( Registering<T> value)  registering,required TResult Function( StartingTrip<T> value)  startingTrip,required TResult Function( Loaded<T> value)  loaded,required TResult Function( Empty<T> value)  empty,required TResult Function( Success<T> value)  success,required TResult Function( Error<T> value)  error,}){
+@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( _Initial<T> value)  initial,required TResult Function( Loading<T> value)  loading,required TResult Function( Registering<T> value)  registering,required TResult Function( StartingTrip<T> value)  startingTrip,required TResult Function( AdvancingStop<T> value)  advancingStop,required TResult Function( BoardingPassenger<T> value)  boardingPassenger,required TResult Function( CompletingTrip<T> value)  completingTrip,required TResult Function( Loaded<T> value)  loaded,required TResult Function( Empty<T> value)  empty,required TResult Function( Success<T> value)  success,required TResult Function( Error<T> value)  error,}){
 final _that = this;
 switch (_that) {
 case _Initial():
 return initial(_that);case Loading():
 return loading(_that);case Registering():
 return registering(_that);case StartingTrip():
-return startingTrip(_that);case Loaded():
+return startingTrip(_that);case AdvancingStop():
+return advancingStop(_that);case BoardingPassenger():
+return boardingPassenger(_that);case CompletingTrip():
+return completingTrip(_that);case Loaded():
 return loaded(_that);case Empty():
 return empty(_that);case Success():
 return success(_that);case Error():
@@ -113,14 +119,17 @@ return error(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( _Initial<T> value)?  initial,TResult? Function( Loading<T> value)?  loading,TResult? Function( Registering<T> value)?  registering,TResult? Function( StartingTrip<T> value)?  startingTrip,TResult? Function( Loaded<T> value)?  loaded,TResult? Function( Empty<T> value)?  empty,TResult? Function( Success<T> value)?  success,TResult? Function( Error<T> value)?  error,}){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( _Initial<T> value)?  initial,TResult? Function( Loading<T> value)?  loading,TResult? Function( Registering<T> value)?  registering,TResult? Function( StartingTrip<T> value)?  startingTrip,TResult? Function( AdvancingStop<T> value)?  advancingStop,TResult? Function( BoardingPassenger<T> value)?  boardingPassenger,TResult? Function( CompletingTrip<T> value)?  completingTrip,TResult? Function( Loaded<T> value)?  loaded,TResult? Function( Empty<T> value)?  empty,TResult? Function( Success<T> value)?  success,TResult? Function( Error<T> value)?  error,}){
 final _that = this;
 switch (_that) {
 case _Initial() when initial != null:
 return initial(_that);case Loading() when loading != null:
 return loading(_that);case Registering() when registering != null:
 return registering(_that);case StartingTrip() when startingTrip != null:
-return startingTrip(_that);case Loaded() when loaded != null:
+return startingTrip(_that);case AdvancingStop() when advancingStop != null:
+return advancingStop(_that);case BoardingPassenger() when boardingPassenger != null:
+return boardingPassenger(_that);case CompletingTrip() when completingTrip != null:
+return completingTrip(_that);case Loaded() when loaded != null:
 return loaded(_that);case Empty() when empty != null:
 return empty(_that);case Success() when success != null:
 return success(_that);case Error() when error != null:
@@ -141,13 +150,16 @@ return error(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  initial,TResult Function()?  loading,TResult Function()?  registering,TResult Function()?  startingTrip,TResult Function()?  loaded,TResult Function()?  empty,TResult Function( T data)?  success,TResult Function( String message)?  error,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  initial,TResult Function()?  loading,TResult Function()?  registering,TResult Function()?  startingTrip,TResult Function()?  advancingStop,TResult Function()?  boardingPassenger,TResult Function()?  completingTrip,TResult Function()?  loaded,TResult Function()?  empty,TResult Function( T data)?  success,TResult Function( String message)?  error,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Initial() when initial != null:
 return initial();case Loading() when loading != null:
 return loading();case Registering() when registering != null:
 return registering();case StartingTrip() when startingTrip != null:
-return startingTrip();case Loaded() when loaded != null:
+return startingTrip();case AdvancingStop() when advancingStop != null:
+return advancingStop();case BoardingPassenger() when boardingPassenger != null:
+return boardingPassenger();case CompletingTrip() when completingTrip != null:
+return completingTrip();case Loaded() when loaded != null:
 return loaded();case Empty() when empty != null:
 return empty();case Success() when success != null:
 return success(_that.data);case Error() when error != null:
@@ -169,13 +181,16 @@ return error(_that.message);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  initial,required TResult Function()  loading,required TResult Function()  registering,required TResult Function()  startingTrip,required TResult Function()  loaded,required TResult Function()  empty,required TResult Function( T data)  success,required TResult Function( String message)  error,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  initial,required TResult Function()  loading,required TResult Function()  registering,required TResult Function()  startingTrip,required TResult Function()  advancingStop,required TResult Function()  boardingPassenger,required TResult Function()  completingTrip,required TResult Function()  loaded,required TResult Function()  empty,required TResult Function( T data)  success,required TResult Function( String message)  error,}) {final _that = this;
 switch (_that) {
 case _Initial():
 return initial();case Loading():
 return loading();case Registering():
 return registering();case StartingTrip():
-return startingTrip();case Loaded():
+return startingTrip();case AdvancingStop():
+return advancingStop();case BoardingPassenger():
+return boardingPassenger();case CompletingTrip():
+return completingTrip();case Loaded():
 return loaded();case Empty():
 return empty();case Success():
 return success(_that.data);case Error():
@@ -196,13 +211,16 @@ return error(_that.message);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  initial,TResult? Function()?  loading,TResult? Function()?  registering,TResult? Function()?  startingTrip,TResult? Function()?  loaded,TResult? Function()?  empty,TResult? Function( T data)?  success,TResult? Function( String message)?  error,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  initial,TResult? Function()?  loading,TResult? Function()?  registering,TResult? Function()?  startingTrip,TResult? Function()?  advancingStop,TResult? Function()?  boardingPassenger,TResult? Function()?  completingTrip,TResult? Function()?  loaded,TResult? Function()?  empty,TResult? Function( T data)?  success,TResult? Function( String message)?  error,}) {final _that = this;
 switch (_that) {
 case _Initial() when initial != null:
 return initial();case Loading() when loading != null:
 return loading();case Registering() when registering != null:
 return registering();case StartingTrip() when startingTrip != null:
-return startingTrip();case Loaded() when loaded != null:
+return startingTrip();case AdvancingStop() when advancingStop != null:
+return advancingStop();case BoardingPassenger() when boardingPassenger != null:
+return boardingPassenger();case CompletingTrip() when completingTrip != null:
+return completingTrip();case Loaded() when loaded != null:
 return loaded();case Empty() when empty != null:
 return empty();case Success() when success != null:
 return success(_that.data);case Error() when error != null:
@@ -334,6 +352,102 @@ int get hashCode => runtimeType.hashCode;
 @override
 String toString() {
     return 'DriverStates<$T>.startingTrip()';
+}
+
+
+}
+
+
+
+
+/// @nodoc
+
+
+class AdvancingStop<T> implements DriverStates<T> {
+  const AdvancingStop();
+  
+
+
+
+
+
+
+@override
+bool operator ==(Object other) {
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is AdvancingStop<T>);
+}
+
+
+@override
+int get hashCode => runtimeType.hashCode;
+
+@override
+String toString() {
+    return 'DriverStates<$T>.advancingStop()';
+}
+
+
+}
+
+
+
+
+/// @nodoc
+
+
+class BoardingPassenger<T> implements DriverStates<T> {
+  const BoardingPassenger();
+  
+
+
+
+
+
+
+@override
+bool operator ==(Object other) {
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is BoardingPassenger<T>);
+}
+
+
+@override
+int get hashCode => runtimeType.hashCode;
+
+@override
+String toString() {
+    return 'DriverStates<$T>.boardingPassenger()';
+}
+
+
+}
+
+
+
+
+/// @nodoc
+
+
+class CompletingTrip<T> implements DriverStates<T> {
+  const CompletingTrip();
+  
+
+
+
+
+
+
+@override
+bool operator ==(Object other) {
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is CompletingTrip<T>);
+}
+
+
+@override
+int get hashCode => runtimeType.hashCode;
+
+@override
+String toString() {
+    return 'DriverStates<$T>.completingTrip()';
 }
 
 

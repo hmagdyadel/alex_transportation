@@ -11,8 +11,17 @@ class DriverStates<T> with _$DriverStates<T> {
   /// Registering as a new driver.
   const factory DriverStates.registering() = Registering;
 
-  /// Starting a bus trip (triggers location stream).
+  /// Starting a bus trip.
   const factory DriverStates.startingTrip() = StartingTrip;
+
+  /// Driver moving to or announcing next stop.
+  const factory DriverStates.advancingStop() = AdvancingStop;
+
+  /// Boarding / verifying passenger pass.
+  const factory DriverStates.boardingPassenger() = BoardingPassenger;
+
+  /// Completing the current route run.
+  const factory DriverStates.completingTrip() = CompletingTrip;
 
   const factory DriverStates.loaded() = Loaded;
 

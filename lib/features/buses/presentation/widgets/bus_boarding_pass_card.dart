@@ -280,7 +280,7 @@ class BusBoardingPassCard extends StatelessWidget {
                       Expanded(
                         flex: 3,
                         child: ElevatedButton.icon(
-                          icon: const Icon(Icons.qr_code_scanner_rounded, size: 18),
+                          icon: const Icon(Icons.directions_bus_rounded, size: 18),
                           label: const Text('Board Bus'),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppColors.primary,

@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:flutter_bloc/flutter_bloc.dart';
+
 import 'package:alex_transportation/core/design_system/tokens.dart';
+import 'package:alex_transportation/core/di/injector.dart';
 import 'package:alex_transportation/features/auth/presentation/pages/access_gate_page.dart';
 import 'package:alex_transportation/features/auth/presentation/pages/onboarding_page.dart';
 import 'package:alex_transportation/features/auth/presentation/pages/splash_page.dart';
+import 'package:alex_transportation/features/driver/presentation/bloc/driver_cubit.dart';
+import 'package:alex_transportation/features/driver/presentation/pages/driver_page.dart';
 import 'package:alex_transportation/features/home/presentation/pages/home_page.dart';
 
 /// App-wide router configuration.
@@ -68,8 +73,10 @@ class AppRouter {
       GoRoute(
         path: '/driver',
         name: 'driver',
-        builder: (context, state) =>
-            const _PlaceholderScreen(title: 'Driver Portal'),
+        builder: (context, state) => BlocProvider<DriverCubit>(
+          create: (_) => sl<DriverCubit>(),
+          child: const DriverPage(),
+        ),
       ),
       // Admin panel
       GoRoute(
