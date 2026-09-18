@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:alex_transportation/core/design_system/tokens.dart';
+import 'package:alex_transportation/core/extensions/l10n_extension.dart';
 import 'package:alex_transportation/core/widgets/alex_logo.dart';
 import 'package:alex_transportation/core/widgets/app_card.dart';
 import 'package:alex_transportation/features/errand_cars/data/models/errand_dispatch_pass_model.dart';
@@ -24,6 +25,7 @@ class ErrandDispatchPassCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final isCompleted = pass.status == 'completed';
 
     return AppCard(
@@ -32,7 +34,7 @@ class ErrandDispatchPassCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // Executive Holographic Smart Pass Header (matching fintech design slide)
+          // Executive Holographic Smart Pass Header
           Container(
             padding: const EdgeInsets.all(AppSpacing.md),
             decoration: BoxDecoration(
@@ -68,7 +70,7 @@ class ErrandDispatchPassCard extends StatelessWidget {
                         const AlexLogo(size: 22),
                         const SizedBox(width: AppSpacing.xs),
                         Text(
-                          'AlexBank',
+                          l10n.alexBank,
                           style: AppTypography.titleMedium.copyWith(
                             color: Colors.white,
                             fontWeight: FontWeight.w800,
@@ -104,7 +106,7 @@ class ErrandDispatchPassCard extends StatelessWidget {
                 ),
                 const SizedBox(height: AppSpacing.xs),
                 Text(
-                  'OFFICIAL EXECUTIVE DISPATCH',
+                  l10n.errandPassTitle.toUpperCase(),
                   style: AppTypography.labelLarge.copyWith(
                     color: Colors.white,
                     fontWeight: FontWeight.w800,
@@ -113,7 +115,7 @@ class ErrandDispatchPassCard extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  'ALEXBANK CORPORATE MISSIONS',
+                  l10n.errandOfficialUseBadge,
                   style: AppTypography.caption.copyWith(
                     color: AppColors.accentGold.withValues(alpha: 0.9),
                     fontWeight: FontWeight.w600,
@@ -133,7 +135,7 @@ class ErrandDispatchPassCard extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'MISSION: ${pass.missionCode}',
+                            '${l10n.errandMissionCode}: ${pass.missionCode}',
                             style: AppTypography.bodySmall.copyWith(
                               color: Colors.white,
                               fontWeight: FontWeight.w700,
@@ -153,7 +155,7 @@ class ErrandDispatchPassCard extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(width: AppSpacing.xs),
-                    // Glowing Approved Pill matching the image
+                    // Glowing Approved Pill
                     Container(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 10,
@@ -195,7 +197,9 @@ class ErrandDispatchPassCard extends StatelessWidget {
                           ),
                           const SizedBox(width: 4),
                           Text(
-                            isCompleted ? 'COMPLETED' : 'APPROVED',
+                            isCompleted
+                                ? l10n.completed.toUpperCase()
+                                : l10n.approved.toUpperCase(),
                             style: AppTypography.caption.copyWith(
                               color: isCompleted
                                   ? Colors.white70
@@ -224,7 +228,7 @@ class ErrandDispatchPassCard extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'ASSIGNED OFFICER',
+                      l10n.garageEmployeeName.toUpperCase(),
                       style: AppTypography.caption.copyWith(
                         fontSize: 9,
                         letterSpacing: 0.5,
@@ -273,7 +277,7 @@ class ErrandDispatchPassCard extends StatelessWidget {
                               ),
                             ),
                             Text(
-                              'Plate: ${pass.carPlate}',
+                              '${l10n.errandPlateNumber}: ${pass.carPlate}',
                               style: AppTypography.caption.copyWith(
                                 color: AppColors.textMid,
                               ),
@@ -308,7 +312,7 @@ class ErrandDispatchPassCard extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'PICKUP',
+                              l10n.errandPickupPoint.toUpperCase(),
                               style: AppTypography.caption.copyWith(
                                 fontSize: 9,
                                 fontWeight: FontWeight.w700,
@@ -346,7 +350,7 @@ class ErrandDispatchPassCard extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'DESTINATION',
+                              l10n.errandDestination.toUpperCase(),
                               style: AppTypography.caption.copyWith(
                                 fontSize: 9,
                                 fontWeight: FontWeight.w700,
@@ -395,7 +399,7 @@ class ErrandDispatchPassCard extends StatelessWidget {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    'DEPARTURE',
+                                    l10n.errandDepartureTime.toUpperCase(),
                                     style: AppTypography.caption.copyWith(
                                       fontSize: 9,
                                       letterSpacing: 0.5,
@@ -436,7 +440,7 @@ class ErrandDispatchPassCard extends StatelessWidget {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    'EST. RETURN',
+                                    l10n.errandReturnTime.toUpperCase(),
                                     style: AppTypography.caption.copyWith(
                                       fontSize: 9,
                                       letterSpacing: 0.5,
@@ -481,7 +485,7 @@ class ErrandDispatchPassCard extends StatelessWidget {
                         ),
                         const SizedBox(width: AppSpacing.xs),
                         Text(
-                          'Start: ${pass.startMileage} km',
+                          '${l10n.errandStartOdometer}: ${pass.startMileage} km',
                           style: AppTypography.caption.copyWith(
                             fontWeight: FontWeight.w600,
                             color: AppColors.accentBlue,
@@ -489,7 +493,7 @@ class ErrandDispatchPassCard extends StatelessWidget {
                         ),
                         if (pass.endMileage != null) ...[
                           Text(
-                            '  →  End: ${pass.endMileage} km',
+                            '  →  ${l10n.errandEndOdometer}: ${pass.endMileage} km',
                             style: AppTypography.caption.copyWith(
                               fontWeight: FontWeight.w600,
                               color: AppColors.accentBlue,
@@ -520,82 +524,6 @@ class ErrandDispatchPassCard extends StatelessWidget {
 
                 const SizedBox(height: AppSpacing.md),
 
-                // Mission Status & Verification Banner
-                Container(
-                  padding: const EdgeInsets.all(AppSpacing.md),
-                  decoration: BoxDecoration(
-                    color: isCompleted
-                        ? AppColors.greenLight
-                        : ((pass.startMileage != null) ? AppColors.greenLight : AppColors.goldLight),
-                    borderRadius: BorderRadius.circular(AppRadius.md),
-                    border: Border.all(
-                      color: (isCompleted || pass.startMileage != null)
-                          ? AppColors.primaryLight.withValues(alpha: 0.3)
-                          : AppColors.accentGold.withValues(alpha: 0.3),
-                    ),
-                  ),
-                  child: Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(AppSpacing.xs),
-                        decoration: BoxDecoration(
-                          color: (isCompleted || pass.startMileage != null
-                                  ? AppColors.primary
-                                  : AppColors.accentGold)
-                              .withValues(alpha: 0.15),
-                          shape: BoxShape.circle,
-                        ),
-                        child: Icon(
-                          isCompleted
-                              ? Icons.check_circle_rounded
-                              : (pass.startMileage != null
-                                  ? Icons.directions_car_rounded
-                                  : Icons.verified_user_rounded),
-                          color: (isCompleted || pass.startMileage != null)
-                              ? AppColors.primary
-                              : AppColors.accentGold,
-                          size: 24,
-                        ),
-                      ),
-                      const SizedBox(width: AppSpacing.sm),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              isCompleted
-                                  ? 'Mission Completed — Vehicle Returned'
-                                  : (pass.startMileage != null
-                                      ? 'Mission In Progress — Vehicle Dispatched'
-                                      : 'Authorized Official Mission Pass'),
-                              style: AppTypography.bodySmall.copyWith(
-                                fontWeight: FontWeight.w700,
-                                color: (isCompleted || pass.startMileage != null)
-                                    ? AppColors.primary
-                                    : AppColors.textPrimary,
-                              ),
-                            ),
-                            const SizedBox(height: 2),
-                            Text(
-                              isCompleted
-                                  ? 'Trip concluded and logged to corporate fleet'
-                                  : (pass.startMileage != null
-                                      ? 'Heading to ${pass.destination}'
-                                      : 'Approved for ${pass.employeeName} (${pass.missionCode})'),
-                              style: AppTypography.caption.copyWith(
-                                color: AppColors.textMid,
-                                fontSize: 10,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-
-                const SizedBox(height: AppSpacing.md),
-
                 // Action Buttons
                 if (!isCompleted)
                   Row(
@@ -611,8 +539,8 @@ class ErrandDispatchPassCard extends StatelessWidget {
                           ),
                           label: Text(
                             onStartMission != null
-                                ? 'Start Mission'
-                                : 'End Mission',
+                                ? l10n.errandStartMissionAction
+                                : l10n.errandEndMissionAction,
                           ),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppColors.primary,
@@ -644,7 +572,7 @@ class ErrandDispatchPassCard extends StatelessWidget {
                               ),
                             ),
                             onPressed: onCancel,
-                            child: const Text('Cancel'),
+                            child: Text(l10n.cancel),
                           ),
                         ),
                       ],
@@ -670,7 +598,7 @@ class ErrandDispatchPassCard extends StatelessWidget {
                         ),
                         const SizedBox(width: 6),
                         Text(
-                          'Mission Complete — Vehicle Returned',
+                          l10n.completed,
                           style: AppTypography.bodySmall.copyWith(
                             color: AppColors.primary,
                             fontWeight: FontWeight.w600,

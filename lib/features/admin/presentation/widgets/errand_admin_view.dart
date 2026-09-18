@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:alex_transportation/core/design_system/tokens.dart';
+import 'package:alex_transportation/core/extensions/l10n_extension.dart';
 import 'package:alex_transportation/core/widgets/app_card.dart';
 import 'package:alex_transportation/core/widgets/status_pill.dart';
 import 'package:alex_transportation/features/errand_cars/presentation/bloc/errand_car_cubit.dart';
@@ -12,6 +13,25 @@ import 'package:alex_transportation/features/errand_cars/presentation/bloc/erran
 /// and reviewing dual-point routes (Pickup Point -> Destination).
 class ErrandAdminView extends StatelessWidget {
   const ErrandAdminView({super.key});
+
+  String _formatStatus(BuildContext context, String status) {
+    switch (status.toLowerCase()) {
+      case 'pending':
+        return context.l10n.pending.toUpperCase();
+      case 'approved':
+        return context.l10n.approved.toUpperCase();
+      case 'active':
+        return context.l10n.active.toUpperCase();
+      case 'completed':
+        return context.l10n.completed.toUpperCase();
+      case 'rejected':
+        return context.l10n.rejected.toUpperCase();
+      case 'cancelled':
+        return context.l10n.cancelled.toUpperCase();
+      default:
+        return status.toUpperCase();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +59,7 @@ class ErrandAdminView extends StatelessWidget {
                       children: [
                         Expanded(
                           child: Text(
-                            'EXECUTIVE FLEET OVERVIEW',
+                            context.l10n.adminExecutiveFleetOverview,
                             style: AppTypography.labelSmall.copyWith(
                               letterSpacing: 0.8,
                               fontWeight: FontWeight.w700,
@@ -48,7 +68,7 @@ class ErrandAdminView extends StatelessWidget {
                         ),
                         const SizedBox(width: AppSpacing.xs),
                         StatusPill(
-                          label: '$availableCars / ${fleet.length} AVAILABLE',
+                          label: context.l10n.adminAvailableCarsCount(availableCars, fleet.length),
                           type: availableCars > 0 ? StatusPillType.active : StatusPillType.danger,
                         ),
                       ],
@@ -131,7 +151,7 @@ class ErrandAdminView extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'MISSION REQUEST MANIFEST (${requests.length})',
+                    '${context.l10n.adminMissionRequestManifest} (${requests.length})',
                     style: AppTypography.labelLarge.copyWith(
                       fontWeight: FontWeight.w800,
                       letterSpacing: 0.5,
@@ -185,7 +205,7 @@ class ErrandAdminView extends StatelessWidget {
                                     ],
                                   ),
                                   Text(
-                                    'Dept: ${req.department} • Supervisor: ${req.supervisorName}',
+                                    context.l10n.adminDeptSupervisor(req.department, req.supervisorName),
                                     style: AppTypography.caption.copyWith(
                                       color: AppColors.textSecondary,
                                       fontSize: 10,
@@ -198,7 +218,7 @@ class ErrandAdminView extends StatelessWidget {
                             ),
                             const SizedBox(width: AppSpacing.xs),
                             StatusPill(
-                              label: req.status.toUpperCase().replaceAll('_', ' '),
+                              label: _formatStatus(context, req.status),
                               type: isApproved
                                   ? StatusPillType.active
                                   : isPending
@@ -230,7 +250,7 @@ class ErrandAdminView extends StatelessWidget {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      'PICKUP',
+                                      context.l10n.adminPickupLabel,
                                       style: AppTypography.caption.copyWith(
                                         fontSize: 8,
                                         fontWeight: FontWeight.w700,
@@ -268,7 +288,7 @@ class ErrandAdminView extends StatelessWidget {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      'DESTINATION',
+                                      context.l10n.adminDestinationLabel,
                                       style: AppTypography.caption.copyWith(
                                         fontSize: 8,
                                         fontWeight: FontWeight.w700,
@@ -298,7 +318,7 @@ class ErrandAdminView extends StatelessWidget {
                           children: [
                             Expanded(
                               child: Text(
-                                'Purpose: ${req.purpose}',
+                                context.l10n.adminPurposeWithDetails(req.purpose),
                                 style: AppTypography.caption.copyWith(color: AppColors.textMid),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,

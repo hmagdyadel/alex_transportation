@@ -7,6 +7,8 @@ import 'package:alex_transportation/core/design_system/tokens.dart';
 import 'package:alex_transportation/core/di/injector.dart';
 import 'package:alex_transportation/core/widgets/alex_logo.dart';
 import 'package:alex_transportation/core/widgets/custom_loading_indicator.dart';
+import 'package:alex_transportation/core/widgets/language_selector_button.dart';
+import 'package:alex_transportation/core/extensions/l10n_extension.dart';
 import 'package:alex_transportation/features/admin/presentation/bloc/admin_cubit.dart';
 import 'package:alex_transportation/features/admin/presentation/bloc/admin_states.dart';
 import 'package:alex_transportation/features/admin/presentation/widgets/access_admin_view.dart';
@@ -48,18 +50,10 @@ class _AdminPageContentState extends State<_AdminPageContent>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
-  static const _tabs = [
-    Tab(icon: Icon(Icons.directions_bus_rounded), text: 'Buses'),
-    Tab(icon: Icon(Icons.local_parking_rounded), text: 'Garage'),
-    Tab(icon: Icon(Icons.directions_car_rounded), text: 'Errand'),
-    Tab(icon: Icon(Icons.badge_rounded), text: 'Drivers'),
-    Tab(icon: Icon(Icons.vpn_key_rounded), text: 'Access'),
-  ];
-
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: _tabs.length, vsync: this);
+    _tabController = TabController(length: 5, vsync: this);
   }
 
   @override
@@ -70,6 +64,16 @@ class _AdminPageContentState extends State<_AdminPageContent>
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
+
+    final tabs = [
+      Tab(icon: const Icon(Icons.directions_bus_rounded), text: l10n.adminTabBuses),
+      Tab(icon: const Icon(Icons.local_parking_rounded), text: l10n.adminTabGarage),
+      Tab(icon: const Icon(Icons.directions_car_rounded), text: l10n.adminTabErrand),
+      Tab(icon: const Icon(Icons.badge_rounded), text: l10n.adminTabDrivers),
+      Tab(icon: const Icon(Icons.vpn_key_rounded), text: l10n.adminTabSecurity),
+    ];
+
     return BlocConsumer<AdminCubit, AdminStates>(
       listener: (context, state) {
         switch (state) {
@@ -122,7 +126,7 @@ class _AdminPageContentState extends State<_AdminPageContent>
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(
-                          'AlexBank Operations',
+                          l10n.adminOperationsTitle,
                           style: AppTypography.titleMedium.copyWith(
                             fontWeight: FontWeight.w800,
                             color: AppColors.primary,
@@ -131,7 +135,7 @@ class _AdminPageContentState extends State<_AdminPageContent>
                           overflow: TextOverflow.ellipsis,
                         ),
                         Text(
-                          'CENTRAL MOBILITY CONSOLE',
+                          l10n.adminCentralMobilityConsole,
                           style: AppTypography.caption.copyWith(
                             fontSize: 9,
                             letterSpacing: 0.8,
@@ -147,13 +151,14 @@ class _AdminPageContentState extends State<_AdminPageContent>
                 ],
               ),
               actions: [
+                const LanguageSelectorButton(),
                 IconButton(
-                  tooltip: 'Switch to Employee View',
+                  tooltip: l10n.adminSwitchToEmployeeView,
                   icon: const Icon(Icons.home_outlined, color: AppColors.primary),
                   onPressed: () => context.go('/home'),
                 ),
                 IconButton(
-                  tooltip: 'Exit to Access Gate',
+                  tooltip: l10n.adminExitToAccessGate,
                   icon: const Icon(Icons.logout_rounded, color: AppColors.textSecondary),
                   onPressed: () => context.go('/access'),
                 ),
@@ -168,7 +173,7 @@ class _AdminPageContentState extends State<_AdminPageContent>
                   fontWeight: FontWeight.w800,
                   letterSpacing: 0.5,
                 ),
-                tabs: _tabs,
+                tabs: tabs,
               ),
             ),
             body: TabBarView(

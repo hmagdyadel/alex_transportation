@@ -1,5 +1,6 @@
 import 'package:get_it/get_it.dart';
 
+import 'package:alex_transportation/core/localization/locale_cubit.dart';
 import 'package:alex_transportation/features/auth/presentation/bloc/auth_cubit.dart';
 import 'package:alex_transportation/features/garage/presentation/bloc/garage_cubit.dart';
 import 'package:alex_transportation/features/buses/presentation/bloc/bus_cubit.dart';
@@ -19,7 +20,8 @@ final sl = GetIt.instance;
 /// Phase 0: only Cubit skeletons.
 /// Subsequent phases add data sources, repositories, and use cases.
 Future<void> setupInjector() async {
-  // ─── Auth ──────────────────────────────────────────────────────────────
+  // ─── Localization & Auth ──────────────────────────────────────────────
+  sl.registerLazySingleton(() => LocaleCubit());
   sl.registerLazySingleton(() => AuthCubit());
 
   // ─── Garage ────────────────────────────────────────────────────────────

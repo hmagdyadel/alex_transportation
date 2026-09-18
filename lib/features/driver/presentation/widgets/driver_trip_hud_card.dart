@@ -4,6 +4,7 @@ import 'package:alex_transportation/core/design_system/tokens.dart';
 import 'package:alex_transportation/core/widgets/app_button.dart';
 import 'package:alex_transportation/core/widgets/app_card.dart';
 import 'package:alex_transportation/core/widgets/status_pill.dart';
+import 'package:alex_transportation/core/extensions/l10n_extension.dart';
 import 'package:alex_transportation/features/driver/data/models/driver_trip_model.dart';
 
 /// Active Trip HUD Card showing route details, live stop status,
@@ -61,7 +62,7 @@ class DriverTripHudCard extends StatelessWidget {
                         borderRadius: BorderRadius.circular(AppRadius.sm),
                       ),
                       child: Text(
-                        'ROUTE ${trip.routeNumber}',
+                        context.l10n.driverRouteNumber(trip.routeNumber),
                         style: AppTypography.caption.copyWith(
                           color: AppColors.textPrimary,
                           fontWeight: FontWeight.w800,
@@ -81,10 +82,10 @@ class DriverTripHudCard extends StatelessWidget {
                 ),
                 StatusPill(
                   label: trip.isCompleted
-                      ? 'COMPLETED'
+                      ? context.l10n.driverStatusCompleted
                       : trip.isInProgress
-                          ? 'IN PROGRESS'
-                          : 'SCHEDULED',
+                          ? context.l10n.driverStatusInProgress
+                          : context.l10n.driverStatusScheduled,
                   type: trip.isCompleted
                       ? StatusPillType.neutral
                       : trip.isInProgress
@@ -125,7 +126,7 @@ class DriverTripHudCard extends StatelessWidget {
                               ),
                               const SizedBox(width: 4),
                               Text(
-                                'Plate: ${trip.busPlate}',
+                                context.l10n.driverPlate(trip.busPlate),
                                 style: AppTypography.caption.copyWith(
                                   color: AppColors.textMid,
                                   fontWeight: FontWeight.w600,
@@ -151,7 +152,7 @@ class DriverTripHudCard extends StatelessWidget {
                       child: Column(
                         children: [
                           Text(
-                            'BOARDED',
+                            context.l10n.driverBoardedBadge,
                             style: AppTypography.caption.copyWith(
                               fontSize: 9,
                               fontWeight: FontWeight.w700,
@@ -204,7 +205,7 @@ class DriverTripHudCard extends StatelessWidget {
                               Row(
                                 children: [
                                   Text(
-                                    'STOP ${trip.currentStopIndex + 1} OF ${trip.stops.length}',
+                                    context.l10n.driverStopOfTotal(trip.currentStopIndex + 1, trip.stops.length),
                                     style: AppTypography.caption.copyWith(
                                       fontSize: 9,
                                       fontWeight: FontWeight.w800,
@@ -215,7 +216,7 @@ class DriverTripHudCard extends StatelessWidget {
                                   if (isLastStop) ...[
                                     const SizedBox(width: 4),
                                     Text(
-                                      '• FINAL DESTINATION',
+                                      '• ${context.l10n.driverFinalDestination}',
                                       style: AppTypography.caption.copyWith(
                                         fontSize: 9,
                                         fontWeight: FontWeight.w800,
@@ -270,7 +271,7 @@ class DriverTripHudCard extends StatelessWidget {
                 // Action Controls
                 if (trip.isScheduled)
                   AppButton(
-                    label: 'Start Trip & Open Manifest',
+                    label: context.l10n.driverStartTripOpenManifest,
                     leadingIcon: const Icon(Icons.play_arrow_rounded, color: Colors.white, size: 20),
                     onPressed: onStartTrip,
                   ),
@@ -281,7 +282,7 @@ class DriverTripHudCard extends StatelessWidget {
                       if (!isLastStop)
                         Expanded(
                           child: AppButton(
-                            label: 'Arrived at Next Stop',
+                            label: context.l10n.driverArrivedAtNextStop,
                             leadingIcon: const Icon(Icons.skip_next_rounded, color: Colors.white, size: 20),
                             onPressed: onAdvanceStop,
                           ),
@@ -290,7 +291,7 @@ class DriverTripHudCard extends StatelessWidget {
                         Expanded(
                           child: ElevatedButton.icon(
                             icon: const Icon(Icons.check_circle_rounded, size: 18),
-                            label: const Text('Complete Trip'),
+                            label: Text(context.l10n.driverCompleteTripAction),
                             style: ElevatedButton.styleFrom(
                               backgroundColor: AppColors.primaryLight,
                               foregroundColor: Colors.white,
@@ -326,7 +327,7 @@ class DriverTripHudCard extends StatelessWidget {
                         ),
                         const SizedBox(width: 6),
                         Text(
-                          'Route Completed Successfully',
+                          context.l10n.driverRouteCompletedSuccess,
                           style: AppTypography.bodySmall.copyWith(
                             color: AppColors.primary,
                             fontWeight: FontWeight.w700,

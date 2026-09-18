@@ -186,6 +186,62 @@ void main() {
       await cubit.close();
     });
 
+    test('Unregistered ISL login is rejected and directs user to register', () async {
+      final cubit = AuthCubit();
+      await cubit.loginWithIsl(
+        isl: 'UNKNOWN-999',
+        password: 'alex123',
+        role: 'employee',
+      );
+      expect(cubit.state is Error, isTrue);
+      final errorState = cubit.state as Error;
+      expect(errorState.message.contains('not found. Please register first.'), isTrue);
+      await cubit.close();
+    });
+
+    test('First-time user registration creates account, logs in, and persists', () async {
+      final cubit = AuthCubit();
+      await cubit.registerAccount(
+        isl: 'EMP-7777',
+        name: 'Haitham Adel',
+        department: 'IT Architecture',
+        role: 'employee',
+        password: 'password123',
+      );
+      expect(cubit.state is Success<dynamic>, isTrue);
+      expect(cubit.currentIsl, 'EMP-7777');
+      expect(cubit.currentUserName, 'Haitham Adel');
+      expect(cubit.currentRole, 'employee');
+
+      // Logout
+      await cubit.signOut();
+
+      // Login again with registered credentials
+      await cubit.loginWithIsl(
+        isl: 'EMP-7777',
+        password: 'password123',
+        role: 'employee',
+      );
+      expect(cubit.state is Success<dynamic>, isTrue);
+      expect(cubit.currentIsl, 'EMP-7777');
+      await cubit.close();
+    });
+
+    test('Registering duplicate ISL is rejected with error', () async {
+      final cubit = AuthCubit();
+      await cubit.registerAccount(
+        isl: '10492', // already exists
+        name: 'Another Person',
+        department: 'Retail Banking',
+        role: 'employee',
+        password: 'alex123',
+      );
+      expect(cubit.state is Error, isTrue);
+      final errorState = cubit.state as Error;
+      expect(errorState.message.contains('already exists'), isTrue);
+      await cubit.close();
+    });
+
     test('SignOut clears role and session', () async {
       final cubit = AuthCubit();
       await cubit.loginWithIsl(

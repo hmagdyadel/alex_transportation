@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:alex_transportation/core/design_system/tokens.dart';
+import 'package:alex_transportation/core/extensions/l10n_extension.dart';
 import 'package:alex_transportation/core/widgets/app_card.dart';
 import 'package:alex_transportation/core/widgets/status_pill.dart';
 import 'package:alex_transportation/features/buses/data/models/bus_boarding_pass_model.dart';
@@ -20,6 +21,7 @@ class BusBoardingPassCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final isBoarded = pass.status == 'boarded';
 
     return AppCard(
@@ -62,7 +64,9 @@ class BusBoardingPassCard extends StatelessWidget {
                   ],
                 ),
                 StatusPill(
-                  label: isBoarded ? 'BOARDED' : 'CONFIRMED',
+                  label: isBoarded
+                      ? l10n.busBoardedAction.toUpperCase()
+                      : l10n.confirmed.toUpperCase(),
                   type: isBoarded ? StatusPillType.neutral : StatusPillType.active,
                 ),
               ],
@@ -114,7 +118,7 @@ class BusBoardingPassCard extends StatelessWidget {
                       child: Column(
                         children: [
                           Text(
-                            'SEATING',
+                            l10n.busSeatLabel.toUpperCase(),
                             style: AppTypography.caption.copyWith(
                               fontSize: 9,
                               fontWeight: FontWeight.w700,
@@ -161,7 +165,7 @@ class BusBoardingPassCard extends StatelessWidget {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    'PICKUP STOP',
+                                    l10n.busPickupStopLabel.toUpperCase(),
                                     style: AppTypography.caption.copyWith(
                                       fontSize: 9,
                                       letterSpacing: 0.5,
@@ -199,7 +203,7 @@ class BusBoardingPassCard extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'DEPARTURE',
+                                l10n.busDepartureTimeLabel.toUpperCase(),
                                 style: AppTypography.caption.copyWith(
                                   fontSize: 9,
                                   letterSpacing: 0.5,
@@ -258,8 +262,8 @@ class BusBoardingPassCard extends StatelessWidget {
                           children: [
                             Text(
                               isBoarded
-                                  ? 'Boarded — Sit in any free seat'
-                                  : 'Spot Reserved — Free Seating',
+                                  ? l10n.busBoardedAction
+                                  : l10n.busActivePassHeader,
                               style: AppTypography.bodySmall.copyWith(
                                 fontWeight: FontWeight.w700,
                                 color: isBoarded
@@ -269,9 +273,7 @@ class BusBoardingPassCard extends StatelessWidget {
                             ),
                             const SizedBox(height: 2),
                             Text(
-                              isBoarded
-                                  ? 'Passenger on board ${pass.routeNumber}'
-                                  : 'Open seating — you can sit in any free seat',
+                              '${pass.routeNumber} — ${pass.routeName}',
                               style: AppTypography.caption.copyWith(
                                 color: AppColors.textMid,
                                 fontSize: 10,
@@ -294,7 +296,7 @@ class BusBoardingPassCard extends StatelessWidget {
                         flex: 3,
                         child: ElevatedButton.icon(
                           icon: const Icon(Icons.directions_bus_rounded, size: 18),
-                          label: const Text('Board Bus'),
+                          label: Text(l10n.busBoardAction),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppColors.primary,
                             foregroundColor: Colors.white,
@@ -322,7 +324,7 @@ class BusBoardingPassCard extends StatelessWidget {
                             ),
                           ),
                           onPressed: onCancel,
-                          child: const Text('Cancel'),
+                          child: Text(l10n.cancel),
                         ),
                       ),
                     ],
@@ -346,7 +348,7 @@ class BusBoardingPassCard extends StatelessWidget {
                               ),
                               const SizedBox(width: 6),
                               Text(
-                                'Checked In — Have a safe ride!',
+                                l10n.busBoardedAction,
                                 style: AppTypography.bodySmall.copyWith(
                                   color: AppColors.primary,
                                   fontWeight: FontWeight.w600,

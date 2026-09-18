@@ -240,3 +240,36 @@
 - **Testing & Verification**:
   - Full test suite: **86/86 tests passing across all features**.
   - `flutter analyze`: **0 issues found**.
+
+---
+
+## Phase 7 — Trilingual Localization (EN, AR, IT), User Registration, Biometric Auth & Network Checker
+**Date:** 2026-09-18
+**Branch:** `phase-6`
+
+### Built
+- **Trilingual Internationalization (`l10n`)**:
+  - Standard Flutter localization system via `flutter_localizations`, `intl`, and `l10n.yaml`.
+  - Full coverage across 3 languages: English (`en`), Egyptian Arabic (`ar` with full RTL layout support), and Italian (`it`).
+  - Over 130 localized strings across all features: Auth, Onboarding, Splash, Home, Garage, Buses, Errand Cars, Driver Portal, and Admin Console.
+  - `LocaleCubit` for dynamic runtime language switching and persistence across app launches.
+  - Modern `LanguageSelectorButton` capsule pill displaying active country flag, locale code, and dropdown menu (`🇬🇧 EN ▾`, `🇪🇬 عربي ▾`, `🇮🇹 IT ▾`).
+- **First-Time User Registration & Unregistered Rejection**:
+  - `AuthCubit.registerAccount(...)`: Registers new employee, driver, or admin accounts with Full Name, Bank Staff ISL, Department, and Password.
+  - Accounts persisted locally to `SharedPreferences` (`registered_accounts_json`).
+  - `AuthCubit.loginWithIsl(...)`: Validates against registered accounts; rejects unregistered ISLs directing them to register first.
+  - Interactive toggle on `AccessGatePage` between **Sign In** and **Register Account** modes.
+- **Biometric Authentication (Face ID / Fingerprint)**:
+  - `BiometricHelper`: Wrapper for `local_auth` 3.x (`isBiometricSupported()`, `authenticate()`, `getAvailableBiometrics()`).
+  - `SecurePrefs`: Encrypted storage for biometric credentials and activation decisions via `flutter_secure_storage` 11.x.
+  - `EnableBiometricBottomSheet`: Interactive post-login prompt to enable biometric login.
+  - Quick biometric sign-in button on `AccessGatePage`.
+  - Android & iOS native configurations: `FlutterFragmentActivity`, `USE_BIOMETRIC` permissions, and `NSFaceIDUsageDescription`.
+- **Real-Time Network Connectivity Checker**:
+  - `NetworkConnectivityService`: Background connectivity stream listener with active socket ping verification (`connectivity_plus` & `internet_connection_checker`).
+  - `NoInternetScreen`: AlexBank-branded full-screen overlay with animated offline state and interactive "Try Again" re-ping.
+  - Global overlay configured in `main.dart` `MaterialApp.router` `builder`.
+- **Automated Testing & Code Quality**:
+  - Expanded test suite: **93/93 tests passing** (including unit tests for registration, persistence, and unknown ISL rejection).
+  - `flutter analyze`: **0 issues found**.
+

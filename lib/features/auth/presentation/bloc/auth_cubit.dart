@@ -1,11 +1,14 @@
+import 'dart:convert';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:alex_transportation/core/extensions/safe_emit_extension.dart';
+import 'package:alex_transportation/core/services/biometric_helper.dart';
+import 'package:alex_transportation/core/services/secure_prefs.dart';
 import 'package:alex_transportation/features/auth/data/models/user_account_model.dart';
 import 'package:alex_transportation/features/auth/presentation/bloc/auth_states.dart';
 
-/// Manages ISL + Password authentication, session state, and role access.
+/// Manages ISL + Password authentication, User Registration, Session State, and Biometrics.
 class AuthCubit extends Cubit<AuthStates> {
   static const String _kOnboardingCompleteKey = 'onboarding_completed';
   static const String _kAuthTokenKey = 'auth_session_token';
@@ -13,11 +16,18 @@ class AuthCubit extends Cubit<AuthStates> {
   static const String _kUserIslKey = 'user_isl';
   static const String _kUserNameKey = 'user_name';
   static const String _kIsAdminKey = 'is_admin_account';
+  static const String _kRegisteredAccountsKey = 'registered_accounts_json';
 
   String _currentRole = 'employee';
   String _currentIsl = '10492';
   String _currentUserName = 'Ahmed Hassan';
   bool _isAdminAccount = false;
+
+  // Stored temporarily in memory for biometric setup bottom sheet
+  String? _lastIsl;
+  String? _lastPassword;
+  String? _lastRole;
+  String? _lastName;
 
   final List<UserAccountModel> _accounts = [
     const UserAccountModel(
@@ -64,15 +74,56 @@ class AuthCubit extends Cubit<AuthStates> {
     ),
   ];
 
-  AuthCubit() : super(const AuthStates.initial());
+  AuthCubit() : super(const AuthStates.initial()) {
+    _loadPersistedAccounts();
+  }
 
   String get currentRole => _currentRole;
   String get currentIsl => _currentIsl;
   String get currentUserName => _currentUserName;
   bool get isAdmin => _isAdminAccount || _currentRole == 'admin';
 
+  String? get lastIsl => _lastIsl;
+  String? get lastPassword => _lastPassword;
+  String? get lastRole => _lastRole;
+  String? get lastName => _lastName;
+
   List<UserAccountModel> get adminAccounts =>
       _accounts.where((a) => a.role == 'admin').toList();
+
+  /// Loads custom registered accounts persisted in SharedPreferences
+  Future<void> _loadPersistedAccounts() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final jsonStr = prefs.getString(_kRegisteredAccountsKey);
+      if (jsonStr != null && jsonStr.isNotEmpty) {
+        final List<dynamic> decoded = jsonDecode(jsonStr);
+        for (final item in decoded) {
+          final account = UserAccountModel.fromJson(item as Map<String, dynamic>);
+          if (!_accounts.any((a) => a.isl.toUpperCase() == account.isl.toUpperCase())) {
+            _accounts.insert(0, account);
+          }
+        }
+      }
+    } catch (_) {
+      // Keep defaults if parsing fails
+    }
+  }
+
+  /// Persists custom registered accounts to SharedPreferences
+  Future<void> _persistAccounts() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      // Save all non-default accounts
+      final customAccounts = _accounts
+          .where((a) => a.isl != 'ADM-9001' && a.isl != 'ADM-9002' &&
+              a.isl != 'DRV-2001' && a.isl != 'DRV-2002' &&
+              a.isl != '10492' && a.isl != 'EMP-1001')
+          .map((a) => a.toJson())
+          .toList();
+      await prefs.setString(_kRegisteredAccountsKey, jsonEncode(customAccounts));
+    } catch (_) {}
+  }
 
   /// Checks if onboarding was already shown.
   Future<bool> isOnboardingCompleted() async {
@@ -100,6 +151,70 @@ class AuthCubit extends Cubit<AuthStates> {
     return false;
   }
 
+  /// Register a new employee/driver/admin account for first-time users.
+  Future<void> registerAccount({
+    required String isl,
+    required String name,
+    required String department,
+    required String role,
+    required String password,
+  }) async {
+    final cleanIsl = isl.trim().toUpperCase();
+    final cleanName = name.trim();
+    final cleanDept = department.trim();
+    final cleanPassword = password.trim();
+
+    if (cleanName.isEmpty) {
+      safeEmit(const AuthStates.error(message: 'Please enter your Full Name'));
+      return;
+    }
+
+    if (cleanIsl.isEmpty) {
+      safeEmit(const AuthStates.error(message: 'Please enter your Bank Staff ISL'));
+      return;
+    }
+
+    if (cleanPassword.length < 4) {
+      safeEmit(const AuthStates.error(message: 'Password must be at least 4 characters'));
+      return;
+    }
+
+    // Check if account already exists
+    final exists = _accounts.any(
+      (a) => a.isl.toUpperCase() == cleanIsl ||
+          a.isl.replaceAll('-', '').toUpperCase() == cleanIsl.replaceAll('-', ''),
+    );
+
+    if (exists) {
+      safeEmit(AuthStates.error(
+        message: 'An account with ISL $cleanIsl already exists. Please Sign In.',
+      ));
+      return;
+    }
+
+    safeEmit(const AuthStates.verifyingCode());
+    await Future.delayed(const Duration(milliseconds: 700));
+
+    final newAccount = UserAccountModel(
+      isl: cleanIsl,
+      name: cleanName,
+      department: cleanDept.isEmpty ? 'Central Operations' : cleanDept,
+      role: role,
+      password: cleanPassword,
+      createdAt: DateTime.now(),
+    );
+
+    _accounts.insert(0, newAccount);
+    await _persistAccounts();
+
+    // Auto sign-in with newly registered credentials
+    await loginWithIsl(
+      isl: cleanIsl,
+      password: cleanPassword,
+      role: role,
+    );
+  }
+
   /// Primary login method with Bank Staff ISL, Password, and Role selection.
   Future<void> loginWithIsl({
     required String isl,
@@ -120,28 +235,22 @@ class AuthCubit extends Cubit<AuthStates> {
     }
 
     safeEmit(const AuthStates.verifyingCode());
-    await Future.delayed(const Duration(milliseconds: 900));
+    await Future.delayed(const Duration(milliseconds: 600));
 
     // Look up registered account
-    final matchingAccount = _accounts.firstWhere(
+    final index = _accounts.indexWhere(
       (a) => a.isl.toUpperCase() == cleanIsl ||
           a.isl.replaceAll('-', '').toUpperCase() == cleanIsl.replaceAll('-', ''),
-      orElse: () {
-        // Fallback for dynamic accounts
-        final defaultRole = cleanIsl.startsWith('ADM')
-            ? 'admin'
-            : (cleanIsl.startsWith('DRV') ? 'driver' : 'employee');
-        return UserAccountModel(
-          isl: cleanIsl,
-          name: cleanIsl.startsWith('DRV')
-              ? 'Captain ($cleanIsl)'
-              : (cleanIsl.startsWith('ADM') ? 'Admin ($cleanIsl)' : 'Employee ($cleanIsl)'),
-          department: 'AlexBank General',
-          role: defaultRole,
-          password: cleanPassword,
-        );
-      },
     );
+
+    if (index == -1) {
+      safeEmit(AuthStates.error(
+        message: 'Account with ISL $cleanIsl not found. Please register first.',
+      ));
+      return;
+    }
+
+    final matchingAccount = _accounts[index];
 
     // Validate Password
     if (matchingAccount.password != cleanPassword) {
@@ -183,6 +292,12 @@ class AuthCubit extends Cubit<AuthStates> {
       resolvedRole = role; // 'admin' or 'employee' (admin using user services)
     }
 
+    // Store temporary credentials for biometric bottom sheet prompt
+    _lastIsl = matchingAccount.isl;
+    _lastPassword = cleanPassword;
+    _lastRole = resolvedRole;
+    _lastName = matchingAccount.name;
+
     // Save session
     _currentRole = resolvedRole;
     _currentIsl = matchingAccount.isl;
@@ -197,6 +312,85 @@ class AuthCubit extends Cubit<AuthStates> {
     await prefs.setBool(_kIsAdminKey, isActuallyAdmin);
 
     safeEmit(AuthStates.success(resolvedRole));
+  }
+
+  // ==================== BIOMETRICS ====================
+
+  /// Check if biometric hardware is supported and enabled in app
+  Future<bool> checkBiometricAvailability() async {
+    final isSupported = await BiometricHelper.isBiometricSupported();
+    if (!isSupported) return false;
+    return await SecurePrefs.isBiometricEnabled();
+  }
+
+  /// Check if credentials exist in secure storage
+  Future<bool> hasSavedBiometricCredentials() async {
+    final creds = await SecurePrefs.getBiometricCredentials();
+    return creds != null;
+  }
+
+  /// Attempt biometric login
+  Future<void> loginWithBiometrics() async {
+    final isSupported = await BiometricHelper.isBiometricSupported();
+    if (!isSupported) {
+      safeEmit(const AuthStates.error(
+        message: 'Biometric authentication is not supported on this device.',
+      ));
+      return;
+    }
+
+    final creds = await SecurePrefs.getBiometricCredentials();
+    if (creds == null) {
+      safeEmit(const AuthStates.error(
+        message: 'No saved biometric credentials found. Please sign in with your ISL.',
+      ));
+      return;
+    }
+
+    final authenticated = await BiometricHelper.authenticate(
+      localizedReason: 'Please authenticate to access AlexBank Transit',
+    );
+
+    if (!authenticated) {
+      safeEmit(const AuthStates.error(
+        message: 'Biometric authentication cancelled or failed.',
+      ));
+      return;
+    }
+
+    await loginWithIsl(
+      isl: creds['isl']!,
+      password: creds['password']!,
+      role: creds['role'] ?? 'employee',
+    );
+  }
+
+  /// Enable biometric login with provided credentials
+  Future<void> enableBiometricLogin({
+    required String isl,
+    required String password,
+    required String role,
+    required String name,
+  }) async {
+    await SecurePrefs.saveBiometricCredentials(
+      isl: isl,
+      password: password,
+      role: role,
+      name: name,
+    );
+  }
+
+  /// Disable biometric login
+  Future<void> disableBiometricLogin() async {
+    await SecurePrefs.clearBiometricCredentials();
+  }
+
+  /// Clear temporary credentials from memory
+  void clearLastCredentials() {
+    _lastIsl = null;
+    _lastPassword = null;
+    _lastRole = null;
+    _lastName = null;
   }
 
   /// Allows existing Admins to provision and register new Administrator accounts.
@@ -232,6 +426,7 @@ class AuthCubit extends Cubit<AuthStates> {
     );
 
     _accounts.insert(0, newAdmin);
+    await _persistAccounts();
     safeEmit(AuthStates.success('New Admin "$cleanName" ($cleanIsl) registered successfully'));
   }
 
@@ -273,6 +468,7 @@ class AuthCubit extends Cubit<AuthStates> {
     await prefs.remove(_kIsAdminKey);
     _currentRole = 'employee';
     _isAdminAccount = false;
+    clearLastCredentials();
     safeEmit(const AuthStates.initial());
   }
 }

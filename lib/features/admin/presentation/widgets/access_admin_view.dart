@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:alex_transportation/core/design_system/tokens.dart';
+import 'package:alex_transportation/core/extensions/l10n_extension.dart';
 import 'package:alex_transportation/core/widgets/app_button.dart';
 import 'package:alex_transportation/core/widgets/app_card.dart';
 import 'package:alex_transportation/core/widgets/app_text_field.dart';
@@ -38,6 +39,7 @@ class _AccessAdminViewState extends State<AccessAdminView> {
     final islCtrl = TextEditingController(text: 'ADM-');
     final deptCtrl = TextEditingController();
     final passCtrl = TextEditingController(text: 'alex123');
+    final l10n = context.l10n;
 
     showDialog<void>(
       context: context,
@@ -58,10 +60,10 @@ class _AccessAdminViewState extends State<AccessAdminView> {
               ),
             ),
             const SizedBox(width: AppSpacing.sm),
-            const Expanded(
+            Expanded(
               child: Text(
-                'Provision New Admin',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                l10n.adminProvisionTitle,
+                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
             ),
           ],
@@ -72,34 +74,34 @@ class _AccessAdminViewState extends State<AccessAdminView> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Text(
-                'Create an authorized administrator account with full console management access.',
+                l10n.adminProvisionSubtitle,
                 style: AppTypography.bodySmall.copyWith(color: AppColors.textMid),
               ),
               const SizedBox(height: AppSpacing.md),
               AppTextField(
                 controller: nameCtrl,
-                label: 'ADMIN FULL NAME',
+                label: l10n.adminFullNameLabel,
                 hint: 'e.g. Tamer El-Sayed',
                 textInputAction: TextInputAction.next,
               ),
               const SizedBox(height: AppSpacing.sm),
               AppTextField(
                 controller: islCtrl,
-                label: 'BANK STAFF ISL',
+                label: l10n.staffIslLabel,
                 hint: 'e.g. ADM-9003',
                 textInputAction: TextInputAction.next,
               ),
               const SizedBox(height: AppSpacing.sm),
               AppTextField(
                 controller: deptCtrl,
-                label: 'DEPARTMENT / DIVISION',
+                label: l10n.adminDeptLabel,
                 hint: 'e.g. Corporate Security & IT',
                 textInputAction: TextInputAction.next,
               ),
               const SizedBox(height: AppSpacing.sm),
               AppTextField(
                 controller: passCtrl,
-                label: 'INITIAL PASSWORD',
+                label: l10n.adminInitialPasswordLabel,
                 hint: 'Minimum 4 characters',
                 textInputAction: TextInputAction.done,
               ),
@@ -109,7 +111,7 @@ class _AccessAdminViewState extends State<AccessAdminView> {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(dlgCtx).pop(),
-            child: const Text('Cancel'),
+            child: Text(l10n.cancel),
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
@@ -125,8 +127,8 @@ class _AccessAdminViewState extends State<AccessAdminView> {
 
               if (name.isEmpty || isl.isEmpty || pass.isEmpty) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Please fill in Name, ISL, and Password'),
+                  SnackBar(
+                    content: Text(l10n.adminPleaseFillRequiredFields),
                     backgroundColor: AppColors.danger,
                     behavior: SnackBarBehavior.floating,
                   ),
@@ -146,14 +148,14 @@ class _AccessAdminViewState extends State<AccessAdminView> {
                 setState(() {});
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content: Text('Admin $name ($isl) provisioned successfully!'),
+                    content: Text(l10n.adminProvisionSuccess(name, isl)),
                     backgroundColor: AppColors.primary,
                     behavior: SnackBarBehavior.floating,
                   ),
                 );
               }
             },
-            child: const Text('Provision Admin'),
+            child: Text(l10n.adminProvisionSubmit),
           ),
         ],
       ),
@@ -191,7 +193,7 @@ class _AccessAdminViewState extends State<AccessAdminView> {
                         ),
                         const SizedBox(width: AppSpacing.xs),
                         Text(
-                          'ADMIN DUAL ACCESS & MOBILITY',
+                          context.l10n.adminDualAccessBannerTitle,
                           style: AppTypography.labelSmall.copyWith(
                             letterSpacing: 0.8,
                             fontWeight: FontWeight.w700,
@@ -201,7 +203,7 @@ class _AccessAdminViewState extends State<AccessAdminView> {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      'As an Administrator, you can switch to Employee Mode to park in the garage, book bus lines, or request errand cars — and return to this console anytime.',
+                      context.l10n.adminDualAccessBannerDesc,
                       style: AppTypography.bodySmall.copyWith(
                         color: AppColors.textSecondary,
                         height: 1.3,
@@ -212,7 +214,7 @@ class _AccessAdminViewState extends State<AccessAdminView> {
                       children: [
                         Expanded(
                           child: AppButton(
-                            label: 'Open Staff Services (Garage/Buses)',
+                            label: context.l10n.adminOpenStaffServices,
                             leadingIcon: const Icon(Icons.directions_bus_rounded, size: 16),
                             variant: AppButtonVariant.primary,
                             onPressed: () => context.go('/home'),
@@ -220,7 +222,7 @@ class _AccessAdminViewState extends State<AccessAdminView> {
                         ),
                         const SizedBox(width: AppSpacing.sm),
                         AppButton(
-                          label: 'Inspect Driver HUD',
+                          label: context.l10n.adminInspectDriverHud,
                           leadingIcon: const Icon(Icons.speed_rounded, size: 16),
                           variant: AppButtonVariant.secondary,
                           onPressed: () => context.go('/driver'),
@@ -246,7 +248,7 @@ class _AccessAdminViewState extends State<AccessAdminView> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'ADMINISTRATOR ACCOUNTS (${adminAccounts.length})',
+                              '${context.l10n.adminAccountsTitle} (${adminAccounts.length})',
                               style: AppTypography.labelSmall.copyWith(
                                 letterSpacing: 0.8,
                                 fontWeight: FontWeight.w700,
@@ -254,7 +256,7 @@ class _AccessAdminViewState extends State<AccessAdminView> {
                             ),
                             const SizedBox(height: 2),
                             Text(
-                              'Staff members with full fleet administration access',
+                              context.l10n.adminAccountsSubtitle,
                               style: AppTypography.caption.copyWith(color: AppColors.textSecondary),
                             ),
                           ],
@@ -268,7 +270,7 @@ class _AccessAdminViewState extends State<AccessAdminView> {
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                           ),
                           icon: const Icon(Icons.person_add_rounded, size: 16),
-                          label: const Text('+ Add Admin'),
+                          label: Text(context.l10n.adminAddAdminButton),
                           onPressed: () => _showAddAdminDialog(context),
                         ),
                       ],
@@ -333,7 +335,7 @@ class _AccessAdminViewState extends State<AccessAdminView> {
                                     ),
                                     const SizedBox(height: 2),
                                     Text(
-                                      'Dept: ${admin.department}',
+                                      context.l10n.adminDeptOnly(admin.department),
                                       style: AppTypography.caption.copyWith(
                                         color: AppColors.textSecondary,
                                         fontSize: 11,
@@ -342,8 +344,8 @@ class _AccessAdminViewState extends State<AccessAdminView> {
                                   ],
                                 ),
                               ),
-                              const StatusPill(
-                                label: 'ACTIVE ADMIN',
+                              StatusPill(
+                                label: context.l10n.adminActiveAdminBadge,
                                 type: StatusPillType.gold,
                               ),
                             ],
@@ -364,7 +366,7 @@ class _AccessAdminViewState extends State<AccessAdminView> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     Text(
-                      'GENERATE ACCESS INVITE CODE',
+                      context.l10n.adminGenerateCodeTitle,
                       style: AppTypography.labelSmall.copyWith(
                         letterSpacing: 0.8,
                         fontWeight: FontWeight.w700,
@@ -374,15 +376,15 @@ class _AccessAdminViewState extends State<AccessAdminView> {
 
                     // Role Selector
                     Text(
-                      'TARGET ROLE',
+                      context.l10n.adminTargetRole,
                       style: AppTypography.caption.copyWith(fontWeight: FontWeight.w700),
                     ),
                     const SizedBox(height: 4),
                     SegmentedButton<String>(
-                      segments: const [
-                        ButtonSegment(value: 'employee', label: Text('Normal User')),
-                        ButtonSegment(value: 'driver', label: Text('Driver')),
-                        ButtonSegment(value: 'admin', label: Text('Admin')),
+                      segments: [
+                        ButtonSegment(value: 'employee', label: Text(context.l10n.roleNormalUser)),
+                        ButtonSegment(value: 'driver', label: Text(context.l10n.roleDriver)),
+                        ButtonSegment(value: 'admin', label: Text(context.l10n.roleAdmin)),
                       ],
                       selected: {_selectedRole},
                       onSelectionChanged: (val) {
@@ -393,20 +395,20 @@ class _AccessAdminViewState extends State<AccessAdminView> {
 
                     AppTextField(
                       controller: _deptController,
-                      label: 'DEPARTMENT / DIVISION',
+                      label: context.l10n.adminDeptLabel,
                       hint: 'e.g. Operations Hub',
                     ),
                     const SizedBox(height: AppSpacing.sm),
 
                     AppTextField(
                       controller: _noteController,
-                      label: 'NOTES / MEMO',
+                      label: context.l10n.adminAdministrativeNotes,
                       hint: 'e.g. Q4 Regional Onboarding Batch',
                     ),
                     const SizedBox(height: AppSpacing.md),
 
                     AppButton(
-                      label: 'Generate Secure Code',
+                      label: context.l10n.adminGenerateCodeButton,
                       leadingIcon: const Icon(Icons.vpn_key_rounded, size: 18),
                       onPressed: () {
                         adminCubit.generateInviteCode(
@@ -426,7 +428,7 @@ class _AccessAdminViewState extends State<AccessAdminView> {
 
               // Existing Invite Codes
               Text(
-                'ACTIVE INVITE CODES (${codes.length})',
+                '${context.l10n.adminInviteCodesTitle} (${codes.length})',
                 style: AppTypography.labelLarge.copyWith(
                   fontWeight: FontWeight.w800,
                   letterSpacing: 0.5,
@@ -472,7 +474,7 @@ class _AccessAdminViewState extends State<AccessAdminView> {
                               ),
                               const SizedBox(height: 2),
                               Text(
-                                'Dept: ${code.department} • Uses: ${code.useCount}',
+                                context.l10n.adminDeptUses(code.department, code.useCount),
                                 style: AppTypography.caption.copyWith(
                                   color: AppColors.textSecondary,
                                   fontSize: 10,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:alex_transportation/core/design_system/tokens.dart';
+import 'package:alex_transportation/core/extensions/l10n_extension.dart';
 import 'package:alex_transportation/core/widgets/alex_logo.dart';
 import 'package:alex_transportation/core/widgets/app_button.dart';
 import 'package:alex_transportation/core/widgets/app_card.dart';
@@ -23,8 +24,9 @@ class GaragePassCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final isCheckedIn = subscription.checkedIn;
-    final slotLabel = subscription.slotLabel ?? 'Pending Slot';
+    final slotLabel = subscription.slotLabel ?? 'P1-014';
 
     return AppCard(
       padding: const EdgeInsets.all(AppSpacing.lg),
@@ -45,7 +47,7 @@ class GaragePassCard extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'DIGITAL PARKING PASS',
+                            l10n.garagePassCardTitle.toUpperCase(),
                             style: AppTypography.caption.copyWith(
                               color: AppColors.primary,
                               fontWeight: FontWeight.w800,
@@ -69,7 +71,9 @@ class GaragePassCard extends StatelessWidget {
               ),
               const SizedBox(width: AppSpacing.xs),
               StatusPill(
-                label: isCheckedIn ? 'CHECKED IN' : 'CHECKED OUT',
+                label: isCheckedIn
+                    ? l10n.garageCheckedInStatus.toUpperCase()
+                    : l10n.garageCheckedOutStatus.toUpperCase(),
                 type: isCheckedIn ? StatusPillType.active : StatusPillType.neutral,
                 icon: Icon(
                   isCheckedIn ? Icons.check_circle : Icons.radio_button_unchecked,
@@ -126,7 +130,7 @@ class GaragePassCard extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'ASSIGNED BAY',
+                          l10n.garageAssignedBay.toUpperCase(),
                           style: AppTypography.caption.copyWith(
                             letterSpacing: 1.0,
                             fontWeight: FontWeight.w800,
@@ -153,9 +157,9 @@ class GaragePassCard extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    _buildInfoColumn('LEVEL', 'Basement 2'),
+                    _buildInfoColumn('LEVEL', 'B2'),
                     _buildInfoColumn('ISL', subscription.isl),
-                    _buildInfoColumn('TIER', 'Executive'),
+                    _buildInfoColumn('STATUS', isCheckedIn ? l10n.active : l10n.pending),
                   ],
                 ),
               ],
@@ -194,8 +198,8 @@ class GaragePassCard extends StatelessWidget {
                     children: [
                       Text(
                         isCheckedIn
-                            ? 'Vehicle currently parked in bay'
-                            : 'Bay available — Ready for parking',
+                            ? l10n.garageCheckedInStatus
+                            : l10n.garageCheckedOutStatus,
                         style: AppTypography.bodySmall.copyWith(
                           fontWeight: FontWeight.w700,
                           color: isCheckedIn ? AppColors.primary : AppColors.textPrimary,
@@ -203,15 +207,7 @@ class GaragePassCard extends StatelessWidget {
                       ),
                       if (isCheckedIn && subscription.checkedInAt != null)
                         Text(
-                          'Checked in at ${_formatTime(subscription.checkedInAt!)}',
-                          style: AppTypography.caption.copyWith(
-                            color: AppColors.textMid,
-                            fontSize: 10,
-                          ),
-                        )
-                      else if (!isCheckedIn)
-                        Text(
-                          'Tap below to check in when you park',
+                          '${l10n.garageEntryDate}: ${_formatTime(subscription.checkedInAt!)}',
                           style: AppTypography.caption.copyWith(
                             color: AppColors.textMid,
                             fontSize: 10,
@@ -227,7 +223,7 @@ class GaragePassCard extends StatelessWidget {
 
           // Toggle Action Button (Check in / Check out)
           AppButton(
-            label: isCheckedIn ? 'Check Out' : 'Check In',
+            label: isCheckedIn ? l10n.garageCheckOutAction : l10n.garageCheckInAction,
             variant: isCheckedIn ? AppButtonVariant.secondary : AppButtonVariant.primary,
             onPressed: isLoading ? null : onCheckInOut,
             leadingIcon: Icon(

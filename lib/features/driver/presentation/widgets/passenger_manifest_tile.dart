@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:alex_transportation/core/design_system/tokens.dart';
 import 'package:alex_transportation/core/widgets/app_card.dart';
+import 'package:alex_transportation/core/extensions/l10n_extension.dart';
 import 'package:alex_transportation/features/driver/data/models/trip_manifest_item_model.dart';
 
 /// Passenger manifest card for the driver's passenger roster with 1-tap check-in.
@@ -140,7 +141,7 @@ class PassengerManifestTile extends StatelessWidget {
                   ),
                   const SizedBox(width: 4),
                   Text(
-                    isBoarded ? 'BOARDED' : 'BOARD',
+                    isBoarded ? context.l10n.driverBoardedBadge : context.l10n.driverBoardButton,
                     style: AppTypography.caption.copyWith(
                       color: isBoarded ? Colors.white : AppColors.primary,
                       fontWeight: FontWeight.w800,

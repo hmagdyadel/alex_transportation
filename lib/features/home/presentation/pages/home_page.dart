@@ -4,7 +4,9 @@ import 'package:go_router/go_router.dart';
 
 import 'package:alex_transportation/core/design_system/tokens.dart';
 import 'package:alex_transportation/core/di/injector.dart';
+import 'package:alex_transportation/core/extensions/l10n_extension.dart';
 import 'package:alex_transportation/core/widgets/alex_logo.dart';
+import 'package:alex_transportation/core/widgets/language_selector_button.dart';
 import 'package:alex_transportation/core/widgets/status_pill.dart';
 import 'package:alex_transportation/features/auth/presentation/bloc/auth_cubit.dart';
 import 'package:alex_transportation/features/buses/presentation/bloc/bus_cubit.dart';
@@ -16,8 +18,8 @@ import 'package:alex_transportation/features/garage/presentation/pages/garage_pa
 
 /// Employee Home shell providing access to:
 /// 1. Garage Parking Pass & Management (Phase 2 - Active)
-/// 2. Bus Routes & Tracking (Phase 3 - Coming Soon)
-/// 3. Errand Car Request (Phase 4 - Coming Soon)
+/// 2. Bus Routes & Tracking (Phase 3 - Active)
+/// 3. Errand Car Request (Phase 4 - Active)
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -28,25 +30,9 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int _selectedModuleIndex = 0;
 
-  static const List<_ModuleInfo> _modules = [
-    _ModuleInfo(
-      title: 'Garage',
-      icon: Icons.local_parking_rounded,
-      badge: 'Active',
-    ),
-    _ModuleInfo(
-      title: 'Buses',
-      icon: Icons.directions_bus_rounded,
-      badge: 'Active',
-    ),
-    _ModuleInfo(
-      title: 'Errand Cars',
-      icon: Icons.directions_car_rounded,
-      badge: 'Active',
-    ),
-  ];
-
   void _showLogoutDialog() {
+    final l10n = context.l10n;
+
     showDialog<void>(
       context: context,
       builder: (dialogContext) => AlertDialog(
@@ -54,18 +40,18 @@ class _HomePageState extends State<HomePage> {
           borderRadius: BorderRadius.circular(AppRadius.lg),
         ),
         title: Text(
-          'Sign Out',
+          l10n.signOutConfirmTitle,
           style: AppTypography.titleLarge,
         ),
         content: Text(
-          'Are you sure you want to end your current session?',
+          l10n.signOutConfirmMessage,
           style: AppTypography.bodyMedium,
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(dialogContext).pop(),
             child: Text(
-              'Cancel',
+              l10n.cancel,
               style: AppTypography.labelLarge.copyWith(
                 color: AppColors.textMid,
               ),
@@ -84,7 +70,7 @@ class _HomePageState extends State<HomePage> {
               context.read<AuthCubit>().signOut();
               context.go('/access');
             },
-            child: const Text('Sign Out'),
+            child: Text(l10n.signOut),
           ),
         ],
       ),
@@ -93,9 +79,22 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final authCubit = context.watch<AuthCubit>();
     final userRole = authCubit.currentRole;
     final isAdmin = authCubit.isAdmin;
+
+    final moduleTitles = [
+      l10n.moduleGarage,
+      l10n.moduleBuses,
+      l10n.moduleErrandCars,
+    ];
+
+    final moduleIcons = [
+      Icons.local_parking_rounded,
+      Icons.directions_bus_rounded,
+      Icons.directions_car_rounded,
+    ];
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -115,7 +114,7 @@ class _HomePageState extends State<HomePage> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    'ALEXBANK',
+                    l10n.alexBank,
                     style: AppTypography.labelMedium.copyWith(
                       color: AppColors.primary,
                       fontWeight: FontWeight.w800,
@@ -125,7 +124,9 @@ class _HomePageState extends State<HomePage> {
                     overflow: TextOverflow.ellipsis,
                   ),
                   Text(
-                    isAdmin ? 'Transit — Admin (Employee Mode)' : 'Transit — Employee Portal',
+                    isAdmin
+                        ? l10n.adminEmployeeModeSubtitle
+                        : l10n.employeePortalSubtitle,
                     style: AppTypography.caption.copyWith(
                       color: AppColors.textMid,
                       fontWeight: FontWeight.w500,
@@ -140,10 +141,11 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
         actions: [
+          const LanguageSelectorButton(),
           StatusPill(
             label: isAdmin
-                ? (userRole == 'employee' ? 'ADMIN (USER MODE)' : 'ADMIN')
-                : 'EMPLOYEE',
+                ? (userRole == 'employee' ? l10n.roleAdminUserMode : l10n.roleAdminBadge)
+                : l10n.roleEmployee,
             type: isAdmin ? StatusPillType.gold : StatusPillType.active,
           ),
           if (isAdmin)
@@ -153,7 +155,7 @@ class _HomePageState extends State<HomePage> {
                 color: AppColors.accentGold,
                 size: 22,
               ),
-              tooltip: 'Return to Admin Console',
+              tooltip: l10n.returnToAdminTooltip,
               onPressed: () => context.go('/admin'),
             ),
           IconButton(
@@ -162,7 +164,7 @@ class _HomePageState extends State<HomePage> {
               color: AppColors.textSecondary,
               size: 20,
             ),
-            tooltip: 'Sign Out',
+            tooltip: l10n.signOut,
             onPressed: _showLogoutDialog,
           ),
           const SizedBox(width: AppSpacing.xs),
@@ -184,8 +186,7 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
             child: Row(
-              children: List.generate(_modules.length, (index) {
-                final module = _modules[index];
+              children: List.generate(moduleTitles.length, (index) {
                 final isSelected = _selectedModuleIndex == index;
 
                 return Expanded(
@@ -227,7 +228,7 @@ class _HomePageState extends State<HomePage> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Icon(
-                              module.icon,
+                              moduleIcons[index],
                               size: 16,
                               color: isSelected
                                   ? Colors.white
@@ -236,15 +237,16 @@ class _HomePageState extends State<HomePage> {
                             const SizedBox(width: 6),
                             Flexible(
                               child: Text(
-                                module.title,
+                                moduleTitles[index],
                                 overflow: TextOverflow.ellipsis,
-                                style: AppTypography.labelMedium.copyWith(
+                                maxLines: 1,
+                                style: AppTypography.labelSmall.copyWith(
                                   color: isSelected
                                       ? Colors.white
                                       : AppColors.textPrimary,
                                   fontWeight: isSelected
                                       ? FontWeight.w700
-                                      : FontWeight.w600,
+                                      : FontWeight.w500,
                                 ),
                               ),
                             ),
@@ -262,37 +264,23 @@ class _HomePageState extends State<HomePage> {
       body: IndexedStack(
         index: _selectedModuleIndex,
         children: [
-          // Module 0: Garage Parking (Phase 2 - Live)
+          // Module 1: Garage Parking
           BlocProvider<GarageCubit>(
-            create: (_) => sl<GarageCubit>()..loadGarageData(),
+            create: (_) => sl<GarageCubit>(),
             child: const GaragePage(),
           ),
-
-          // Module 1: Bus Transit (Phase 3 - Live)
+          // Module 2: Buses Transit
           BlocProvider<BusCubit>(
-            create: (_) => sl<BusCubit>()..loadBuses(),
+            create: (_) => sl<BusCubit>(),
             child: const BusesPage(),
           ),
-
-          // Module 2: Errand Cars (Phase 4 - Live)
+          // Module 3: Errand Cars
           BlocProvider<ErrandCarCubit>(
-            create: (_) => sl<ErrandCarCubit>()..loadFleet(),
+            create: (_) => sl<ErrandCarCubit>(),
             child: const ErrandCarsPage(),
           ),
         ],
       ),
     );
   }
-}
-
-class _ModuleInfo {
-  final String title;
-  final IconData icon;
-  final String badge;
-
-  const _ModuleInfo({
-    required this.title,
-    required this.icon,
-    required this.badge,
-  });
 }

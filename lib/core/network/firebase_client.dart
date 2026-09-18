@@ -26,6 +26,11 @@ abstract final class FirebaseClient {
       debugPrint('[FirebaseClient] ✓ Firebase initialized');
       return true;
     } catch (e) {
+      if (e.toString().contains('duplicate-app')) {
+        _initialized = true;
+        debugPrint('[FirebaseClient] ✓ Firebase already initialized ([DEFAULT] reused)');
+        return true;
+      }
       debugPrint('[FirebaseClient] ✕ Firebase init failed: $e');
       debugPrint(
         '[FirebaseClient] Running in fallback mode without active Firebase connection.',

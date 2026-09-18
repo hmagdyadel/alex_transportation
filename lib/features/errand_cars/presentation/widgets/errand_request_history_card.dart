@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:alex_transportation/core/design_system/tokens.dart';
+import 'package:alex_transportation/core/extensions/l10n_extension.dart';
 import 'package:alex_transportation/core/widgets/app_card.dart';
 import 'package:alex_transportation/core/widgets/status_pill.dart';
 import 'package:alex_transportation/features/errand_cars/data/models/errand_request_model.dart';
@@ -52,8 +53,29 @@ class ErrandRequestHistoryCard extends StatelessWidget {
     }
   }
 
+  String _localizedStatus(BuildContext context, String status) {
+    final l10n = context.l10n;
+    switch (status) {
+      case 'pending':
+        return l10n.pending.toUpperCase();
+      case 'approved':
+        return l10n.approved.toUpperCase();
+      case 'in_progress':
+        return l10n.active.toUpperCase();
+      case 'completed':
+        return l10n.completed.toUpperCase();
+      case 'rejected':
+        return l10n.rejected.toUpperCase();
+      case 'cancelled':
+        return l10n.cancelled.toUpperCase();
+      default:
+        return status.toUpperCase();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final canCancel =
         request.status == 'pending' || request.status == 'approved';
 
@@ -91,7 +113,7 @@ class ErrandRequestHistoryCard extends StatelessWidget {
                 ],
               ),
               StatusPill(
-                label: request.status.toUpperCase().replaceAll('_', ' '),
+                label: _localizedStatus(context, request.status),
                 type: _statusPillType(request.status),
               ),
             ],
@@ -217,7 +239,7 @@ class ErrandRequestHistoryCard extends StatelessWidget {
               alignment: Alignment.centerRight,
               child: TextButton.icon(
                 icon: const Icon(Icons.cancel_outlined, size: 16),
-                label: const Text('Cancel Request'),
+                label: Text(l10n.errandCancelRequestAction),
                 style: TextButton.styleFrom(
                   foregroundColor: AppColors.danger,
                   padding: const EdgeInsets.symmetric(

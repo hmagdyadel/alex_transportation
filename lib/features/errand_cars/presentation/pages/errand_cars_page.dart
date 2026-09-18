@@ -13,6 +13,7 @@ import 'package:alex_transportation/features/errand_cars/presentation/bloc/erran
 import 'package:alex_transportation/features/errand_cars/presentation/bloc/errand_car_states.dart';
 import 'package:alex_transportation/features/errand_cars/presentation/widgets/errand_dispatch_pass_card.dart';
 import 'package:alex_transportation/features/errand_cars/presentation/widgets/errand_request_history_card.dart';
+import 'package:alex_transportation/core/extensions/l10n_extension.dart';
 
 /// Employee Errand Cars Screen:
 /// - Fleet overview with availability banner
@@ -143,8 +144,8 @@ class _ErrandCarsPageState extends State<ErrandCarsPage> {
               );
             } else {
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Request approved! Dispatch pass issued.'),
+                SnackBar(
+                  content: Text(context.l10n.errandRequestApprovedPassIssued),
                   backgroundColor: AppColors.primary,
                   behavior: SnackBarBehavior.floating,
                 ),
@@ -164,6 +165,7 @@ class _ErrandCarsPageState extends State<ErrandCarsPage> {
         }
       },
       builder: (context, state) {
+        final l10n = context.l10n;
         final cubit = context.read<ErrandCarCubit>();
         final isLoading = state is Loading ||
             state is SubmittingRequest ||
@@ -200,14 +202,14 @@ class _ErrandCarsPageState extends State<ErrandCarsPage> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'FLEET AVAILABILITY',
+                                l10n.errandFleetAvailability,
                                 style: AppTypography.labelSmall.copyWith(
                                   letterSpacing: 1.0,
                                 ),
                               ),
                               const SizedBox(height: 2),
                               Text(
-                                '$availableCars Cars Available',
+                                l10n.errandCarsAvailableCount(availableCars),
                                 style: AppTypography.titleLarge.copyWith(
                                   color: AppColors.primary,
                                   fontWeight: FontWeight.w800,
@@ -215,10 +217,10 @@ class _ErrandCarsPageState extends State<ErrandCarsPage> {
                               ),
                             ],
                           ),
-                          const StatusPill(
-                            label: 'OFFICIAL USE',
+                          StatusPill(
+                            label: l10n.errandOfficialUseBadge,
                             type: StatusPillType.gold,
-                            icon: Icon(
+                            icon: const Icon(
                               Icons.verified_rounded,
                               size: 14,
                               color: AppColors.accentGold,
@@ -243,11 +245,11 @@ class _ErrandCarsPageState extends State<ErrandCarsPage> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            '$inUseCars of $totalFleet vehicles dispatched',
+                            l10n.errandDispatchedCount(inUseCars, totalFleet),
                             style: AppTypography.caption,
                           ),
                           Text(
-                            '${(utilizationRate * 100).toInt()}% Utilized',
+                            l10n.errandUtilizedPercent((utilizationRate * 100).toInt()),
                             style: AppTypography.caption.copyWith(
                               fontWeight: FontWeight.w600,
                             ),
@@ -270,11 +272,11 @@ class _ErrandCarsPageState extends State<ErrandCarsPage> {
                   child: Row(
                     children: [
                       _buildSubTabItem(
-                          0, 'My Missions', Icons.assignment_rounded),
+                          0, l10n.errandTabMyMissions, Icons.assignment_rounded),
                       _buildSubTabItem(
-                          1, 'Request', Icons.add_circle_outline_rounded),
+                          1, l10n.errandTabRequestVehicle, Icons.add_circle_outline_rounded),
                       _buildSubTabItem(
-                          2, 'Track', Icons.timeline_rounded),
+                          2, l10n.errandTabTrackStatus, Icons.timeline_rounded),
                     ],
                   ),
                 ),
@@ -342,14 +344,14 @@ class _ErrandCarsPageState extends State<ErrandCarsPage> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'ACTIVE DISPATCH PASS',
+                context.l10n.errandActiveDispatchPass,
                 style: AppTypography.labelSmall.copyWith(
                   letterSpacing: 1.0,
                   fontWeight: FontWeight.w700,
                 ),
               ),
-              const StatusPill(
-                label: 'TODAY',
+              StatusPill(
+                label: context.l10n.commonToday,
                 type: StatusPillType.gold,
               ),
             ],
@@ -378,7 +380,7 @@ class _ErrandCarsPageState extends State<ErrandCarsPage> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Text(
-                  'END MISSION — RECORD RETURN MILEAGE',
+                  context.l10n.errandEndMissionRecordMileage,
                   style: AppTypography.labelSmall.copyWith(
                     letterSpacing: 0.5,
                     fontWeight: FontWeight.w700,
@@ -387,22 +389,22 @@ class _ErrandCarsPageState extends State<ErrandCarsPage> {
                 const SizedBox(height: AppSpacing.sm),
                 AppTextField(
                   controller: _endMileageController,
-                  label: 'ODOMETER READING (KM)',
+                  label: context.l10n.errandOdometerReadingKm,
                   hint: 'e.g. 34560',
                   keyboardType: TextInputType.number,
                   inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                 ),
                 const SizedBox(height: AppSpacing.sm),
                 AppButton(
-                  label: 'Complete Mission & Return Vehicle',
+                  label: context.l10n.errandCompleteMissionAndReturn,
                   variant: AppButtonVariant.secondary,
                   onPressed: () {
                     final mileage =
                         int.tryParse(_endMileageController.text.trim());
                     if (mileage == null) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Please enter a valid mileage reading'),
+                        SnackBar(
+                          content: Text(context.l10n.errandEnterValidMileage),
                           behavior: SnackBarBehavior.floating,
                           backgroundColor: AppColors.danger,
                         ),
@@ -435,18 +437,18 @@ class _ErrandCarsPageState extends State<ErrandCarsPage> {
                 ),
                 const SizedBox(height: AppSpacing.sm),
                 Text(
-                  'No Active Missions',
+                  context.l10n.errandNoActiveMissions,
                   style: AppTypography.titleMedium,
                 ),
                 const SizedBox(height: AppSpacing.xs),
                 Text(
-                  'Submit a vehicle request to get a dispatch pass for your corporate errand.',
+                  context.l10n.errandNoActiveMissionsDesc,
                   textAlign: TextAlign.center,
                   style: AppTypography.bodySmall,
                 ),
                 const SizedBox(height: AppSpacing.md),
                 AppButton(
-                  label: 'Request a Vehicle',
+                  label: context.l10n.errandRequestAVehicleAction,
                   onPressed: () =>
                       setState(() => _selectedSubTab = 1),
                 ),
@@ -457,7 +459,7 @@ class _ErrandCarsPageState extends State<ErrandCarsPage> {
         // Recent Request History
         if (requests.isNotEmpty) ...[
           Text(
-            'REQUEST HISTORY',
+            context.l10n.errandRequestHistory,
             style: AppTypography.labelSmall.copyWith(
               letterSpacing: 1.0,
               fontWeight: FontWeight.w700,
@@ -496,14 +498,14 @@ class _ErrandCarsPageState extends State<ErrandCarsPage> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(
-            'New Vehicle Request',
+            context.l10n.errandNewVehicleRequest,
             style: AppTypography.titleMedium.copyWith(
               fontWeight: FontWeight.w700,
             ),
           ),
           const SizedBox(height: AppSpacing.xxs),
           Text(
-            'Request an official bank vehicle for corporate errands.',
+            context.l10n.errandRequestDesc,
             style: AppTypography.bodySmall,
           ),
           const SizedBox(height: AppSpacing.md),
@@ -511,7 +513,7 @@ class _ErrandCarsPageState extends State<ErrandCarsPage> {
           // Employee Name
           AppTextField(
             controller: _nameController,
-            label: 'FULL NAME',
+            label: context.l10n.errandFullName,
             hint: 'e.g. Ahmed Hassan',
           ),
           const SizedBox(height: AppSpacing.sm),
@@ -519,7 +521,7 @@ class _ErrandCarsPageState extends State<ErrandCarsPage> {
           // ISL
           AppTextField(
             controller: _islController,
-            label: 'BANK ISL (4-8 DIGITS)',
+            label: context.l10n.errandBankIsl,
             hint: '10234',
             keyboardType: TextInputType.number,
             maxLength: 8,
@@ -529,7 +531,7 @@ class _ErrandCarsPageState extends State<ErrandCarsPage> {
 
           // Department
           Text(
-            'DEPARTMENT',
+            context.l10n.errandDepartment,
             style: AppTypography.labelMedium.copyWith(
               color: AppColors.textMid,
               fontWeight: FontWeight.w600,
@@ -561,7 +563,7 @@ class _ErrandCarsPageState extends State<ErrandCarsPage> {
           // Pickup Location
           AppTextField(
             controller: _pickupController,
-            label: 'PICKUP LOCATION',
+            label: context.l10n.errandPickupLocation,
             hint: 'e.g. Smart Village Operations Hub',
             prefixIcon: const Icon(Icons.trip_origin_rounded, color: AppColors.accentGold, size: 20),
           ),
@@ -597,7 +599,7 @@ class _ErrandCarsPageState extends State<ErrandCarsPage> {
           // Destination
           AppTextField(
             controller: _destinationController,
-            label: 'DESTINATION',
+            label: context.l10n.errandDestination,
             hint: 'e.g. Alexandria Main Branch',
             prefixIcon: const Icon(Icons.location_on_rounded, color: AppColors.primary, size: 20),
           ),
@@ -633,14 +635,14 @@ class _ErrandCarsPageState extends State<ErrandCarsPage> {
           // Purpose
           AppTextField(
             controller: _purposeController,
-            label: 'MISSION PURPOSE',
-            hint: 'Describe the reason for this errand',
+            label: context.l10n.errandMissionPurpose,
+            hint: context.l10n.errandMissionPurposeHint,
           ),
           const SizedBox(height: AppSpacing.sm),
 
           // Departure Time
           Text(
-            'DEPARTURE TIME',
+            context.l10n.errandDepartureTime,
             style: AppTypography.labelMedium.copyWith(
               color: AppColors.textMid,
               fontWeight: FontWeight.w600,
@@ -671,7 +673,7 @@ class _ErrandCarsPageState extends State<ErrandCarsPage> {
 
           // Estimated Return
           Text(
-            'ESTIMATED RETURN',
+            context.l10n.errandEstimatedReturn,
             style: AppTypography.labelMedium.copyWith(
               color: AppColors.textMid,
               fontWeight: FontWeight.w600,
@@ -703,7 +705,7 @@ class _ErrandCarsPageState extends State<ErrandCarsPage> {
           // Supervisor Name
           AppTextField(
             controller: _supervisorController,
-            label: 'SUPERVISOR NAME',
+            label: context.l10n.errandSupervisorName,
             hint: 'e.g. Dr. Hany Fouad',
           ),
           const SizedBox(height: AppSpacing.md),
@@ -729,7 +731,7 @@ class _ErrandCarsPageState extends State<ErrandCarsPage> {
                 const SizedBox(width: AppSpacing.xs),
                 Expanded(
                   child: Text(
-                    'Your request will be reviewed by the fleet administrator. A vehicle will be assigned based on availability and supervisor approval.',
+                    context.l10n.errandReviewNotice,
                     style: AppTypography.caption.copyWith(
                       color: AppColors.accentBlue,
                     ),
@@ -742,7 +744,7 @@ class _ErrandCarsPageState extends State<ErrandCarsPage> {
 
           // Submit
           AppButton(
-            label: 'Submit Vehicle Request',
+            label: context.l10n.errandSubmitRequestAction,
             variant: AppButtonVariant.primary,
             onPressed: () => _submitRequest(context),
             leadingIcon: const Icon(
@@ -772,12 +774,12 @@ class _ErrandCarsPageState extends State<ErrandCarsPage> {
             ),
             const SizedBox(height: AppSpacing.sm),
             Text(
-              'No Requests Found',
+              context.l10n.errandNoRequestsFound,
               style: AppTypography.titleMedium,
             ),
             const SizedBox(height: AppSpacing.xs),
             Text(
-              'You have not submitted any errand car requests yet.',
+              context.l10n.errandNoRequestsFoundDesc,
               textAlign: TextAlign.center,
               style: AppTypography.bodySmall,
             ),
@@ -798,13 +800,13 @@ class _ErrandCarsPageState extends State<ErrandCarsPage> {
         // Summary chips
         Row(
           children: [
-            _buildSummaryChip('Pending', pending, AppColors.accentGold,
+            _buildSummaryChip(context.l10n.errandPendingMissions, pending, AppColors.accentGold,
                 AppColors.goldLight),
             const SizedBox(width: AppSpacing.xs),
-            _buildSummaryChip('Active', approved, AppColors.primaryMid,
+            _buildSummaryChip(context.l10n.errandActiveMissions, approved, AppColors.primaryMid,
                 AppColors.greenLight),
             const SizedBox(width: AppSpacing.xs),
-            _buildSummaryChip('Done', completed, AppColors.accentBlue,
+            _buildSummaryChip(context.l10n.errandCompletedMissions, completed, AppColors.accentBlue,
                 AppColors.blueLight),
           ],
         ),
@@ -879,16 +881,16 @@ class _ErrandCarsPageState extends State<ErrandCarsPage> {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppRadius.lg),
         ),
-        title: Text('Cancel Errand Request', style: AppTypography.titleLarge),
+        title: Text(context.l10n.errandCancelRequestTitle, style: AppTypography.titleLarge),
         content: Text(
-          'Are you sure you want to cancel this vehicle request? If a car has been assigned, it will be released back to the fleet.',
+          context.l10n.errandCancelRequestConfirm,
           style: AppTypography.bodyMedium,
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(dialogContext).pop(),
             child: Text(
-              'Keep Request',
+              context.l10n.errandKeepRequest,
               style: AppTypography.labelLarge.copyWith(
                 color: AppColors.textMid,
               ),
@@ -906,7 +908,7 @@ class _ErrandCarsPageState extends State<ErrandCarsPage> {
               Navigator.of(dialogContext).pop();
               context.read<ErrandCarCubit>().cancelRequest(requestId);
             },
-            child: const Text('Cancel Request'),
+            child: Text(context.l10n.errandCancelRequestAction),
           ),
         ],
       ),

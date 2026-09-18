@@ -4,21 +4,23 @@ import 'package:go_router/go_router.dart';
 import 'package:lottie/lottie.dart';
 
 import 'package:alex_transportation/core/design_system/tokens.dart';
+import 'package:alex_transportation/core/extensions/l10n_extension.dart';
 import 'package:alex_transportation/core/widgets/alex_logo.dart';
 import 'package:alex_transportation/core/widgets/app_button.dart';
+import 'package:alex_transportation/core/widgets/language_selector_button.dart';
 import 'package:alex_transportation/features/auth/presentation/bloc/auth_cubit.dart';
 
-class OnboardingSlide {
+class OnboardingSlideItem {
   final String lottieAsset;
-  final String tag;
-  final String title;
-  final String description;
+  final String Function(BuildContext) getTag;
+  final String Function(BuildContext) getTitle;
+  final String Function(BuildContext) getDescription;
 
-  const OnboardingSlide({
+  const OnboardingSlideItem({
     required this.lottieAsset,
-    required this.tag,
-    required this.title,
-    required this.description,
+    required this.getTag,
+    required this.getTitle,
+    required this.getDescription,
   });
 }
 
@@ -33,27 +35,24 @@ class _OnboardingPageState extends State<OnboardingPage> {
   final PageController _pageController = PageController();
   int _currentIndex = 0;
 
-  static const List<OnboardingSlide> _slides = [
-    OnboardingSlide(
+  static final List<OnboardingSlideItem> _slides = [
+    OnboardingSlideItem(
       lottieAsset: 'assets/lottie/garage_parking.json',
-      tag: 'SMART PARKING',
-      title: 'Reserve & Access Bank Garages',
-      description:
-          'Automated license plate recognition, real-time bay occupancy, and one-tap check-in across all AlexBank branch facilities.',
+      getTag: (ctx) => ctx.l10n.moduleGarage.toUpperCase(),
+      getTitle: (ctx) => ctx.l10n.onboardingSlide1Title,
+      getDescription: (ctx) => ctx.l10n.onboardingSlide1Desc,
     ),
-    OnboardingSlide(
+    OnboardingSlideItem(
       lottieAsset: 'assets/lottie/bus_shuttle.json',
-      tag: 'CORPORATE SHUTTLES',
-      title: 'Live Employee Bus Tracking',
-      description:
-          'Track scheduled employee shuttles on live GPS route maps, view real-time stops, and guarantee your commute seat daily.',
+      getTag: (ctx) => ctx.l10n.moduleBuses.toUpperCase(),
+      getTitle: (ctx) => ctx.l10n.onboardingSlide2Title,
+      getDescription: (ctx) => ctx.l10n.onboardingSlide2Desc,
     ),
-    OnboardingSlide(
+    OnboardingSlideItem(
       lottieAsset: 'assets/lottie/errand_dispatch.json',
-      tag: 'OFFICIAL MISSIONS',
-      title: 'Executive Fleet for Business Trips',
-      description:
-          'Request official company errand vehicles for branch visits and client meetings with instant management dispatch approval.',
+      getTag: (ctx) => ctx.l10n.moduleErrandCars.toUpperCase(),
+      getTitle: (ctx) => ctx.l10n.onboardingSlide3Title,
+      getDescription: (ctx) => ctx.l10n.onboardingSlide3Desc,
     ),
   ];
 
@@ -83,6 +82,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final isLast = _currentIndex == _slides.length - 1;
 
     return Scaffold(
@@ -104,7 +104,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                       const AlexLogo(size: 32),
                       const SizedBox(width: AppSpacing.sm),
                       Text(
-                        'ALEXBANK',
+                        l10n.alexBank,
                         style: AppTypography.labelLarge.copyWith(
                           color: AppColors.primary,
                           fontWeight: FontWeight.w700,
@@ -113,16 +113,21 @@ class _OnboardingPageState extends State<OnboardingPage> {
                       ),
                     ],
                   ),
-                  if (!isLast)
-                    TextButton(
-                      onPressed: _completeOnboarding,
-                      child: Text(
-                        'Skip',
-                        style: AppTypography.labelMedium.copyWith(
-                          color: AppColors.textSecondary,
+                  Row(
+                    children: [
+                      const LanguageSelectorButton(),
+                      if (!isLast)
+                        TextButton(
+                          onPressed: _completeOnboarding,
+                          child: Text(
+                            l10n.onboardingSkip,
+                            style: AppTypography.labelMedium.copyWith(
+                              color: AppColors.textSecondary,
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
+                    ],
+                  ),
                 ],
               ),
             ),
@@ -184,7 +189,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                             borderRadius: AppRadius.borderPill,
                           ),
                           child: Text(
-                            slide.tag,
+                            slide.getTag(context),
                             style: AppTypography.labelSmall.copyWith(
                               color: AppColors.primaryMid,
                               fontWeight: FontWeight.w700,
@@ -196,7 +201,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
 
                         // Title
                         Text(
-                          slide.title,
+                          slide.getTitle(context),
                           textAlign: TextAlign.center,
                           style: AppTypography.titleLarge.copyWith(
                             color: AppColors.textPrimary,
@@ -207,7 +212,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
 
                         // Description
                         Text(
-                          slide.description,
+                          slide.getDescription(context),
                           textAlign: TextAlign.center,
                           style: AppTypography.bodyMedium.copyWith(
                             color: AppColors.textMid,
@@ -250,7 +255,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
 
                   // Action Button
                   AppButton(
-                    label: isLast ? 'Get Started' : 'Next',
+                    label: isLast ? l10n.onboardingGetStarted : l10n.onboardingNext,
                     variant: AppButtonVariant.primary,
                     onPressed: _nextPage,
                     leadingIcon: isLast

@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 
 import 'package:alex_transportation/core/design_system/tokens.dart';
+import 'package:alex_transportation/core/extensions/l10n_extension.dart';
 import 'package:alex_transportation/core/widgets/app_button.dart';
 import 'package:alex_transportation/core/widgets/app_card.dart';
 import 'package:alex_transportation/core/widgets/app_text_field.dart';
@@ -103,13 +104,15 @@ class _GaragePageState extends State<GaragePage> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
+
     return BlocConsumer<GarageCubit, GarageStates>(
       listener: (context, state) {
         switch (state) {
           case Success(:final data):
             final message = data is String
                 ? data
-                : 'Garage subscription submitted successfully!';
+                : l10n.success;
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(message),
@@ -168,14 +171,14 @@ class _GaragePageState extends State<GaragePage> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'GARAGE OCCUPANCY',
+                                l10n.garageLiveOccupancy.toUpperCase(),
                                 style: AppTypography.labelSmall.copyWith(
                                   letterSpacing: 1.0,
                                 ),
                               ),
                               const SizedBox(height: 2),
                               Text(
-                                '$availableSlots Available Bays',
+                                '$availableSlots ${l10n.garageAvailable}',
                                 style: AppTypography.titleLarge.copyWith(
                                   color: AppColors.primary,
                                   fontWeight: FontWeight.w800,
@@ -212,11 +215,11 @@ class _GaragePageState extends State<GaragePage> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            '$occupiedSlots of $totalCapacity bays occupied',
+                            '$occupiedSlots / $totalCapacity ${l10n.garageTotalSlots}',
                             style: AppTypography.caption,
                           ),
                           Text(
-                            '${(occupancyRate * 100).toInt()}% Full',
+                            '${(occupancyRate * 100).toInt()}%',
                             style: AppTypography.caption.copyWith(
                               fontWeight: FontWeight.w600,
                             ),
@@ -238,10 +241,10 @@ class _GaragePageState extends State<GaragePage> {
                   ),
                   child: Row(
                     children: [
-                      _buildSubTabItem(0, 'My Pass', Icons.local_parking_rounded),
-                      _buildSubTabItem(1, 'Subscribe', Icons.add_circle_outline_rounded),
-                      _buildSubTabItem(2, 'Status', Icons.search_rounded),
-                      _buildSubTabItem(3, 'Cancel', Icons.cancel_outlined),
+                      _buildSubTabItem(0, l10n.garageTabMyPass, Icons.local_parking_rounded),
+                      _buildSubTabItem(1, l10n.garageTabSubscribe, Icons.add_circle_outline_rounded),
+                      _buildSubTabItem(2, l10n.garageTabLookup, Icons.search_rounded),
+                      _buildSubTabItem(3, l10n.garageTabCancel, Icons.cancel_outlined),
                     ],
                   ),
                 ),
@@ -249,13 +252,13 @@ class _GaragePageState extends State<GaragePage> {
 
                 // Active View Body
                 if (_selectedSubTab == 0)
-                  _buildMyPassTab(cubit, isLoading)
+                  _buildMyPassTab(cubit, isLoading, l10n)
                 else if (_selectedSubTab == 1)
-                  _buildSubscribeTab(context, cubit)
+                  _buildSubscribeTab(context, cubit, l10n)
                 else if (_selectedSubTab == 2)
-                  _buildStatusLookupTab(context)
+                  _buildStatusLookupTab(context, l10n)
                 else
-                  _buildCancelTab(context),
+                  _buildCancelTab(context, l10n),
               ],
             ),
           ),
@@ -286,6 +289,8 @@ class _GaragePageState extends State<GaragePage> {
               const SizedBox(height: 2),
               Text(
                 label,
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
                 style: AppTypography.labelSmall.copyWith(
                   color: isSelected ? Colors.white : AppColors.textMid,
                   fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
@@ -299,7 +304,7 @@ class _GaragePageState extends State<GaragePage> {
   }
 
   // ── Tab 0: My Pass ──────────────────────────────────────────────────────────
-  Widget _buildMyPassTab(GarageCubit cubit, bool isLoading) {
+  Widget _buildMyPassTab(GarageCubit cubit, bool isLoading, dynamic l10n) {
     final sub = cubit.currentSubscription;
 
     if (sub == null) {
@@ -314,18 +319,18 @@ class _GaragePageState extends State<GaragePage> {
             ),
             const SizedBox(height: AppSpacing.sm),
             Text(
-              'No Active Parking Pass',
+              l10n.garageHeaderTitle,
               style: AppTypography.titleMedium,
             ),
             const SizedBox(height: AppSpacing.xs),
             Text(
-              'Submit a subscription request to get your assigned bay and parking pass.',
+              l10n.garageHeaderSubtitle,
               textAlign: TextAlign.center,
               style: AppTypography.bodySmall,
             ),
             const SizedBox(height: AppSpacing.md),
             AppButton(
-              label: 'Apply for Parking Pass',
+              label: l10n.garageTabSubscribe,
               onPressed: () => setState(() => _selectedSubTab = 1),
             ),
           ],
@@ -341,19 +346,19 @@ class _GaragePageState extends State<GaragePage> {
   }
 
   // ── Tab 1: Subscribe ────────────────────────────────────────────────────────
-  Widget _buildSubscribeTab(BuildContext context, GarageCubit cubit) {
+  Widget _buildSubscribeTab(BuildContext context, GarageCubit cubit, dynamic l10n) {
     return AppCard(
       padding: const EdgeInsets.all(AppSpacing.lg),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(
-            'New Parking Subscription',
+            l10n.garageSubscriptionFormTitle,
             style: AppTypography.titleMedium.copyWith(fontWeight: FontWeight.w700),
           ),
           const SizedBox(height: AppSpacing.xxs),
           Text(
-            'Monthly subscription with automatic payroll deduction.',
+            l10n.garageMonthlyDeductionNotice,
             style: AppTypography.bodySmall,
           ),
           const SizedBox(height: AppSpacing.md),
@@ -361,7 +366,7 @@ class _GaragePageState extends State<GaragePage> {
           // Name
           AppTextField(
             controller: _nameController,
-            label: 'FULL NAME',
+            label: l10n.garageEmployeeName,
             hint: 'e.g. Sara Hassan',
           ),
           const SizedBox(height: AppSpacing.sm),
@@ -369,7 +374,7 @@ class _GaragePageState extends State<GaragePage> {
           // National ID
           AppTextField(
             controller: _nationalIdController,
-            label: 'NATIONAL ID (14 DIGITS)',
+            label: l10n.garageNationalId,
             hint: '29001011234567',
             keyboardType: TextInputType.number,
             maxLength: 14,
@@ -380,7 +385,7 @@ class _GaragePageState extends State<GaragePage> {
           // ISL Number
           AppTextField(
             controller: _islController,
-            label: 'BANK ISL (4–8 DIGITS)',
+            label: l10n.staffIslLabel,
             hint: '10234',
             keyboardType: TextInputType.number,
             maxLength: 8,
@@ -390,7 +395,7 @@ class _GaragePageState extends State<GaragePage> {
 
           // Department Dropdown
           Text(
-            'DEPARTMENT',
+            l10n.errandDepartmentLabel,
             style: AppTypography.labelMedium.copyWith(
               color: AppColors.textMid,
               fontWeight: FontWeight.w600,
@@ -422,7 +427,7 @@ class _GaragePageState extends State<GaragePage> {
           // Email
           AppTextField(
             controller: _emailController,
-            label: 'WORK EMAIL (@alexbank.com)',
+            label: l10n.garageEmail,
             hint: 's.hassan@alexbank.com',
             keyboardType: TextInputType.emailAddress,
           ),
@@ -430,7 +435,7 @@ class _GaragePageState extends State<GaragePage> {
 
           // Priority Tier Selector
           Text(
-            'PRIORITY TIER',
+            'TIER',
             style: AppTypography.labelMedium.copyWith(
               color: AppColors.textMid,
               fontWeight: FontWeight.w600,
@@ -450,7 +455,7 @@ class _GaragePageState extends State<GaragePage> {
               const SizedBox(width: AppSpacing.sm),
               Expanded(
                 child: ChoiceChip(
-                  label: const Center(child: Text('Senior / Priority')),
+                  label: const Center(child: Text('Senior')),
                   selected: _priorityTier == 'senior',
                   selectedColor: AppColors.goldLight,
                   onSelected: (_) => setState(() => _priorityTier = 'senior'),
@@ -517,7 +522,7 @@ class _GaragePageState extends State<GaragePage> {
             controlAffinity: ListTileControlAffinity.leading,
             activeColor: AppColors.primary,
             title: Text(
-              'I authorize AlexBank to deduct EGP ${cubit.currentMonthlyFee} monthly from my salary for garage parking services.',
+              l10n.garageConsentCheckbox,
               style: AppTypography.caption.copyWith(color: AppColors.textMid),
             ),
           ),
@@ -525,7 +530,7 @@ class _GaragePageState extends State<GaragePage> {
 
           // Submit Button
           AppButton(
-            label: 'Submit Parking Application',
+            label: l10n.garageSubmitApplication,
             variant: AppButtonVariant.primary,
             onPressed: () => _submitSubscription(context),
             leadingIcon: const Icon(Icons.send_rounded, size: 18, color: Colors.white),
@@ -536,39 +541,39 @@ class _GaragePageState extends State<GaragePage> {
   }
 
   // ── Tab 2: Status Lookup ────────────────────────────────────────────────────
-  Widget _buildStatusLookupTab(BuildContext context) {
+  Widget _buildStatusLookupTab(BuildContext context, dynamic l10n) {
     return AppCard(
       padding: const EdgeInsets.all(AppSpacing.lg),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(
-            'Check Subscription Status',
+            l10n.garageLookupTitle,
             style: AppTypography.titleMedium.copyWith(fontWeight: FontWeight.w700),
           ),
           const SizedBox(height: AppSpacing.xxs),
           Text(
-            'Lookup your active parking pass or waiting list position.',
+            l10n.garageEnterIslSearch,
             style: AppTypography.bodySmall,
           ),
           const SizedBox(height: AppSpacing.md),
 
           AppTextField(
             controller: _statusIslController,
-            label: 'BANK ISL',
+            label: l10n.staffIslLabel,
             hint: 'e.g. 10234',
             keyboardType: TextInputType.number,
           ),
           const SizedBox(height: AppSpacing.sm),
           AppTextField(
             controller: _statusEmailController,
-            label: 'WORK EMAIL',
+            label: l10n.garageEmail,
             hint: 's.hassan@alexbank.com',
             keyboardType: TextInputType.emailAddress,
           ),
           const SizedBox(height: AppSpacing.md),
           AppButton(
-            label: 'Search Records',
+            label: l10n.search,
             variant: AppButtonVariant.primary,
             onPressed: () => _lookupStatus(context),
             leadingIcon: const Icon(Icons.search_rounded, size: 18, color: Colors.white),
@@ -607,7 +612,7 @@ class _GaragePageState extends State<GaragePage> {
                     const SizedBox(height: AppSpacing.xs),
                     Text(
                       _lookupResult!.status == 'active'
-                          ? 'Assigned Bay: ${_lookupResult!.slotLabel ?? "General"}'
+                          ? '${l10n.garageAssignedBay}: ${_lookupResult!.slotLabel ?? "General"}'
                           : 'Waiting List Position: #${_lookupResult!.waitingPosition ?? 1}',
                       style: AppTypography.bodySmall.copyWith(
                         color: AppColors.primaryMid,
@@ -630,7 +635,7 @@ class _GaragePageState extends State<GaragePage> {
                     const SizedBox(width: AppSpacing.xs),
                     Expanded(
                       child: Text(
-                        'No parking records found for this ISL and email.',
+                        'No parking records found.',
                         style: AppTypography.bodySmall.copyWith(color: AppColors.danger),
                       ),
                     ),
@@ -644,7 +649,7 @@ class _GaragePageState extends State<GaragePage> {
   }
 
   // ── Tab 3: Cancel Request ───────────────────────────────────────────────────
-  Widget _buildCancelTab(BuildContext context) {
+  Widget _buildCancelTab(BuildContext context, dynamic l10n) {
     return AppCard(
       padding: const EdgeInsets.all(AppSpacing.lg),
       child: Column(
@@ -664,7 +669,7 @@ class _GaragePageState extends State<GaragePage> {
                 const SizedBox(width: AppSpacing.xs),
                 Expanded(
                   child: Text(
-                    'Notice: Your parking pass and payroll deduction remain active until the fleet administrator reviews and approves this cancellation request.',
+                    l10n.garageCancelTitle,
                     style: AppTypography.caption.copyWith(color: AppColors.danger),
                   ),
                 ),
@@ -675,20 +680,20 @@ class _GaragePageState extends State<GaragePage> {
 
           AppTextField(
             controller: _cancelIslController,
-            label: 'BANK ISL',
+            label: l10n.staffIslLabel,
             hint: 'e.g. 10234',
             keyboardType: TextInputType.number,
           ),
           const SizedBox(height: AppSpacing.sm),
           AppTextField(
             controller: _cancelEmailController,
-            label: 'WORK EMAIL',
+            label: l10n.garageEmail,
             hint: 'name@alexbank.com',
             keyboardType: TextInputType.emailAddress,
           ),
           const SizedBox(height: AppSpacing.md),
           AppButton(
-            label: 'Submit Cancellation Request',
+            label: l10n.garageSubmitCancellation,
             variant: AppButtonVariant.outline,
             onPressed: () => _submitCancellation(context),
             leadingIcon: const Icon(Icons.cancel_outlined, size: 18, color: AppColors.danger),

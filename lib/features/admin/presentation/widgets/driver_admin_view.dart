@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:alex_transportation/core/design_system/tokens.dart';
+import 'package:alex_transportation/core/extensions/l10n_extension.dart';
 import 'package:alex_transportation/core/widgets/app_card.dart';
 import 'package:alex_transportation/features/admin/presentation/bloc/admin_cubit.dart';
 import 'package:alex_transportation/features/admin/presentation/bloc/admin_states.dart';
@@ -31,18 +32,18 @@ class DriverAdminView extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    _buildStatCol('TOTAL CAPTAINS', '${captains.length}', AppColors.primary),
+                    _buildStatCol(context.l10n.adminTotalCaptains, '${captains.length}', AppColors.primary),
                     Container(height: 36, width: 1, color: AppColors.border),
-                    _buildStatCol('ON ACTIVE DUTY', '${captains.length}', AppColors.primaryMid),
+                    _buildStatCol(context.l10n.adminOnActiveDuty, '${captains.length}', AppColors.primaryMid),
                     Container(height: 36, width: 1, color: AppColors.border),
-                    _buildStatCol('AVG RATING', '4.93 ★', AppColors.accentGold),
+                    _buildStatCol(context.l10n.adminAvgRating, '4.93 ★', AppColors.accentGold),
                   ],
                 ),
               ),
               const SizedBox(height: AppSpacing.md),
 
               Text(
-                'OFFICIAL TRANSPORTATION CAPTAINS (${captains.length})',
+                '${context.l10n.adminOfficialCaptains} (${captains.length})',
                 style: AppTypography.labelLarge.copyWith(
                   fontWeight: FontWeight.w800,
                   letterSpacing: 0.5,
@@ -98,7 +99,7 @@ class DriverAdminView extends StatelessWidget {
                                           overflow: TextOverflow.ellipsis,
                                         ),
                                         Text(
-                                          'License: ${driver.licenseNumber} • ${driver.phone}',
+                                          context.l10n.driverLicensePhone(driver.licenseNumber, driver.phone),
                                           style: AppTypography.caption.copyWith(
                                             color: AppColors.textSecondary,
                                             fontSize: 10,
@@ -142,7 +143,7 @@ class DriverAdminView extends StatelessWidget {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    'ASSIGNMENT',
+                                    context.l10n.adminAssignment,
                                     style: AppTypography.caption.copyWith(
                                       fontSize: 8,
                                       letterSpacing: 0.5,
@@ -164,7 +165,7 @@ class DriverAdminView extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.end,
                               children: [
                                 Text(
-                                  'ASSIGNED VEHICLE',
+                                  context.l10n.adminAssignedVehicle,
                                   style: AppTypography.caption.copyWith(
                                     fontSize: 8,
                                     letterSpacing: 0.5,

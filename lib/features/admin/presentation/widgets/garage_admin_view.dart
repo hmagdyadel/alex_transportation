@@ -5,6 +5,7 @@ import 'package:alex_transportation/core/design_system/tokens.dart';
 import 'package:alex_transportation/core/widgets/app_card.dart';
 import 'package:alex_transportation/core/widgets/app_text_field.dart';
 import 'package:alex_transportation/core/widgets/status_pill.dart';
+import 'package:alex_transportation/core/extensions/l10n_extension.dart';
 import 'package:alex_transportation/features/garage/presentation/bloc/garage_cubit.dart';
 import 'package:alex_transportation/features/garage/presentation/bloc/garage_states.dart';
 
@@ -43,7 +44,7 @@ class GarageAdminView extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'MONTHLY PARKING SUBSCRIPTION RATE',
+                                context.l10n.adminMonthlyParkingRate,
                                 style: AppTypography.labelSmall.copyWith(
                                   letterSpacing: 0.8,
                                   fontWeight: FontWeight.w700,
@@ -51,7 +52,7 @@ class GarageAdminView extends StatelessWidget {
                               ),
                               const SizedBox(height: 2),
                               Text(
-                                'Admin Dynamic Pricing',
+                                context.l10n.adminDynamicPricing,
                                 style: AppTypography.caption.copyWith(
                                   color: AppColors.textSecondary,
                                 ),
@@ -84,7 +85,7 @@ class GarageAdminView extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  'CURRENT TARIFF',
+                                  context.l10n.adminCurrentTariff,
                                   style: AppTypography.caption.copyWith(
                                     fontSize: 9,
                                     fontWeight: FontWeight.w700,
@@ -100,7 +101,7 @@ class GarageAdminView extends StatelessWidget {
                                     ),
                                     children: [
                                       TextSpan(
-                                        text: ' EGP/mo',
+                                        text: ' ${context.l10n.adminEgpMonth}',
                                         style: AppTypography.labelSmall.copyWith(
                                           color: AppColors.textSecondary,
                                           fontWeight: FontWeight.w700,
@@ -195,7 +196,7 @@ class GarageAdminView extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     Text(
-                      'FACILITY CAPACITY OVERVIEW',
+                      context.l10n.adminFacilityCapacityOverview,
                       style: AppTypography.labelSmall.copyWith(
                         letterSpacing: 0.8,
                         fontWeight: FontWeight.w700,
@@ -206,7 +207,7 @@ class GarageAdminView extends StatelessWidget {
                       children: [
                         Expanded(
                           child: _buildMetricTile(
-                            label: 'TOTAL SLOTS',
+                            label: context.l10n.adminTotalSlots,
                             value: '${GarageCubit.totalCapacity}',
                             icon: Icons.local_parking_rounded,
                             color: AppColors.textPrimary,
@@ -215,7 +216,7 @@ class GarageAdminView extends StatelessWidget {
                         const SizedBox(width: AppSpacing.sm),
                         Expanded(
                           child: _buildMetricTile(
-                            label: 'AVAILABLE',
+                            label: context.l10n.garageAvailable.toUpperCase(),
                             value: '${garageCubit.availableSlots}',
                             icon: Icons.check_circle_outline_rounded,
                             color: AppColors.primaryMid,
@@ -224,7 +225,7 @@ class GarageAdminView extends StatelessWidget {
                         const SizedBox(width: AppSpacing.sm),
                         Expanded(
                           child: _buildMetricTile(
-                            label: 'WAITLIST',
+                            label: context.l10n.adminWaitlist,
                             value: '${garageCubit.waitingCount}',
                             icon: Icons.hourglass_top_rounded,
                             color: AppColors.accentGold,
@@ -239,7 +240,7 @@ class GarageAdminView extends StatelessWidget {
 
               // Active Subscription Management Card
               Text(
-                'ACTIVE CORPORATE PARKING PASSES',
+                context.l10n.adminActiveCorporateParkingPasses,
                 style: AppTypography.labelLarge.copyWith(
                   fontWeight: FontWeight.w800,
                   letterSpacing: 0.5,

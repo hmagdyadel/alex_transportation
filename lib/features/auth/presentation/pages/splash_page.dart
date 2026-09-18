@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:alex_transportation/core/design_system/tokens.dart';
+import 'package:alex_transportation/core/extensions/l10n_extension.dart';
 import 'package:alex_transportation/core/widgets/alex_logo.dart';
 import 'package:alex_transportation/core/widgets/custom_loading_indicator.dart';
 import 'package:alex_transportation/features/auth/presentation/bloc/auth_cubit.dart';
@@ -82,6 +83,8 @@ class _SplashPageState extends State<SplashPage>
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
+
     return Scaffold(
       body: Container(
         width: double.infinity,
@@ -126,33 +129,21 @@ class _SplashPageState extends State<SplashPage>
                       ),
                       const SizedBox(height: AppSpacing.xl),
                       // Brand Name
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            'ALEXBANK',
-                            style: AppTypography.titleLarge.copyWith(
-                              color: AppColors.accentGold,
-                              letterSpacing: 2.5,
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
-                          const SizedBox(width: AppSpacing.xs),
-                          Text(
-                            'TRANSIT',
-                            style: AppTypography.titleLarge.copyWith(
-                              color: Colors.white,
-                              letterSpacing: 2.0,
-                              fontWeight: FontWeight.w400,
-                            ),
-                          ),
-                        ],
+                      Text(
+                        l10n.appName,
+                        textAlign: TextAlign.center,
+                        style: AppTypography.titleLarge.copyWith(
+                          color: AppColors.accentGold,
+                          letterSpacing: 2.0,
+                          fontWeight: FontWeight.w700,
+                        ),
                       ),
                       const SizedBox(height: AppSpacing.xs),
                       Text(
-                        'Employee Transport Services',
+                        l10n.splashSlogan,
+                        textAlign: TextAlign.center,
                         style: AppTypography.bodySmall.copyWith(
-                          color: AppColors.surface.withValues(alpha: 0.7),
+                          color: AppColors.surface.withValues(alpha: 0.8),
                           letterSpacing: 0.6,
                         ),
                       ),
@@ -170,10 +161,11 @@ class _SplashPageState extends State<SplashPage>
                     const CustomLoadingIndicator(size: 36),
                     const SizedBox(height: AppSpacing.md),
                     Text(
-                      'Internal Mobility Network',
+                      l10n.accessGateSubtitle,
+                      textAlign: TextAlign.center,
                       style: AppTypography.labelSmall.copyWith(
-                        color: Colors.white.withValues(alpha: 0.4),
-                        letterSpacing: 1.0,
+                        color: Colors.white.withValues(alpha: 0.5),
+                        letterSpacing: 0.8,
                       ),
                     ),
                   ],

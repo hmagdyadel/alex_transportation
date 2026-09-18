@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 
 import 'package:alex_transportation/core/design_system/tokens.dart';
+import 'package:alex_transportation/core/extensions/l10n_extension.dart';
 import 'package:alex_transportation/core/widgets/app_button.dart';
 import 'package:alex_transportation/core/widgets/app_card.dart';
 import 'package:alex_transportation/core/widgets/custom_loading_indicator.dart';
@@ -31,6 +32,8 @@ class _BusesPageState extends State<BusesPage> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
+
     return BlocConsumer<BusCubit, BusStates>(
       listener: (context, state) {
         switch (state) {
@@ -87,14 +90,14 @@ class _BusesPageState extends State<BusesPage> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          'YOUR ACTIVE BOARDING PASS',
+                          l10n.busActivePassHeader.toUpperCase(),
                           style: AppTypography.labelSmall.copyWith(
                             letterSpacing: 1.0,
                             fontWeight: FontWeight.w700,
                           ),
                         ),
-                        const StatusPill(
-                          label: 'TODAY',
+                        StatusPill(
+                          label: l10n.active.toUpperCase(),
                           type: StatusPillType.gold,
                         ),
                       ],
@@ -113,19 +116,25 @@ class _BusesPageState extends State<BusesPage> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        'AVAILABLE SHUTTLE ROUTES',
+                        l10n.busFilterAll.toUpperCase(),
                         style: AppTypography.labelSmall.copyWith(
                           letterSpacing: 1.0,
                           fontWeight: FontWeight.w700,
                         ),
                       ),
                       Row(
-                        children: ['All', 'Morning', 'Evening'].map((shift) {
-                          final isSelected = selectedShift == shift;
+                        children: [
+                          {'key': 'All', 'label': l10n.busFilterAll},
+                          {'key': 'Morning', 'label': l10n.busFilterMorning},
+                          {'key': 'Evening', 'label': l10n.busFilterEvening},
+                        ].map((shiftItem) {
+                          final shiftKey = shiftItem['key']!;
+                          final shiftLabel = shiftItem['label']!;
+                          final isSelected = selectedShift == shiftKey;
                           return Padding(
                             padding: const EdgeInsets.only(left: 4),
                             child: InkWell(
-                              onTap: () => cubit.filterShift(shift),
+                              onTap: () => cubit.filterShift(shiftKey),
                               borderRadius: BorderRadius.circular(AppRadius.pill),
                               child: Container(
                                 padding: const EdgeInsets.symmetric(
@@ -144,7 +153,7 @@ class _BusesPageState extends State<BusesPage> {
                                   ),
                                 ),
                                 child: Text(
-                                  shift,
+                                  shiftLabel,
                                   style: AppTypography.caption.copyWith(
                                     color: isSelected
                                         ? Colors.white
@@ -171,7 +180,7 @@ class _BusesPageState extends State<BusesPage> {
                       backgroundColor: AppColors.surface,
                       child: Center(
                         child: Text(
-                          'No routes found for the selected shift',
+                          l10n.busRouteLabel,
                           style: AppTypography.bodySmall,
                         ),
                       ),
@@ -205,6 +214,7 @@ class _BusesPageState extends State<BusesPage> {
     bool isExpanded,
     bool hasActivePass,
   ) {
+    final l10n = context.l10n;
     final isFull = route.availableSeats <= 0;
     final cubit = context.read<BusCubit>();
 
@@ -258,7 +268,9 @@ class _BusesPageState extends State<BusesPage> {
                           ),
                           const SizedBox(width: AppSpacing.xs),
                           StatusPill(
-                            label: route.shift.toUpperCase(),
+                            label: route.shift == 'Morning'
+                                ? l10n.busFilterMorning.toUpperCase()
+                                : l10n.busFilterEvening.toUpperCase(),
                             type: route.shift == 'Morning'
                                 ? StatusPillType.neutral
                                 : StatusPillType.gold,
@@ -266,7 +278,9 @@ class _BusesPageState extends State<BusesPage> {
                         ],
                       ),
                       StatusPill(
-                        label: isFull ? 'BUS FULL' : '${route.availableSeats} SEATS LEFT',
+                        label: isFull
+                            ? l10n.busRouteFull.toUpperCase()
+                            : '${route.availableSeats} ${l10n.busAvailableSeats.toUpperCase()}',
                         type: isFull ? StatusPillType.danger : StatusPillType.active,
                       ),
                     ],
@@ -306,7 +320,7 @@ class _BusesPageState extends State<BusesPage> {
                       ),
                       const SizedBox(width: 4),
                       Text(
-                        '${route.stops.length} Stops',
+                        '${route.stops.length} ${l10n.busStopsCount}',
                         style: AppTypography.caption.copyWith(
                           color: AppColors.textMid,
                         ),
@@ -364,7 +378,7 @@ class _BusesPageState extends State<BusesPage> {
                                 ),
                               ),
                               Text(
-                                'Plate: ${route.busPlate}',
+                                '${l10n.driverBusPlate}: ${route.busPlate}',
                                 style: AppTypography.caption.copyWith(
                                   color: AppColors.textMid,
                                 ),
@@ -374,7 +388,7 @@ class _BusesPageState extends State<BusesPage> {
                         ),
                         OutlinedButton.icon(
                           icon: const Icon(Icons.phone_rounded, size: 14),
-                          label: const Text('Call Driver'),
+                          label: Text(l10n.busDriverCaptain),
                           style: OutlinedButton.styleFrom(
                             foregroundColor: AppColors.primary,
                             side: const BorderSide(color: AppColors.primary),
@@ -386,7 +400,7 @@ class _BusesPageState extends State<BusesPage> {
                           onPressed: () {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
-                                content: Text('Calling ${route.driverName} (${route.driverPhone})...'),
+                                content: Text('${route.driverName} (${route.driverPhone})'),
                                 behavior: SnackBarBehavior.floating,
                               ),
                             );
@@ -399,7 +413,7 @@ class _BusesPageState extends State<BusesPage> {
                   const SizedBox(height: AppSpacing.md),
 
                   Text(
-                    'SELECT PICKUP STOP:',
+                    '${l10n.busPickupStopLabel.toUpperCase()}:',
                     style: AppTypography.caption.copyWith(
                       fontWeight: FontWeight.w700,
                       letterSpacing: 0.5,
@@ -429,7 +443,7 @@ class _BusesPageState extends State<BusesPage> {
                         border: Border.all(color: AppColors.accentGold.withValues(alpha: 0.5)),
                       ),
                       child: Text(
-                        'You already have an active boarding pass for today.',
+                        l10n.busActivePassHeader,
                         textAlign: TextAlign.center,
                         style: AppTypography.caption.copyWith(
                           color: AppColors.textPrimary,
@@ -439,14 +453,14 @@ class _BusesPageState extends State<BusesPage> {
                     )
                   else
                     AppButton(
-                      label: isFull ? 'Route Full' : 'Reserve Spot on ${route.routeNumber}',
+                      label: isFull ? l10n.busRouteFull : '${l10n.busReserveSeatAction} (${route.routeNumber})',
                       onPressed: isFull
                           ? null
                           : () {
                               if (_selectedPickupStopId == null) {
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text('Please select your pickup stop from the list above'),
+                                  SnackBar(
+                                    content: Text(l10n.busPickupStopLabel),
                                     behavior: SnackBarBehavior.floating,
                                   ),
                                 );
@@ -470,22 +484,24 @@ class _BusesPageState extends State<BusesPage> {
   }
 
   void _confirmCancelBooking(BuildContext context, String passId) {
+    final l10n = context.l10n;
+
     showDialog<void>(
       context: context,
       builder: (dialogContext) => AlertDialog(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppRadius.lg),
         ),
-        title: Text('Cancel Reservation', style: AppTypography.titleLarge),
+        title: Text(l10n.busCancelReservation, style: AppTypography.titleLarge),
         content: Text(
-          'Are you sure you want to cancel your shuttle reservation? Your spot will be released to other colleagues.',
+          l10n.signOutConfirmMessage,
           style: AppTypography.bodyMedium,
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(dialogContext).pop(),
             child: Text(
-              'Keep Reservation',
+              l10n.cancel,
               style: AppTypography.labelLarge.copyWith(
                 color: AppColors.textMid,
               ),
@@ -503,7 +519,7 @@ class _BusesPageState extends State<BusesPage> {
               Navigator.of(dialogContext).pop();
               context.read<BusCubit>().cancelBooking(passId);
             },
-            child: const Text('Cancel Reservation'),
+            child: Text(l10n.busCancelReservation),
           ),
         ],
       ),

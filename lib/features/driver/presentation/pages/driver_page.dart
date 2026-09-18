@@ -8,6 +8,8 @@ import 'package:alex_transportation/core/widgets/alex_logo.dart';
 import 'package:alex_transportation/core/widgets/app_card.dart';
 import 'package:alex_transportation/core/widgets/custom_loading_indicator.dart';
 import 'package:alex_transportation/core/widgets/status_pill.dart';
+import 'package:alex_transportation/core/widgets/language_selector_button.dart';
+import 'package:alex_transportation/core/extensions/l10n_extension.dart';
 import 'package:alex_transportation/features/auth/presentation/bloc/auth_cubit.dart';
 import 'package:alex_transportation/features/driver/data/models/driver_trip_model.dart';
 import 'package:alex_transportation/features/driver/data/models/trip_manifest_item_model.dart';
@@ -34,14 +36,14 @@ class _DriverPageState extends State<DriverPage> {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('End Shift & Sign Out'),
-        content: const Text(
-          'Are you sure you want to end your driver shift and return to the access gate?',
+        title: Text(context.l10n.driverEndShift),
+        content: Text(
+          context.l10n.driverEndShiftConfirm,
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(),
-            child: const Text('Cancel'),
+            child: Text(context.l10n.commonCancel),
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
@@ -55,7 +57,7 @@ class _DriverPageState extends State<DriverPage> {
                 context.go('/access');
               }
             },
-            child: const Text('Sign Out'),
+            child: Text(context.l10n.commonSignOut),
           ),
         ],
       ),
@@ -132,7 +134,7 @@ class _DriverPageState extends State<DriverPage> {
                           overflow: TextOverflow.ellipsis,
                         ),
                         Text(
-                          'Transit — Driver Portal',
+                          context.l10n.driverPortalTitle,
                           style: AppTypography.caption.copyWith(
                             color: AppColors.textMid,
                             fontSize: 10,
@@ -146,13 +148,14 @@ class _DriverPageState extends State<DriverPage> {
                 ],
               ),
               actions: [
-                const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 14),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 14),
                   child: StatusPill(
-                    label: 'CAPTAIN',
+                    label: context.l10n.driverCaptainPill,
                     type: StatusPillType.gold,
                   ),
                 ),
+                const LanguageSelectorButton(),
                 if (isAdmin)
                   IconButton(
                     icon: const Icon(
@@ -160,7 +163,7 @@ class _DriverPageState extends State<DriverPage> {
                       color: AppColors.primary,
                       size: 20,
                     ),
-                    tooltip: 'Return to Admin Console',
+                    tooltip: context.l10n.driverReturnToAdminConsole,
                     onPressed: () => context.go('/admin'),
                   ),
                 IconButton(
@@ -169,7 +172,7 @@ class _DriverPageState extends State<DriverPage> {
                     color: AppColors.textMid,
                     size: 20,
                   ),
-                  tooltip: 'Sign Out',
+                  tooltip: context.l10n.commonSignOut,
                   onPressed: () => _showSignOutDialog(context),
                 ),
                 const SizedBox(width: AppSpacing.xs),
@@ -237,19 +240,19 @@ class _DriverPageState extends State<DriverPage> {
                       _buildSubTabButton(
                         index: 0,
                         icon: Icons.navigation_rounded,
-                        label: 'Trip HUD',
+                        label: context.l10n.driverTabHud,
                       ),
                       const SizedBox(width: AppSpacing.xs),
                       _buildSubTabButton(
                         index: 1,
                         icon: Icons.people_alt_rounded,
-                        label: 'Manifest (${cubit.boardedCount}/${cubit.totalPassengers})',
+                        label: '${context.l10n.driverTabManifest} (${cubit.boardedCount}/${cubit.totalPassengers})',
                       ),
                       const SizedBox(width: AppSpacing.xs),
                       _buildSubTabButton(
                         index: 2,
                         icon: Icons.checklist_rounded,
-                        label: 'Inspection',
+                        label: context.l10n.driverTabInspection,
                       ),
                     ],
                   ),
@@ -347,7 +350,7 @@ class _DriverPageState extends State<DriverPage> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'ROUTE TIMELINE',
+                      context.l10n.driverRouteTimeline,
                       style: AppTypography.caption.copyWith(
                         fontWeight: FontWeight.w800,
                         color: AppColors.primary,
@@ -355,7 +358,7 @@ class _DriverPageState extends State<DriverPage> {
                       ),
                     ),
                     Text(
-                      '${trip.stops.length} STOPS',
+                      context.l10n.driverStopsCount(trip.stops.length),
                       style: AppTypography.caption.copyWith(
                         color: AppColors.textSecondary,
                         fontWeight: FontWeight.w700,
@@ -534,7 +537,7 @@ class _DriverPageState extends State<DriverPage> {
                         ),
                         const SizedBox(width: AppSpacing.xs),
                         Text(
-                          'BOARDING STATUS',
+                          context.l10n.driverBoardingStatus,
                           style: AppTypography.labelLarge.copyWith(
                             color: AppColors.primary,
                             fontWeight: FontWeight.w800,
@@ -545,7 +548,7 @@ class _DriverPageState extends State<DriverPage> {
                       ],
                     ),
                     Text(
-                      '${cubit.boardedCount} of ${cubit.totalPassengers} Boarded',
+                      context.l10n.driverBoardedRatio(cubit.boardedCount, cubit.totalPassengers),
                       style: AppTypography.caption.copyWith(
                         color: AppColors.primaryMid,
                         fontWeight: FontWeight.w700,
@@ -567,7 +570,7 @@ class _DriverPageState extends State<DriverPage> {
                 ),
                 const SizedBox(height: AppSpacing.xs),
                 Text(
-                  'Tap the BOARD button next to each employee to check them in upon boarding the bus.',
+                  context.l10n.driverBoardingInstruction,
                   style: AppTypography.caption.copyWith(
                     color: AppColors.textMid,
                     fontSize: 11,
@@ -583,7 +586,7 @@ class _DriverPageState extends State<DriverPage> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'PASSENGER MANIFEST',
+                context.l10n.driverTabManifest,
                 style: AppTypography.caption.copyWith(
                   fontWeight: FontWeight.w800,
                   color: AppColors.primary,
@@ -601,7 +604,7 @@ class _DriverPageState extends State<DriverPage> {
                   border: Border.all(color: AppColors.primaryLight.withValues(alpha: 0.3)),
                 ),
                 child: Text(
-                  '${cubit.boardedCount} / ${cubit.totalPassengers} Boarded',
+                  context.l10n.driverBoardedRatio(cubit.boardedCount, cubit.totalPassengers),
                   style: AppTypography.caption.copyWith(
                     fontWeight: FontWeight.w800,
                     color: AppColors.primary,
@@ -616,11 +619,11 @@ class _DriverPageState extends State<DriverPage> {
           // Filter Segment
           Row(
             children: [
-              _buildFilterChip(0, 'All (${trip.totalPassengers})'),
+              _buildFilterChip(0, '${context.l10n.driverFilterAll} (${trip.totalPassengers})'),
               const SizedBox(width: AppSpacing.xs),
-              _buildFilterChip(1, 'Awaiting (${trip.totalPassengers - trip.boardedCount})'),
+              _buildFilterChip(1, '${context.l10n.driverFilterAwaiting} (${trip.totalPassengers - trip.boardedCount})'),
               const SizedBox(width: AppSpacing.xs),
-              _buildFilterChip(2, 'Boarded (${trip.boardedCount})'),
+              _buildFilterChip(2, '${context.l10n.driverFilterBoarded} (${trip.boardedCount})'),
             ],
           ),
           const SizedBox(height: AppSpacing.sm),
@@ -677,38 +680,38 @@ class _DriverPageState extends State<DriverPage> {
     final inspectionItems = [
       {
         'id': 'tires',
-        'title': 'Tires & Pressure',
-        'desc': 'All tires inspected for pressure, tread depth, and wheel lug nuts.',
+        'title': context.l10n.driverCheckTiresTitle,
+        'desc': context.l10n.driverCheckTiresDesc,
         'icon': Icons.album_rounded,
       },
       {
         'id': 'fuel_battery',
-        'title': 'Fuel / Battery Level',
-        'desc': 'Fuel tank above 75% or EV battery adequately charged for route.',
+        'title': context.l10n.driverCheckFuelTitle,
+        'desc': context.l10n.driverCheckFuelDesc,
         'icon': Icons.local_gas_station_rounded,
       },
       {
         'id': 'first_aid',
-        'title': 'Emergency First Aid Kit & Extinguisher',
-        'desc': 'Fire extinguisher certified, first aid medical pouch fully stocked.',
+        'title': context.l10n.driverCheckFirstAidTitle,
+        'desc': context.l10n.driverCheckFirstAidDesc,
         'icon': Icons.medical_services_rounded,
       },
       {
         'id': 'ac_ventilation',
-        'title': 'Climate Control & AC',
-        'desc': 'Cabin air conditioning and ventilation functioning at 21°C.',
+        'title': context.l10n.driverCheckAcTitle,
+        'desc': context.l10n.driverCheckAcDesc,
         'icon': Icons.ac_unit_rounded,
       },
       {
         'id': 'mirrors_cameras',
-        'title': 'Mirrors & Rearview Cameras',
-        'desc': 'Side view mirrors adjusted, backup camera sensor clean.',
+        'title': context.l10n.driverCheckMirrorsTitle,
+        'desc': context.l10n.driverCheckMirrorsDesc,
         'icon': Icons.remove_red_eye_rounded,
       },
       {
         'id': 'cleanliness',
-        'title': 'Interior Cleanliness & Sanitization',
-        'desc': 'Passenger seats sanitized, aisles clean, waste receptacles emptied.',
+        'title': context.l10n.driverCheckCleanlinessTitle,
+        'desc': context.l10n.driverCheckCleanlinessDesc,
         'icon': Icons.cleaning_services_rounded,
       },
     ];
@@ -742,8 +745,8 @@ class _DriverPageState extends State<DriverPage> {
                     children: [
                       Text(
                         isReady
-                            ? 'VEHICLE READY FOR DISPATCH'
-                            : 'INSPECTION IN PROGRESS',
+                            ? context.l10n.driverVehicleReady
+                            : context.l10n.driverInspectionInProgress,
                         style: AppTypography.labelLarge.copyWith(
                           color: isReady ? AppColors.primary : AppColors.textPrimary,
                           fontWeight: FontWeight.w800,
@@ -751,7 +754,7 @@ class _DriverPageState extends State<DriverPage> {
                         ),
                       ),
                       Text(
-                        '$checkedCount of $totalCount checks passed. Complete safety protocol before departure.',
+                        context.l10n.driverInspectionProgressText(checkedCount, totalCount),
                         style: AppTypography.caption.copyWith(
                           color: AppColors.textMid,
                           fontSize: 11,
@@ -766,7 +769,7 @@ class _DriverPageState extends State<DriverPage> {
           const SizedBox(height: AppSpacing.md),
 
           Text(
-            'PRE-TRIP SAFETY CHECKLIST',
+            context.l10n.driverPreTripChecklist,
             style: AppTypography.caption.copyWith(
               fontWeight: FontWeight.w800,
               color: AppColors.primary,
