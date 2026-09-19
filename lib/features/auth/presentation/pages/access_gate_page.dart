@@ -31,8 +31,12 @@ class _AccessGatePageState extends State<AccessGatePage> {
   bool _isRegisterMode = false;
 
   // Sign In Controllers
-  final TextEditingController _islController = TextEditingController(text: '10492');
-  final TextEditingController _passwordController = TextEditingController(text: 'alex123');
+  final TextEditingController _islController = TextEditingController(
+    text: '10492',
+  );
+  final TextEditingController _passwordController = TextEditingController(
+    text: 'alex123',
+  );
   String _selectedRole = 'employee'; // 'employee', 'driver', 'admin'
   bool _obscurePassword = true;
 
@@ -41,7 +45,8 @@ class _AccessGatePageState extends State<AccessGatePage> {
   final TextEditingController _regIslController = TextEditingController();
   final TextEditingController _regDeptController = TextEditingController();
   final TextEditingController _regPasswordController = TextEditingController();
-  final TextEditingController _regConfirmPasswordController = TextEditingController();
+  final TextEditingController _regConfirmPasswordController =
+      TextEditingController();
   String _regSelectedRole = 'employee';
 
   bool _hasBiometrics = false;
@@ -70,7 +75,9 @@ class _AccessGatePageState extends State<AccessGatePage> {
   Future<void> _checkBiometricStatus() async {
     final isSupported = await BiometricHelper.isBiometricSupported();
     if (!mounted) return;
-    final hasCreds = await context.read<AuthCubit>().hasSavedBiometricCredentials();
+    final hasCreds = await context
+        .read<AuthCubit>()
+        .hasSavedBiometricCredentials();
     if (mounted) {
       setState(() {
         _hasBiometrics = isSupported && hasCreds;
@@ -120,10 +127,10 @@ class _AccessGatePageState extends State<AccessGatePage> {
     }
 
     context.read<AuthCubit>().loginWithIsl(
-          isl: isl,
-          password: password,
-          role: _selectedRole,
-        );
+      isl: isl,
+      password: password,
+      role: _selectedRole,
+    );
   }
 
   void _submitRegister() {
@@ -156,7 +163,7 @@ class _AccessGatePageState extends State<AccessGatePage> {
       return;
     }
 
-    if (password.length < 4) {
+    if (password.length < 6) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(l10n.enterPasswordError),
@@ -179,12 +186,12 @@ class _AccessGatePageState extends State<AccessGatePage> {
     }
 
     context.read<AuthCubit>().registerAccount(
-          isl: isl,
-          name: name,
-          department: dept.isEmpty ? 'General' : dept,
-          role: _regSelectedRole,
-          password: password,
-        );
+      isl: isl,
+      name: name,
+      department: dept.isEmpty ? 'General' : dept,
+      role: _regSelectedRole,
+      password: password,
+    );
   }
 
   void _applyDemoCredentials({
@@ -221,12 +228,16 @@ class _AccessGatePageState extends State<AccessGatePage> {
                 }
               }
 
-              final isBiometricSupported = await BiometricHelper.isBiometricSupported();
+              final isBiometricSupported =
+                  await BiometricHelper.isBiometricSupported();
               final isBiometricEnabled = await SecurePrefs.isBiometricEnabled();
               final biometricAction = await SecurePrefs.getBiometricAction();
 
               // Prompt for biometric setup if device supports it and user hasn't decided yet
-              if (isBiometricSupported && !isBiometricEnabled && biometricAction == null && context.mounted) {
+              if (isBiometricSupported &&
+                  !isBiometricEnabled &&
+                  biometricAction == null &&
+                  context.mounted) {
                 showModalBottomSheet<void>(
                   context: context,
                   isScrollControlled: true,
@@ -440,9 +451,7 @@ class _AccessGatePageState extends State<AccessGatePage> {
             size: 20,
           ),
           textInputAction: TextInputAction.next,
-          inputFormatters: [
-            UpperCaseTextFormatter(),
-          ],
+          inputFormatters: [UpperCaseTextFormatter()],
         ),
         const SizedBox(height: AppSpacing.md),
 
@@ -459,7 +468,9 @@ class _AccessGatePageState extends State<AccessGatePage> {
           ),
           suffixIcon: IconButton(
             icon: Icon(
-              _obscurePassword ? Icons.visibility_off_outlined : Icons.visibility_outlined,
+              _obscurePassword
+                  ? Icons.visibility_off_outlined
+                  : Icons.visibility_outlined,
               color: AppColors.textSecondary,
               size: 20,
             ),
@@ -674,9 +685,7 @@ class _AccessGatePageState extends State<AccessGatePage> {
             size: 20,
           ),
           textInputAction: TextInputAction.next,
-          inputFormatters: [
-            UpperCaseTextFormatter(),
-          ],
+          inputFormatters: [UpperCaseTextFormatter()],
         ),
         const SizedBox(height: AppSpacing.sm),
 

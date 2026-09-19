@@ -47,16 +47,19 @@ void main() {
   });
 
   group('DriverCubit — Trip Execution Lifecycle', () {
-    test('startTrip sets status to in_progress and activates first stop', () async {
-      await cubit.loadDriverDashboard();
-      expect(cubit.activeTrip!.isScheduled, true);
+    test(
+      'startTrip sets status to in_progress and activates first stop',
+      () async {
+        await cubit.loadDriverDashboard();
+        expect(cubit.activeTrip!.isScheduled, true);
 
-      await cubit.startTrip();
+        await cubit.startTrip();
 
-      expect(cubit.activeTrip!.isInProgress, true);
-      expect(cubit.activeTrip!.currentStopIndex, 0);
-      expect(cubit.activeTrip!.currentStop?.name, contains('AlexBank HQ'));
-    });
+        expect(cubit.activeTrip!.isInProgress, true);
+        expect(cubit.activeTrip!.currentStopIndex, 0);
+        expect(cubit.activeTrip!.currentStop?.name, contains('AlexBank HQ'));
+      },
+    );
 
     test('advanceToNextStop moves through stops sequentially', () async {
       await cubit.loadDriverDashboard();
@@ -81,7 +84,9 @@ void main() {
       await cubit.boardPassenger('MNF-001');
       expect(cubit.boardedCount, initialBoarded + 1);
 
-      final ahmed = cubit.activeTrip!.passengers.firstWhere((p) => p.id == 'MNF-001');
+      final ahmed = cubit.activeTrip!.passengers.firstWhere(
+        (p) => p.id == 'MNF-001',
+      );
       expect(ahmed.isBoarded, true);
 
       // Toggle back
@@ -161,17 +166,23 @@ void main() {
       expect(cubit.activeTrip!.currentStopIndex, 0);
     });
 
-    test('simulateArrivalAtNextStop advances to next stop seamlessly', () async {
-      await cubit.loadDriverDashboard();
-      await cubit.startTrip();
+    test(
+      'simulateArrivalAtNextStop advances to next stop seamlessly',
+      () async {
+        await cubit.loadDriverDashboard();
+        await cubit.startTrip();
 
-      expect(cubit.activeTrip!.currentStopIndex, 0);
+        expect(cubit.activeTrip!.currentStopIndex, 0);
 
-      await cubit.simulateArrivalAtNextStop();
-      await Future.delayed(const Duration(milliseconds: 400));
+        await cubit.simulateArrivalAtNextStop();
+        await Future.delayed(const Duration(milliseconds: 400));
 
-      expect(cubit.activeTrip!.currentStopIndex, 1);
-      expect(cubit.activeTrip!.currentStop?.name, contains('City Center Hub'));
-    });
+        expect(cubit.activeTrip!.currentStopIndex, 1);
+        expect(
+          cubit.activeTrip!.currentStop?.name,
+          contains('City Center Hub'),
+        );
+      },
+    );
   });
 }

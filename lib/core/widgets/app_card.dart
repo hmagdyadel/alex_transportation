@@ -33,10 +33,7 @@ class AppCard extends StatelessWidget {
       elevation: 0,
       child: InkWell(
         onTap: onTap,
-        child: Padding(
-          padding: padding,
-          child: child,
-        ),
+        child: Padding(padding: padding, child: child),
       ),
     );
   }

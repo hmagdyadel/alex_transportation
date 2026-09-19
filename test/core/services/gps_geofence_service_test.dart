@@ -116,19 +116,22 @@ void main() {
       expect(service.tryTriggerArrival('stop-A'), isTrue);
     });
 
-    test('simulatePosition updates lastKnownPosition and emits to stream', () async {
-      final positions = [];
-      final sub = service.positionStream.listen(positions.add);
+    test(
+      'simulatePosition updates lastKnownPosition and emits to stream',
+      () async {
+        final positions = [];
+        final sub = service.positionStream.listen(positions.add);
 
-      service.simulatePosition(latitude: 30.0715, longitude: 31.0210);
-      await Future.delayed(const Duration(milliseconds: 20));
+        service.simulatePosition(latitude: 30.0715, longitude: 31.0210);
+        await Future.delayed(const Duration(milliseconds: 20));
 
-      expect(service.lastKnownPosition, isNotNull);
-      expect(service.lastKnownPosition!.latitude, 30.0715);
-      expect(service.lastKnownPosition!.longitude, 31.0210);
-      expect(positions.length, 1);
+        expect(service.lastKnownPosition, isNotNull);
+        expect(service.lastKnownPosition!.latitude, 30.0715);
+        expect(service.lastKnownPosition!.longitude, 31.0210);
+        expect(positions.length, 1);
 
-      await sub.cancel();
-    });
+        await sub.cancel();
+      },
+    );
   });
 }

@@ -23,14 +23,30 @@ import 'package:alex_transportation/features/garage/presentation/pages/garage_pa
 /// 2. Bus Routes & Tracking (Phase 3 - Active)
 /// 3. Errand Car Request (Phase 4 - Active)
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  final int initialModuleIndex;
+
+  const HomePage({super.key, this.initialModuleIndex = 0});
 
   @override
   State<HomePage> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
-  int _selectedModuleIndex = 0;
+  late int _selectedModuleIndex;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedModuleIndex = widget.initialModuleIndex;
+  }
+
+  @override
+  void didUpdateWidget(HomePage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.initialModuleIndex != widget.initialModuleIndex) {
+      _selectedModuleIndex = widget.initialModuleIndex;
+    }
+  }
 
   void _showLogoutDialog() {
     final l10n = context.l10n;

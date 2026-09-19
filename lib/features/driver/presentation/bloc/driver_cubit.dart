@@ -37,7 +37,8 @@ class DriverCubit extends Cubit<DriverStates> {
 
   DriverProfileModel? get profile => _profile;
   DriverTripModel? get activeTrip => _activeTrip;
-  Map<String, bool> get inspectionChecklist => Map.unmodifiable(_inspectionChecklist);
+  Map<String, bool> get inspectionChecklist =>
+      Map.unmodifiable(_inspectionChecklist);
   bool get isInspectionComplete => _inspectionChecklist.values.every((v) => v);
 
   int get boardedCount => _activeTrip?.boardedCount ?? 0;
@@ -134,7 +135,11 @@ class DriverCubit extends Cubit<DriverStates> {
     }
 
     if (!isInspectionComplete) {
-      safeEmit(const DriverStates.error(message: 'Pre-trip inspection must be complete before starting'));
+      safeEmit(
+        const DriverStates.error(
+          message: 'Pre-trip inspection must be complete before starting',
+        ),
+      );
       return;
     }
 
@@ -168,7 +173,9 @@ class DriverCubit extends Cubit<DriverStates> {
         ? ' (${_activeTrip!.skippedStopsCount} empty stops skipped)'
         : '';
 
-    safeEmit(DriverStates.success('Trip started from $startStopName$skippedMsg!'));
+    safeEmit(
+      DriverStates.success('Trip started from $startStopName$skippedMsg!'),
+    );
     safeEmit(const DriverStates.loaded());
   }
 
@@ -180,7 +187,9 @@ class DriverCubit extends Cubit<DriverStates> {
     if (trip != null && trip.currentStop != null) {
       GpsGeofenceService.instance.tryTriggerArrival(trip.currentStop!.id);
       final next = trip.nextStop;
-      if (next != null && trip.currentStop!.latitude != null && trip.currentStop!.longitude != null) {
+      if (next != null &&
+          trip.currentStop!.latitude != null &&
+          trip.currentStop!.longitude != null) {
         _distanceToNextStopMeters = GpsGeofenceService.instance.distanceToStop(
           currentLat: trip.currentStop!.latitude!,
           currentLng: trip.currentStop!.longitude!,
@@ -219,7 +228,9 @@ class DriverCubit extends Cubit<DriverStates> {
     _isGpsActive = true;
 
     // Check automatic geofence arrival at target stop
-    if (_isAutoGeofenceEnabled && distance != null && distance <= targetStop.radiusMeters) {
+    if (_isAutoGeofenceEnabled &&
+        distance != null &&
+        distance <= targetStop.radiusMeters) {
       if (GpsGeofenceService.instance.tryTriggerArrival(targetStop.id)) {
         advanceToNextStop(isFromGps: true);
         return;
@@ -239,7 +250,11 @@ class DriverCubit extends Cubit<DriverStates> {
 
     final nextActiveIdx = trip.nextActiveStopIndex;
     if (nextActiveIdx == null) {
-      safeEmit(const DriverStates.error(message: 'Already at the final destination! You can now complete the trip.'));
+      safeEmit(
+        const DriverStates.error(
+          message: 'Already at the final destination! You can now complete the trip.',
+        ),
+      );
       return;
     }
 
@@ -270,7 +285,8 @@ class DriverCubit extends Cubit<DriverStates> {
           currentLng: lastPos.longitude,
           targetStop: upcoming,
         );
-      } else if (_activeTrip!.currentStop?.latitude != null && _activeTrip!.currentStop?.longitude != null) {
+      } else if (_activeTrip!.currentStop?.latitude != null &&
+          _activeTrip!.currentStop?.longitude != null) {
         _distanceToNextStopMeters = GpsGeofenceService.instance.distanceToStop(
           currentLat: _activeTrip!.currentStop!.latitude!,
           currentLng: _activeTrip!.currentStop!.longitude!,
@@ -285,7 +301,9 @@ class DriverCubit extends Cubit<DriverStates> {
 
     final nextStopName = trip.stops[nextActiveIdx].name;
     if (isFromGps) {
-      safeEmit(DriverStates.success('📍 GPS Geofence: Arrived at $nextStopName!'));
+      safeEmit(
+        DriverStates.success('📍 GPS Geofence: Arrived at $nextStopName!'),
+      );
     } else {
       safeEmit(DriverStates.success('Arrived at $nextStopName'));
     }
@@ -313,7 +331,9 @@ class DriverCubit extends Cubit<DriverStates> {
   Future<void> completeTrip() async {
     final trip = _activeTrip;
     if (trip == null || !trip.isInProgress) {
-      safeEmit(const DriverStates.error(message: 'No trip in progress to complete'));
+      safeEmit(
+        const DriverStates.error(message: 'No trip in progress to complete'),
+      );
       return;
     }
 
@@ -331,7 +351,11 @@ class DriverCubit extends Cubit<DriverStates> {
 
     await FirestoreSyncService.instance.syncDriverTripStatus(_activeTrip!);
 
-    safeEmit(const DriverStates.success('Trip completed successfully! All passengers arrived.'));
+    safeEmit(
+      const DriverStates.success(
+        'Trip completed successfully! All passengers arrived.',
+      ),
+    );
     safeEmit(const DriverStates.loaded());
   }
 
@@ -343,7 +367,9 @@ class DriverCubit extends Cubit<DriverStates> {
     final trip = _activeTrip;
     if (trip == null) return false;
 
-    final passengerExists = trip.passengers.any((p) => p.passId == passId || p.id == passId);
+    final passengerExists = trip.passengers.any(
+      (p) => p.passId == passId || p.id == passId,
+    );
     if (!passengerExists) return false;
 
     final updatedPassengers = trip.passengers.map((p) {

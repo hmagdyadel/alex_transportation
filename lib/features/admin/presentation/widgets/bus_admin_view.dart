@@ -57,7 +57,9 @@ class _BusAdminViewState extends State<BusAdminView> {
                           style: TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.w700,
-                            color: isSelected ? Colors.white : AppColors.textPrimary,
+                            color: isSelected
+                                ? Colors.white
+                                : AppColors.textPrimary,
                           ),
                         ),
                         selected: isSelected,
@@ -108,7 +110,9 @@ class _BusAdminViewState extends State<BusAdminView> {
                         const SizedBox(width: AppSpacing.sm),
                         StatusPill(
                           label: selectedRoute.shift.toUpperCase(),
-                          type: isMorningRoute ? StatusPillType.gold : StatusPillType.active,
+                          type: isMorningRoute
+                              ? StatusPillType.gold
+                              : StatusPillType.active,
                         ),
                       ],
                     ),
@@ -169,10 +173,15 @@ class _BusAdminViewState extends State<BusAdminView> {
                     if (isMorningRoute)
                       AppButton(
                         label: context.l10n.adminSyncMirroredReturnEveningLine,
-                        leadingIcon: const Icon(Icons.sync_alt_rounded, size: 18),
+                        leadingIcon: const Icon(
+                          Icons.sync_alt_rounded,
+                          size: 18,
+                        ),
                         variant: AppButtonVariant.secondary,
                         onPressed: () {
-                          busCubit.generateReverseEveningRoute(selectedRoute.id);
+                          busCubit.generateReverseEveningRoute(
+                            selectedRoute.id,
+                          );
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                               content: Text(
@@ -201,7 +210,8 @@ class _BusAdminViewState extends State<BusAdminView> {
                     ),
                   ),
                   TextButton.icon(
-                    onPressed: () => _showAddStationDialog(context, selectedRoute),
+                    onPressed: () =>
+                        _showAddStationDialog(context, selectedRoute),
                     icon: const Icon(Icons.add_location_alt_rounded, size: 18),
                     label: Text(context.l10n.adminAddStationTitle),
                   ),
@@ -229,8 +239,8 @@ class _BusAdminViewState extends State<BusAdminView> {
                           backgroundColor: isStart
                               ? AppColors.accentGold.withValues(alpha: 0.2)
                               : isTerminus
-                                  ? AppColors.primaryLight.withValues(alpha: 0.2)
-                                  : AppColors.background,
+                              ? AppColors.primaryLight.withValues(alpha: 0.2)
+                              : AppColors.background,
                           child: Text(
                             '${stop.order}',
                             style: AppTypography.caption.copyWith(
@@ -238,8 +248,8 @@ class _BusAdminViewState extends State<BusAdminView> {
                               color: isStart
                                   ? AppColors.accentGold
                                   : isTerminus
-                                      ? AppColors.primary
-                                      : AppColors.textPrimary,
+                                  ? AppColors.primary
+                                  : AppColors.textPrimary,
                             ),
                           ),
                         ),
@@ -265,7 +275,10 @@ class _BusAdminViewState extends State<BusAdminView> {
                           ),
                         ),
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 4,
+                          ),
                           decoration: BoxDecoration(
                             color: AppColors.background,
                             borderRadius: BorderRadius.circular(AppRadius.sm),
@@ -283,13 +296,23 @@ class _BusAdminViewState extends State<BusAdminView> {
                         IconButton(
                           icon: const Icon(Icons.schedule_rounded, size: 18),
                           color: AppColors.textSecondary,
-                          onPressed: () => _showEditTimeDialog(context, selectedRoute.id, stop),
+                          onPressed: () => _showEditTimeDialog(
+                            context,
+                            selectedRoute.id,
+                            stop,
+                          ),
                         ),
                         if (selectedRoute.stops.length > 2)
                           IconButton(
-                            icon: const Icon(Icons.delete_outline_rounded, size: 18),
+                            icon: const Icon(
+                              Icons.delete_outline_rounded,
+                              size: 18,
+                            ),
                             color: AppColors.danger,
-                            onPressed: () => busCubit.removeStationFromRoute(selectedRoute.id, stop.id),
+                            onPressed: () => busCubit.removeStationFromRoute(
+                              selectedRoute.id,
+                              stop.id,
+                            ),
                           ),
                       ],
                     ),
@@ -312,15 +335,30 @@ class _BusAdminViewState extends State<BusAdminView> {
       context: context,
       builder: (ctx) {
         return AlertDialog(
-          title: Text('${context.l10n.adminAddStationTitle} (${route.routeNumber})', style: AppTypography.titleMedium),
+          title: Text(
+            '${context.l10n.adminAddStationTitle} (${route.routeNumber})',
+            style: AppTypography.titleMedium,
+          ),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              AppTextField(controller: nameController, label: context.l10n.adminStationNameEn, hint: 'e.g. Ring Road Exit'),
+              AppTextField(
+                controller: nameController,
+                label: context.l10n.adminStationNameEn,
+                hint: 'e.g. Ring Road Exit',
+              ),
               const SizedBox(height: AppSpacing.sm),
-              AppTextField(controller: nameArController, label: context.l10n.adminStationNameAr, hint: 'e.g. مخرج الدائري'),
+              AppTextField(
+                controller: nameArController,
+                label: context.l10n.adminStationNameAr,
+                hint: 'e.g. مخرج الدائري',
+              ),
               const SizedBox(height: AppSpacing.sm),
-              AppTextField(controller: timeController, label: context.l10n.adminScheduledTime, hint: '07:45 AM'),
+              AppTextField(
+                controller: timeController,
+                label: context.l10n.adminScheduledTime,
+                hint: '07:45 AM',
+              ),
             ],
           ),
           actions: [
@@ -329,20 +367,27 @@ class _BusAdminViewState extends State<BusAdminView> {
               child: Text(context.l10n.commonCancel),
             ),
             ElevatedButton(
-              style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.primary,
+              ),
               onPressed: () {
                 if (nameController.text.trim().isEmpty) return;
                 final newStop = BusStopModel(
                   id: 'STOP-${DateTime.now().millisecondsSinceEpoch}',
                   name: nameController.text.trim(),
-                  nameAr: nameArController.text.trim().isNotEmpty ? nameArController.text.trim() : null,
+                  nameAr: nameArController.text.trim().isNotEmpty
+                      ? nameArController.text.trim()
+                      : null,
                   scheduledTime: timeController.text.trim(),
                   order: route.stops.length + 1,
                 );
                 context.read<BusCubit>().addStationToRoute(route.id, newStop);
                 Navigator.pop(ctx);
               },
-              child: Text(context.l10n.adminAddStationTitle, style: const TextStyle(color: Colors.white)),
+              child: Text(
+                context.l10n.adminAddStationTitle,
+                style: const TextStyle(color: Colors.white),
+              ),
             ),
           ],
         );
@@ -350,28 +395,47 @@ class _BusAdminViewState extends State<BusAdminView> {
     );
   }
 
-  void _showEditTimeDialog(BuildContext context, String routeId, BusStopModel stop) {
+  void _showEditTimeDialog(
+    BuildContext context,
+    String routeId,
+    BusStopModel stop,
+  ) {
     final controller = TextEditingController(text: stop.scheduledTime);
 
     showDialog(
       context: context,
       builder: (ctx) {
         return AlertDialog(
-          title: Text('${context.l10n.adminEditTiming}: ${stop.name}', style: AppTypography.titleMedium),
+          title: Text(
+            '${context.l10n.adminEditTiming}: ${stop.name}',
+            style: AppTypography.titleMedium,
+          ),
           content: AppTextField(
             controller: controller,
             label: context.l10n.adminScheduledTime,
             hint: '08:00 AM',
           ),
           actions: [
-            TextButton(onPressed: () => Navigator.pop(ctx), child: Text(context.l10n.commonCancel)),
+            TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: Text(context.l10n.commonCancel),
+            ),
             ElevatedButton(
-              style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.primary,
+              ),
               onPressed: () {
-                context.read<BusCubit>().updateStationTime(routeId, stop.id, controller.text.trim());
+                context.read<BusCubit>().updateStationTime(
+                  routeId,
+                  stop.id,
+                  controller.text.trim(),
+                );
                 Navigator.pop(ctx);
               },
-              child: Text(context.l10n.commonSave, style: const TextStyle(color: Colors.white)),
+              child: Text(
+                context.l10n.commonSave,
+                style: const TextStyle(color: Colors.white),
+              ),
             ),
           ],
         );

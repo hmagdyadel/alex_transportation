@@ -11,6 +11,7 @@ import 'package:alex_transportation/features/admin/presentation/bloc/bus_admin_c
 import 'package:alex_transportation/features/admin/presentation/bloc/errand_admin_cubit.dart';
 import 'package:alex_transportation/features/admin/presentation/bloc/driver_admin_cubit.dart';
 import 'package:alex_transportation/features/admin/presentation/bloc/access_admin_cubit.dart';
+import 'package:alex_transportation/features/notifications/presentation/bloc/notification_cubit.dart';
 
 /// Global service locator instance.
 final sl = GetIt.instance;
@@ -20,9 +21,10 @@ final sl = GetIt.instance;
 /// Phase 0: only Cubit skeletons.
 /// Subsequent phases add data sources, repositories, and use cases.
 Future<void> setupInjector() async {
-  // ─── Localization & Auth ──────────────────────────────────────────────
+  // ─── Localization, Auth & Notifications ─────────────────────────────────
   sl.registerLazySingleton(() => LocaleCubit());
   sl.registerLazySingleton(() => AuthCubit());
+  sl.registerLazySingleton(() => NotificationCubit());
 
   // ─── Garage ────────────────────────────────────────────────────────────
   sl.registerFactory(() => GarageCubit());

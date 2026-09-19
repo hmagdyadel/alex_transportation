@@ -94,13 +94,14 @@ class ErrandRequestHistoryCard extends StatelessWidget {
                   Icon(
                     _statusIcon(request.status),
                     size: 18,
-                    color: request.status == 'completed' ||
+                    color:
+                        request.status == 'completed' ||
                             request.status == 'approved' ||
                             request.status == 'in_progress'
                         ? AppColors.primaryMid
                         : request.status == 'pending'
-                            ? AppColors.accentGold
-                            : AppColors.danger,
+                        ? AppColors.accentGold
+                        : AppColors.danger,
                   ),
                   const SizedBox(width: AppSpacing.xs),
                   Text(
@@ -172,9 +173,7 @@ class ErrandRequestHistoryCard extends StatelessWidget {
             request.purpose,
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
-            style: AppTypography.caption.copyWith(
-              color: AppColors.textMid,
-            ),
+            style: AppTypography.caption.copyWith(color: AppColors.textMid),
           ),
           const SizedBox(height: AppSpacing.sm),
 
@@ -203,9 +202,7 @@ class ErrandRequestHistoryCard extends StatelessWidget {
               const SizedBox(width: 4),
               Text(
                 '${request.requestedTime} → ${request.estimatedReturnTime}',
-                style: AppTypography.caption.copyWith(
-                  color: AppColors.textMid,
-                ),
+                style: AppTypography.caption.copyWith(color: AppColors.textMid),
               ),
             ],
           ),

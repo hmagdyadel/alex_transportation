@@ -32,11 +32,23 @@ class DriverAdminView extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    _buildStatCol(context.l10n.adminTotalCaptains, '${captains.length}', AppColors.primary),
+                    _buildStatCol(
+                      context.l10n.adminTotalCaptains,
+                      '${captains.length}',
+                      AppColors.primary,
+                    ),
                     Container(height: 36, width: 1, color: AppColors.border),
-                    _buildStatCol(context.l10n.adminOnActiveDuty, '${captains.length}', AppColors.primaryMid),
+                    _buildStatCol(
+                      context.l10n.adminOnActiveDuty,
+                      '${captains.length}',
+                      AppColors.primaryMid,
+                    ),
                     Container(height: 36, width: 1, color: AppColors.border),
-                    _buildStatCol(context.l10n.adminAvgRating, '4.93 ★', AppColors.accentGold),
+                    _buildStatCol(
+                      context.l10n.adminAvgRating,
+                      '4.93 ★',
+                      AppColors.accentGold,
+                    ),
                   ],
                 ),
               ),
@@ -53,7 +65,9 @@ class DriverAdminView extends StatelessWidget {
 
               // Roster Cards
               ...captains.map((driver) {
-                final isErrandChauffeur = driver.assignedRouteId.startsWith('ERRAND');
+                final isErrandChauffeur = driver.assignedRouteId.startsWith(
+                  'ERRAND',
+                );
 
                 return Padding(
                   padding: const EdgeInsets.only(bottom: AppSpacing.sm),
@@ -87,19 +101,24 @@ class DriverAdminView extends StatelessWidget {
                                   const SizedBox(width: AppSpacing.sm),
                                   Expanded(
                                     child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Text(
                                           driver.name,
-                                          style: AppTypography.titleMedium.copyWith(
-                                            fontWeight: FontWeight.w800,
-                                            fontSize: 15,
-                                          ),
+                                          style: AppTypography.titleMedium
+                                              .copyWith(
+                                                fontWeight: FontWeight.w800,
+                                                fontSize: 15,
+                                              ),
                                           maxLines: 1,
                                           overflow: TextOverflow.ellipsis,
                                         ),
                                         Text(
-                                          context.l10n.driverLicensePhone(driver.licenseNumber, driver.phone),
+                                          context.l10n.driverLicensePhone(
+                                            driver.licenseNumber,
+                                            driver.phone,
+                                          ),
                                           style: AppTypography.caption.copyWith(
                                             color: AppColors.textSecondary,
                                             fontSize: 10,
@@ -115,10 +134,15 @@ class DriverAdminView extends StatelessWidget {
                             ),
                             const SizedBox(width: AppSpacing.xs),
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 4,
+                              ),
                               decoration: BoxDecoration(
                                 color: AppColors.goldLight,
-                                borderRadius: BorderRadius.circular(AppRadius.sm),
+                                borderRadius: BorderRadius.circular(
+                                  AppRadius.sm,
+                                ),
                               ),
                               child: Text(
                                 '${driver.rating} ★',

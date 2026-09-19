@@ -111,71 +111,71 @@ abstract final class AppTypography {
 
   // ─── Direct TextStyle accessors via Inter ────────────────────────────────
   static TextStyle get headlineLarge => GoogleFonts.inter(
-        fontSize: 24,
-        fontWeight: headlineWeight,
-        color: AppColors.textPrimary,
-      );
+    fontSize: 24,
+    fontWeight: headlineWeight,
+    color: AppColors.textPrimary,
+  );
 
   static TextStyle get headlineMedium => GoogleFonts.inter(
-        fontSize: headlineSize,
-        fontWeight: headlineWeight,
-        color: AppColors.textPrimary,
-      );
+    fontSize: headlineSize,
+    fontWeight: headlineWeight,
+    color: AppColors.textPrimary,
+  );
 
   static TextStyle get titleLarge => GoogleFonts.inter(
-        fontSize: titleSize,
-        fontWeight: titleWeight,
-        color: AppColors.textPrimary,
-      );
+    fontSize: titleSize,
+    fontWeight: titleWeight,
+    color: AppColors.textPrimary,
+  );
 
   static TextStyle get titleMedium => GoogleFonts.inter(
-        fontSize: subtitleSize,
-        fontWeight: subtitleWeight,
-        color: AppColors.textPrimary,
-      );
+    fontSize: subtitleSize,
+    fontWeight: subtitleWeight,
+    color: AppColors.textPrimary,
+  );
 
   static TextStyle get bodyLarge => GoogleFonts.inter(
-        fontSize: 16,
-        fontWeight: bodyWeight,
-        color: AppColors.textPrimary,
-      );
+    fontSize: 16,
+    fontWeight: bodyWeight,
+    color: AppColors.textPrimary,
+  );
 
   static TextStyle get bodyMedium => GoogleFonts.inter(
-        fontSize: bodySize,
-        fontWeight: bodyWeight,
-        color: AppColors.textPrimary,
-      );
+    fontSize: bodySize,
+    fontWeight: bodyWeight,
+    color: AppColors.textPrimary,
+  );
 
   static TextStyle get bodySmall => GoogleFonts.inter(
-        fontSize: bodySmSize,
-        fontWeight: bodySmWeight,
-        color: AppColors.textMid,
-      );
+    fontSize: bodySmSize,
+    fontWeight: bodySmWeight,
+    color: AppColors.textMid,
+  );
 
   static TextStyle get labelLarge => GoogleFonts.inter(
-        fontSize: 14,
-        fontWeight: FontWeight.w600,
-        color: AppColors.textPrimary,
-      );
+    fontSize: 14,
+    fontWeight: FontWeight.w600,
+    color: AppColors.textPrimary,
+  );
 
   static TextStyle get labelMedium => GoogleFonts.inter(
-        fontSize: labelSize,
-        fontWeight: labelWeight,
-        letterSpacing: labelLetterSpacing,
-        color: AppColors.textPrimary,
-      );
+    fontSize: labelSize,
+    fontWeight: labelWeight,
+    letterSpacing: labelLetterSpacing,
+    color: AppColors.textPrimary,
+  );
 
   static TextStyle get labelSmall => GoogleFonts.inter(
-        fontSize: captionSize,
-        fontWeight: FontWeight.w600,
-        color: AppColors.textSecondary,
-      );
+    fontSize: captionSize,
+    fontWeight: FontWeight.w600,
+    color: AppColors.textSecondary,
+  );
 
   static TextStyle get caption => GoogleFonts.inter(
-        fontSize: captionSize,
-        fontWeight: captionWeight,
-        color: AppColors.textSecondary,
-      );
+    fontSize: captionSize,
+    fontWeight: captionWeight,
+    color: AppColors.textSecondary,
+  );
 }
 
 // ─── Elevation ─────────────────────────────────────────────────────────────
@@ -245,44 +245,44 @@ abstract final class AppLayout {
 abstract final class AppShadow {
   /// Subtle card shadow
   static List<BoxShadow> get card => [
-        BoxShadow(
-          color: Colors.black.withValues(alpha: 0.04),
-          blurRadius: 6,
-          offset: const Offset(0, 2),
-        ),
-      ];
+    BoxShadow(
+      color: Colors.black.withValues(alpha: 0.04),
+      blurRadius: 6,
+      offset: const Offset(0, 2),
+    ),
+  ];
 
   /// Elevated floating element shadow
   static List<BoxShadow> get elevated => [
-        BoxShadow(
-          color: Colors.black.withValues(alpha: 0.08),
-          blurRadius: 12,
-          offset: const Offset(0, 4),
-        ),
-        BoxShadow(
-          color: Colors.black.withValues(alpha: 0.04),
-          blurRadius: 4,
-          offset: const Offset(0, 1),
-        ),
-      ];
+    BoxShadow(
+      color: Colors.black.withValues(alpha: 0.08),
+      blurRadius: 12,
+      offset: const Offset(0, 4),
+    ),
+    BoxShadow(
+      color: Colors.black.withValues(alpha: 0.04),
+      blurRadius: 4,
+      offset: const Offset(0, 1),
+    ),
+  ];
 
   /// Modal / overlay shadow
   static List<BoxShadow> get modal => [
-        BoxShadow(
-          color: Colors.black.withValues(alpha: 0.15),
-          blurRadius: 24,
-          offset: const Offset(0, 8),
-        ),
-      ];
+    BoxShadow(
+      color: Colors.black.withValues(alpha: 0.15),
+      blurRadius: 24,
+      offset: const Offset(0, 8),
+    ),
+  ];
 
   /// Brand primary glow
   static List<BoxShadow> get primaryGlow => [
-        BoxShadow(
-          color: AppColors.primary.withValues(alpha: 0.25),
-          blurRadius: 12,
-          offset: const Offset(0, 4),
-        ),
-      ];
+    BoxShadow(
+      color: AppColors.primary.withValues(alpha: 0.25),
+      blurRadius: 12,
+      offset: const Offset(0, 4),
+    ),
+  ];
 }
 
 // ─── Animation Durations ───────────────────────────────────────────────────

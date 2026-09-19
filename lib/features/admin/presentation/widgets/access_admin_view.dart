@@ -44,7 +44,9 @@ class _AccessAdminViewState extends State<AccessAdminView> {
     showDialog<void>(
       context: context,
       builder: (dlgCtx) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.lg)),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppRadius.lg),
+        ),
         title: Row(
           children: [
             Container(
@@ -63,7 +65,10 @@ class _AccessAdminViewState extends State<AccessAdminView> {
             Expanded(
               child: Text(
                 l10n.adminProvisionTitle,
-                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
           ],
@@ -75,7 +80,9 @@ class _AccessAdminViewState extends State<AccessAdminView> {
             children: [
               Text(
                 l10n.adminProvisionSubtitle,
-                style: AppTypography.bodySmall.copyWith(color: AppColors.textMid),
+                style: AppTypography.bodySmall.copyWith(
+                  color: AppColors.textMid,
+                ),
               ),
               const SizedBox(height: AppSpacing.md),
               AppTextField(
@@ -117,7 +124,9 @@ class _AccessAdminViewState extends State<AccessAdminView> {
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.primary,
               foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.sm)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(AppRadius.sm),
+              ),
             ),
             onPressed: () async {
               final name = nameCtrl.text.trim();
@@ -137,11 +146,11 @@ class _AccessAdminViewState extends State<AccessAdminView> {
               }
 
               await context.read<AuthCubit>().registerNewAdmin(
-                    isl: isl,
-                    name: name,
-                    department: dept.isEmpty ? 'Central Operations' : dept,
-                    password: pass,
-                  );
+                isl: isl,
+                name: name,
+                department: dept.isEmpty ? 'Central Operations' : dept,
+                password: pass,
+              );
 
               if (context.mounted) {
                 Navigator.of(dlgCtx).pop();
@@ -215,7 +224,10 @@ class _AccessAdminViewState extends State<AccessAdminView> {
                         Expanded(
                           child: AppButton(
                             label: context.l10n.adminOpenStaffServices,
-                            leadingIcon: const Icon(Icons.directions_bus_rounded, size: 16),
+                            leadingIcon: const Icon(
+                              Icons.directions_bus_rounded,
+                              size: 16,
+                            ),
                             variant: AppButtonVariant.primary,
                             onPressed: () => context.go('/home'),
                           ),
@@ -223,7 +235,10 @@ class _AccessAdminViewState extends State<AccessAdminView> {
                         const SizedBox(width: AppSpacing.sm),
                         AppButton(
                           label: context.l10n.adminInspectDriverHud,
-                          leadingIcon: const Icon(Icons.speed_rounded, size: 16),
+                          leadingIcon: const Icon(
+                            Icons.speed_rounded,
+                            size: 16,
+                          ),
                           variant: AppButtonVariant.secondary,
                           onPressed: () => context.go('/driver'),
                         ),
@@ -257,7 +272,9 @@ class _AccessAdminViewState extends State<AccessAdminView> {
                             const SizedBox(height: 2),
                             Text(
                               context.l10n.adminAccountsSubtitle,
-                              style: AppTypography.caption.copyWith(color: AppColors.textSecondary),
+                              style: AppTypography.caption.copyWith(
+                                color: AppColors.textSecondary,
+                              ),
                             ),
                           ],
                         ),
@@ -265,9 +282,16 @@ class _AccessAdminViewState extends State<AccessAdminView> {
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppColors.primary,
                             foregroundColor: Colors.white,
-                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                            textStyle: AppTypography.labelSmall.copyWith(fontWeight: FontWeight.w700),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 8,
+                            ),
+                            textStyle: AppTypography.labelSmall.copyWith(
+                              fontWeight: FontWeight.w700,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
                           ),
                           icon: const Icon(Icons.person_add_rounded, size: 16),
                           label: Text(context.l10n.adminAddAdminButton),
@@ -310,32 +334,43 @@ class _AccessAdminViewState extends State<AccessAdminView> {
                                       children: [
                                         Text(
                                           admin.name,
-                                          style: AppTypography.bodySmall.copyWith(
-                                            fontWeight: FontWeight.w700,
-                                            color: AppColors.textPrimary,
-                                          ),
+                                          style: AppTypography.bodySmall
+                                              .copyWith(
+                                                fontWeight: FontWeight.w700,
+                                                color: AppColors.textPrimary,
+                                              ),
                                         ),
                                         const SizedBox(width: AppSpacing.xs),
                                         Container(
-                                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 6,
+                                            vertical: 2,
+                                          ),
                                           decoration: BoxDecoration(
-                                            color: AppColors.primary.withValues(alpha: 0.1),
-                                            borderRadius: BorderRadius.circular(4),
+                                            color: AppColors.primary.withValues(
+                                              alpha: 0.1,
+                                            ),
+                                            borderRadius: BorderRadius.circular(
+                                              4,
+                                            ),
                                           ),
                                           child: Text(
                                             admin.isl,
-                                            style: AppTypography.caption.copyWith(
-                                              fontWeight: FontWeight.w800,
-                                              color: AppColors.primary,
-                                              fontSize: 10,
-                                            ),
+                                            style: AppTypography.caption
+                                                .copyWith(
+                                                  fontWeight: FontWeight.w800,
+                                                  color: AppColors.primary,
+                                                  fontSize: 10,
+                                                ),
                                           ),
                                         ),
                                       ],
                                     ),
                                     const SizedBox(height: 2),
                                     Text(
-                                      context.l10n.adminDeptOnly(admin.department),
+                                      context.l10n.adminDeptOnly(
+                                        admin.department,
+                                      ),
                                       style: AppTypography.caption.copyWith(
                                         color: AppColors.textSecondary,
                                         fontSize: 11,
@@ -377,14 +412,25 @@ class _AccessAdminViewState extends State<AccessAdminView> {
                     // Role Selector
                     Text(
                       context.l10n.adminTargetRole,
-                      style: AppTypography.caption.copyWith(fontWeight: FontWeight.w700),
+                      style: AppTypography.caption.copyWith(
+                        fontWeight: FontWeight.w700,
+                      ),
                     ),
                     const SizedBox(height: 4),
                     SegmentedButton<String>(
                       segments: [
-                        ButtonSegment(value: 'employee', label: Text(context.l10n.roleNormalUser)),
-                        ButtonSegment(value: 'driver', label: Text(context.l10n.roleDriver)),
-                        ButtonSegment(value: 'admin', label: Text(context.l10n.roleAdmin)),
+                        ButtonSegment(
+                          value: 'employee',
+                          label: Text(context.l10n.roleNormalUser),
+                        ),
+                        ButtonSegment(
+                          value: 'driver',
+                          label: Text(context.l10n.roleDriver),
+                        ),
+                        ButtonSegment(
+                          value: 'admin',
+                          label: Text(context.l10n.roleAdmin),
+                        ),
                       ],
                       selected: {_selectedRole},
                       onSelectionChanged: (val) {
@@ -439,7 +485,9 @@ class _AccessAdminViewState extends State<AccessAdminView> {
               ...codes.map((code) {
                 final rolePillType = code.role == 'admin'
                     ? StatusPillType.gold
-                    : (code.role == 'driver' ? StatusPillType.active : StatusPillType.neutral);
+                    : (code.role == 'driver'
+                          ? StatusPillType.active
+                          : StatusPillType.neutral);
 
                 return Padding(
                   padding: const EdgeInsets.only(bottom: AppSpacing.xs),
@@ -474,7 +522,10 @@ class _AccessAdminViewState extends State<AccessAdminView> {
                               ),
                               const SizedBox(height: 2),
                               Text(
-                                context.l10n.adminDeptUses(code.department, code.useCount),
+                                context.l10n.adminDeptUses(
+                                  code.department,
+                                  code.useCount,
+                                ),
                                 style: AppTypography.caption.copyWith(
                                   color: AppColors.textSecondary,
                                   fontSize: 10,
@@ -495,10 +546,14 @@ class _AccessAdminViewState extends State<AccessAdminView> {
                         Switch.adaptive(
                           value: code.isActive,
                           activeTrackColor: AppColors.primary,
-                          onChanged: (_) => adminCubit.toggleInviteCode(code.id),
+                          onChanged: (_) =>
+                              adminCubit.toggleInviteCode(code.id),
                         ),
                         IconButton(
-                          icon: const Icon(Icons.delete_outline_rounded, size: 18),
+                          icon: const Icon(
+                            Icons.delete_outline_rounded,
+                            size: 18,
+                          ),
                           color: AppColors.danger,
                           onPressed: () => adminCubit.revokeInviteCode(code.id),
                         ),

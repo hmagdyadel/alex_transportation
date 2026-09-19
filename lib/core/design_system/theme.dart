@@ -58,9 +58,7 @@ abstract final class AppTheme {
           backgroundColor: AppColors.primary,
           foregroundColor: Colors.white,
           minimumSize: const Size(0, AppLayout.buttonHeight),
-          shape: RoundedRectangleBorder(
-            borderRadius: AppRadius.borderMd,
-          ),
+          shape: RoundedRectangleBorder(borderRadius: AppRadius.borderMd),
           textStyle: GoogleFonts.inter(
             fontSize: AppTypography.bodySize,
             fontWeight: FontWeight.w700,
@@ -73,9 +71,7 @@ abstract final class AppTheme {
         style: OutlinedButton.styleFrom(
           foregroundColor: AppColors.primary,
           minimumSize: const Size(0, AppLayout.buttonHeight),
-          shape: RoundedRectangleBorder(
-            borderRadius: AppRadius.borderMd,
-          ),
+          shape: RoundedRectangleBorder(borderRadius: AppRadius.borderMd),
           side: const BorderSide(color: AppColors.border),
           textStyle: GoogleFonts.inter(
             fontSize: AppTypography.bodySize,
@@ -159,9 +155,7 @@ abstract final class AppTheme {
       // Dialog
       dialogTheme: DialogThemeData(
         backgroundColor: AppColors.surface,
-        shape: RoundedRectangleBorder(
-          borderRadius: AppRadius.borderXl,
-        ),
+        shape: RoundedRectangleBorder(borderRadius: AppRadius.borderXl),
       ),
     );
   }

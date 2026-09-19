@@ -39,7 +39,8 @@ class _NoInternetScreenState extends State<NoInternetScreen>
     setState(() => _isChecking = true);
 
     try {
-      final isOnline = await NetworkConnectivityService.instance.checkConnection();
+      final isOnline = await NetworkConnectivityService.instance
+          .checkConnection();
       if (!mounted) return;
 
       if (isOnline) {
@@ -54,7 +55,9 @@ class _NoInternetScreenState extends State<NoInternetScreen>
             ),
             backgroundColor: AppColors.primary,
             behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
           ),
         );
       } else {
@@ -62,14 +65,20 @@ class _NoInternetScreenState extends State<NoInternetScreen>
           SnackBar(
             content: Row(
               children: [
-                const Icon(Icons.wifi_off_rounded, color: Colors.white, size: 20),
+                const Icon(
+                  Icons.wifi_off_rounded,
+                  color: Colors.white,
+                  size: 20,
+                ),
                 const SizedBox(width: AppSpacing.sm),
                 Expanded(child: Text(context.l10n.stillNoConnection)),
               ],
             ),
             backgroundColor: AppColors.danger,
             behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
           ),
         );
       }
@@ -108,7 +117,9 @@ class _NoInternetScreenState extends State<NoInternetScreen>
                           shape: BoxShape.circle,
                           color: AppColors.primary.withValues(alpha: 0.06),
                           border: Border.all(
-                            color: AppColors.accentGold.withValues(alpha: 0.3 + (_pulseController.value * 0.4)),
+                            color: AppColors.accentGold.withValues(
+                              alpha: 0.3 + (_pulseController.value * 0.4),
+                            ),
                             width: 2,
                           ),
                         ),
@@ -119,7 +130,10 @@ class _NoInternetScreenState extends State<NoInternetScreen>
                             decoration: const BoxDecoration(
                               shape: BoxShape.circle,
                               gradient: LinearGradient(
-                                colors: [AppColors.primary, AppColors.primaryMid],
+                                colors: [
+                                  AppColors.primary,
+                                  AppColors.primaryMid,
+                                ],
                                 begin: Alignment.topLeft,
                                 end: Alignment.bottomRight,
                               ),

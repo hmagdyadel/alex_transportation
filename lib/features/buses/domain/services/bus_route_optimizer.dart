@@ -27,7 +27,7 @@ class OptimizedRoutePlan {
 /// Rule:
 /// - If stops 1..5 have 0 riders, the bus starts directly at stop 6.
 /// - If an intermediate stop (like stop 7) has 0 riders, it is skipped.
-/// - The terminal destination stop (AlexBank HQ / destination) is always preserved.
+/// - The terminal destination stop (Smart Village HQ / destination) is always preserved.
 class BusRouteOptimizer {
   const BusRouteOptimizer._();
 
@@ -103,48 +103,58 @@ class BusRouteOptimizer {
 
       if (i < firstActiveIndex) {
         // Leading stop with no riders -> Skip
-        optimized.add(original.copyWith(
-          isSkipped: true,
-          riderCount: 0,
-          isCurrent: false,
-          isCompleted: true, // Marked as bypassed
-        ));
-        skippedCount++;
-      } else if (i == firstActiveIndex) {
-        // First active pickup stop -> Bus starts here
-        optimized.add(original.copyWith(
-          isSkipped: false,
-          riderCount: count,
-          isCurrent: true,
-          isCompleted: false,
-        ));
-      } else if (i == lastIndex) {
-        // Terminal destination stop -> Always active for passenger drop-off
-        optimized.add(original.copyWith(
-          isSkipped: false,
-          riderCount: count,
-          isCurrent: false,
-          isCompleted: false,
-        ));
-      } else {
-        // Intermediate stops between first stop and destination
-        if (count == 0) {
-          // No passengers waiting at this stop -> Skip
-          optimized.add(original.copyWith(
+        optimized.add(
+          original.copyWith(
             isSkipped: true,
             riderCount: 0,
             isCurrent: false,
-            isCompleted: true,
-          ));
-          skippedCount++;
-        } else {
-          // Has passengers waiting -> Active stop
-          optimized.add(original.copyWith(
+            isCompleted: true, // Marked as bypassed
+          ),
+        );
+        skippedCount++;
+      } else if (i == firstActiveIndex) {
+        // First active pickup stop -> Bus starts here
+        optimized.add(
+          original.copyWith(
+            isSkipped: false,
+            riderCount: count,
+            isCurrent: true,
+            isCompleted: false,
+          ),
+        );
+      } else if (i == lastIndex) {
+        // Terminal destination stop -> Always active for passenger drop-off
+        optimized.add(
+          original.copyWith(
             isSkipped: false,
             riderCount: count,
             isCurrent: false,
             isCompleted: false,
-          ));
+          ),
+        );
+      } else {
+        // Intermediate stops between first stop and destination
+        if (count == 0) {
+          // No passengers waiting at this stop -> Skip
+          optimized.add(
+            original.copyWith(
+              isSkipped: true,
+              riderCount: 0,
+              isCurrent: false,
+              isCompleted: true,
+            ),
+          );
+          skippedCount++;
+        } else {
+          // Has passengers waiting -> Active stop
+          optimized.add(
+            original.copyWith(
+              isSkipped: false,
+              riderCount: count,
+              isCurrent: false,
+              isCompleted: false,
+            ),
+          );
         }
       }
     }

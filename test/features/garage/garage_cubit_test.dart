@@ -26,14 +26,17 @@ void main() {
       expect(GarageCubit.totalCapacity, 300);
     });
 
-    test('loadGarageData populates active subscription and sets state to loaded', () async {
-      await cubit.loadGarageData();
+    test(
+      'loadGarageData populates active subscription and sets state to loaded',
+      () async {
+        await cubit.loadGarageData();
 
-      expect(cubit.state, const GarageStates.loaded());
-      expect(cubit.currentSubscription, isNotNull);
-      expect(cubit.currentSubscription!.name, 'Sara Hassan');
-      expect(cubit.currentSubscription!.slotLabel, 'P1-014');
-    });
+        expect(cubit.state, const GarageStates.loaded());
+        expect(cubit.currentSubscription, isNotNull);
+        expect(cubit.currentSubscription!.name, 'Sara Hassan');
+        expect(cubit.currentSubscription!.slotLabel, 'P1-014');
+      },
+    );
 
     test('checkInOut toggles checkIn state and decrements/increments available bays', () async {
       await cubit.loadGarageData();

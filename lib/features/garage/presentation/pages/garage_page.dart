@@ -73,22 +73,22 @@ class _GaragePageState extends State<GaragePage> {
 
   void _submitSubscription(BuildContext context) {
     context.read<GarageCubit>().submitSubscription(
-          name: _nameController.text,
-          nationalId: _nationalIdController.text,
-          isl: _islController.text,
-          dept: _selectedDept,
-          email: _emailController.text,
-          priorityTier: _priorityTier,
-          consent: _consent,
-          licenseUrl: _licenseFileName,
-        );
+      name: _nameController.text,
+      nationalId: _nationalIdController.text,
+      isl: _islController.text,
+      dept: _selectedDept,
+      email: _emailController.text,
+      priorityTier: _priorityTier,
+      consent: _consent,
+      licenseUrl: _licenseFileName,
+    );
   }
 
   void _lookupStatus(BuildContext context) {
     final result = context.read<GarageCubit>().findSubscription(
-          _statusIslController.text,
-          _statusEmailController.text,
-        );
+      _statusIslController.text,
+      _statusEmailController.text,
+    );
     setState(() {
       _lookupResult = result;
       _hasSearched = true;
@@ -97,9 +97,9 @@ class _GaragePageState extends State<GaragePage> {
 
   void _submitCancellation(BuildContext context) {
     context.read<GarageCubit>().requestCancellation(
-          isl: _cancelIslController.text,
-          email: _cancelEmailController.text,
-        );
+      isl: _cancelIslController.text,
+      email: _cancelEmailController.text,
+    );
   }
 
   @override
@@ -110,9 +110,7 @@ class _GaragePageState extends State<GaragePage> {
       listener: (context, state) {
         switch (state) {
           case Success(:final data):
-            final message = data is String
-                ? data
-                : l10n.success;
+            final message = data is String ? data : l10n.success;
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(message),
@@ -137,7 +135,8 @@ class _GaragePageState extends State<GaragePage> {
       },
       builder: (context, state) {
         final cubit = context.read<GarageCubit>();
-        final isLoading = state is Loading ||
+        final isLoading =
+            state is Loading ||
             state is SubmittingSubscription ||
             state is CheckingInOut ||
             state is Cancelling;
@@ -241,10 +240,26 @@ class _GaragePageState extends State<GaragePage> {
                   ),
                   child: Row(
                     children: [
-                      _buildSubTabItem(0, l10n.garageTabMyPass, Icons.local_parking_rounded),
-                      _buildSubTabItem(1, l10n.garageTabSubscribe, Icons.add_circle_outline_rounded),
-                      _buildSubTabItem(2, l10n.garageTabLookup, Icons.search_rounded),
-                      _buildSubTabItem(3, l10n.garageTabCancel, Icons.cancel_outlined),
+                      _buildSubTabItem(
+                        0,
+                        l10n.garageTabMyPass,
+                        Icons.local_parking_rounded,
+                      ),
+                      _buildSubTabItem(
+                        1,
+                        l10n.garageTabSubscribe,
+                        Icons.add_circle_outline_rounded,
+                      ),
+                      _buildSubTabItem(
+                        2,
+                        l10n.garageTabLookup,
+                        Icons.search_rounded,
+                      ),
+                      _buildSubTabItem(
+                        3,
+                        l10n.garageTabCancel,
+                        Icons.cancel_outlined,
+                      ),
                     ],
                   ),
                 ),
@@ -318,10 +333,7 @@ class _GaragePageState extends State<GaragePage> {
               color: AppColors.textSecondary,
             ),
             const SizedBox(height: AppSpacing.sm),
-            Text(
-              l10n.garageHeaderTitle,
-              style: AppTypography.titleMedium,
-            ),
+            Text(l10n.garageHeaderTitle, style: AppTypography.titleMedium),
             const SizedBox(height: AppSpacing.xs),
             Text(
               l10n.garageHeaderSubtitle,
@@ -346,7 +358,11 @@ class _GaragePageState extends State<GaragePage> {
   }
 
   // ── Tab 1: Subscribe ────────────────────────────────────────────────────────
-  Widget _buildSubscribeTab(BuildContext context, GarageCubit cubit, dynamic l10n) {
+  Widget _buildSubscribeTab(
+    BuildContext context,
+    GarageCubit cubit,
+    dynamic l10n,
+  ) {
     return AppCard(
       padding: const EdgeInsets.all(AppSpacing.lg),
       child: Column(
@@ -354,7 +370,9 @@ class _GaragePageState extends State<GaragePage> {
         children: [
           Text(
             l10n.garageSubscriptionFormTitle,
-            style: AppTypography.titleMedium.copyWith(fontWeight: FontWeight.w700),
+            style: AppTypography.titleMedium.copyWith(
+              fontWeight: FontWeight.w700,
+            ),
           ),
           const SizedBox(height: AppSpacing.xxs),
           Text(
@@ -533,7 +551,11 @@ class _GaragePageState extends State<GaragePage> {
             label: l10n.garageSubmitApplication,
             variant: AppButtonVariant.primary,
             onPressed: () => _submitSubscription(context),
-            leadingIcon: const Icon(Icons.send_rounded, size: 18, color: Colors.white),
+            leadingIcon: const Icon(
+              Icons.send_rounded,
+              size: 18,
+              color: Colors.white,
+            ),
           ),
         ],
       ),
@@ -549,13 +571,12 @@ class _GaragePageState extends State<GaragePage> {
         children: [
           Text(
             l10n.garageLookupTitle,
-            style: AppTypography.titleMedium.copyWith(fontWeight: FontWeight.w700),
+            style: AppTypography.titleMedium.copyWith(
+              fontWeight: FontWeight.w700,
+            ),
           ),
           const SizedBox(height: AppSpacing.xxs),
-          Text(
-            l10n.garageEnterIslSearch,
-            style: AppTypography.bodySmall,
-          ),
+          Text(l10n.garageEnterIslSearch, style: AppTypography.bodySmall),
           const SizedBox(height: AppSpacing.md),
 
           AppTextField(
@@ -576,7 +597,11 @@ class _GaragePageState extends State<GaragePage> {
             label: l10n.search,
             variant: AppButtonVariant.primary,
             onPressed: () => _lookupStatus(context),
-            leadingIcon: const Icon(Icons.search_rounded, size: 18, color: Colors.white),
+            leadingIcon: const Icon(
+              Icons.search_rounded,
+              size: 18,
+              color: Colors.white,
+            ),
           ),
 
           if (_hasSearched) ...[
@@ -589,7 +614,9 @@ class _GaragePageState extends State<GaragePage> {
                 decoration: BoxDecoration(
                   color: AppColors.greenLight,
                   borderRadius: AppRadius.borderMd,
-                  border: Border.all(color: AppColors.primaryLight.withValues(alpha: 0.3)),
+                  border: Border.all(
+                    color: AppColors.primaryLight.withValues(alpha: 0.3),
+                  ),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -636,7 +663,9 @@ class _GaragePageState extends State<GaragePage> {
                     Expanded(
                       child: Text(
                         'No parking records found.',
-                        style: AppTypography.bodySmall.copyWith(color: AppColors.danger),
+                        style: AppTypography.bodySmall.copyWith(
+                          color: AppColors.danger,
+                        ),
                       ),
                     ),
                   ],
@@ -660,17 +689,25 @@ class _GaragePageState extends State<GaragePage> {
             decoration: BoxDecoration(
               color: AppColors.dangerLight,
               borderRadius: AppRadius.borderMd,
-              border: Border.all(color: AppColors.danger.withValues(alpha: 0.3)),
+              border: Border.all(
+                color: AppColors.danger.withValues(alpha: 0.3),
+              ),
             ),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Icon(Icons.warning_amber_rounded, color: AppColors.danger, size: 20),
+                const Icon(
+                  Icons.warning_amber_rounded,
+                  color: AppColors.danger,
+                  size: 20,
+                ),
                 const SizedBox(width: AppSpacing.xs),
                 Expanded(
                   child: Text(
                     l10n.garageCancelTitle,
-                    style: AppTypography.caption.copyWith(color: AppColors.danger),
+                    style: AppTypography.caption.copyWith(
+                      color: AppColors.danger,
+                    ),
                   ),
                 ),
               ],
@@ -696,7 +733,11 @@ class _GaragePageState extends State<GaragePage> {
             label: l10n.garageSubmitCancellation,
             variant: AppButtonVariant.outline,
             onPressed: () => _submitCancellation(context),
-            leadingIcon: const Icon(Icons.cancel_outlined, size: 18, color: AppColors.danger),
+            leadingIcon: const Icon(
+              Icons.cancel_outlined,
+              size: 18,
+              color: AppColors.danger,
+            ),
           ),
         ],
       ),

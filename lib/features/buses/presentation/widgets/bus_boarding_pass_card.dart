@@ -67,7 +67,9 @@ class BusBoardingPassCard extends StatelessWidget {
                   label: isBoarded
                       ? l10n.busBoardedAction.toUpperCase()
                       : l10n.confirmed.toUpperCase(),
-                  type: isBoarded ? StatusPillType.neutral : StatusPillType.active,
+                  type: isBoarded
+                      ? StatusPillType.neutral
+                      : StatusPillType.active,
                 ),
               ],
             ),
@@ -189,7 +191,9 @@ class BusBoardingPassCard extends StatelessWidget {
                         height: 32,
                         width: 1,
                         color: AppColors.border,
-                        margin: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
+                        margin: const EdgeInsets.symmetric(
+                          horizontal: AppSpacing.sm,
+                        ),
                       ),
                       Row(
                         children: [
@@ -230,7 +234,9 @@ class BusBoardingPassCard extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(AppSpacing.md),
                   decoration: BoxDecoration(
-                    color: isBoarded ? AppColors.greenLight : AppColors.goldLight,
+                    color: isBoarded
+                        ? AppColors.greenLight
+                        : AppColors.goldLight,
                     borderRadius: BorderRadius.circular(AppRadius.md),
                     border: Border.all(
                       color: isBoarded
@@ -243,15 +249,20 @@ class BusBoardingPassCard extends StatelessWidget {
                       Container(
                         padding: const EdgeInsets.all(AppSpacing.xs),
                         decoration: BoxDecoration(
-                          color: (isBoarded ? AppColors.primary : AppColors.accentGold)
-                              .withValues(alpha: 0.15),
+                          color:
+                              (isBoarded
+                                      ? AppColors.primary
+                                      : AppColors.accentGold)
+                                  .withValues(alpha: 0.15),
                           shape: BoxShape.circle,
                         ),
                         child: Icon(
                           isBoarded
                               ? Icons.check_circle_rounded
                               : Icons.airline_seat_recline_normal_rounded,
-                          color: isBoarded ? AppColors.primary : AppColors.accentGold,
+                          color: isBoarded
+                              ? AppColors.primary
+                              : AppColors.accentGold,
                           size: 24,
                         ),
                       ),
@@ -295,7 +306,10 @@ class BusBoardingPassCard extends StatelessWidget {
                       Expanded(
                         flex: 3,
                         child: ElevatedButton.icon(
-                          icon: const Icon(Icons.directions_bus_rounded, size: 18),
+                          icon: const Icon(
+                            Icons.directions_bus_rounded,
+                            size: 18,
+                          ),
                           label: Text(l10n.busBoardAction),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppColors.primary,

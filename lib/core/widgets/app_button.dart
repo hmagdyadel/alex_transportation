@@ -39,12 +39,18 @@ class AppButton extends StatelessWidget {
         foregroundColor = isEnabled ? Colors.white : AppColors.textSecondary;
         break;
       case AppButtonVariant.secondary:
-        backgroundColor = isEnabled ? AppColors.greenLight : AppColors.background;
-        foregroundColor = isEnabled ? AppColors.primary : AppColors.textSecondary;
+        backgroundColor = isEnabled
+            ? AppColors.greenLight
+            : AppColors.background;
+        foregroundColor = isEnabled
+            ? AppColors.primary
+            : AppColors.textSecondary;
         break;
       case AppButtonVariant.outline:
         backgroundColor = Colors.transparent;
-        foregroundColor = isEnabled ? AppColors.primary : AppColors.textSecondary;
+        foregroundColor = isEnabled
+            ? AppColors.primary
+            : AppColors.textSecondary;
         borderSide = BorderSide(
           color: isEnabled ? AppColors.primary : AppColors.border,
           width: 1.5,
@@ -52,7 +58,9 @@ class AppButton extends StatelessWidget {
         break;
       case AppButtonVariant.text:
         backgroundColor = Colors.transparent;
-        foregroundColor = isEnabled ? AppColors.primaryMid : AppColors.textSecondary;
+        foregroundColor = isEnabled
+            ? AppColors.primaryMid
+            : AppColors.textSecondary;
         break;
     }
 
@@ -93,7 +101,9 @@ class AppButton extends StatelessWidget {
         child: InkWell(
           onTap: onPressed,
           child: Padding(
-            padding: padding ?? const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
+            padding:
+                padding ??
+                const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
             child: content,
           ),
         ),

@@ -53,18 +53,21 @@ void main() {
       expect(cubit.activePass!.status, 'boarded');
     });
 
-    test('cancelBooking clears active pass and restores seat to route', () async {
-      final passId = cubit.activePass!.id;
-      final route101 = cubit.routes.firstWhere((r) => r.id == 'R101');
-      final initialSeats = route101.availableSeats;
+    test(
+      'cancelBooking clears active pass and restores seat to route',
+      () async {
+        final passId = cubit.activePass!.id;
+        final route101 = cubit.routes.firstWhere((r) => r.id == 'R101');
+        final initialSeats = route101.availableSeats;
 
-      final success = await cubit.cancelBooking(passId);
+        final success = await cubit.cancelBooking(passId);
 
-      expect(success, isTrue);
-      expect(cubit.activePass, isNull);
-      final updatedRoute = cubit.routes.firstWhere((r) => r.id == 'R101');
-      expect(updatedRoute.availableSeats, initialSeats + 1);
-    });
+        expect(success, isTrue);
+        expect(cubit.activePass, isNull);
+        final updatedRoute = cubit.routes.firstWhere((r) => r.id == 'R101');
+        expect(updatedRoute.availableSeats, initialSeats + 1);
+      },
+    );
 
     test('bookSeat reserves seat on available route', () async {
       // First cancel the existing pass so we can book a fresh one
@@ -102,7 +105,10 @@ void main() {
     });
 
     test('addStationToRoute adds station and updates route manifest', () {
-      final initialStopCount = cubit.routes.firstWhere((r) => r.id == 'R101').stops.length;
+      final initialStopCount = cubit.routes
+          .firstWhere((r) => r.id == 'R101')
+          .stops
+          .length;
       cubit.addStationToRoute(
         'R101',
         const BusStopModel(
@@ -127,7 +133,10 @@ void main() {
     test('updateStationTime updates scheduled time of station', () {
       cubit.updateStationTime('R101', 'S101-1', '07:10 AM');
       final updated = cubit.routes.firstWhere((r) => r.id == 'R101');
-      expect(updated.stops.firstWhere((s) => s.id == 'S101-1').scheduledTime, '07:10 AM');
+      expect(
+        updated.stops.firstWhere((s) => s.id == 'S101-1').scheduledTime,
+        '07:10 AM',
+      );
     });
 
     test('generateReverseEveningRoute mirrors morning line in reverse from Smart Village HQ', () {

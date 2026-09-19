@@ -20,14 +20,17 @@ abstract final class FirebaseClient {
     try {
       // Detect placeholder keys before attempting initialization
       final options = DefaultFirebaseOptions.currentPlatform;
-      if (options.apiKey.contains('DUMMY') || options.appId.contains('abcdef')) {
+      if (options.apiKey.contains('DUMMY') ||
+          options.appId.contains('abcdef')) {
         _placeholderKeys = true;
         debugPrint('[FirebaseClient] ⚠ Placeholder Firebase keys detected.');
       }
 
       if (Firebase.apps.isNotEmpty) {
         _initialized = true;
-        debugPrint('[FirebaseClient] ✓ Firebase already initialized (hot restart)');
+        debugPrint(
+          '[FirebaseClient] ✓ Firebase already initialized (hot restart)',
+        );
         return true;
       }
       await Firebase.initializeApp(options: options);
@@ -37,7 +40,9 @@ abstract final class FirebaseClient {
     } catch (e) {
       if (e.toString().contains('duplicate-app')) {
         _initialized = true;
-        debugPrint('[FirebaseClient] ✓ Firebase already initialized ([DEFAULT] reused)');
+        debugPrint(
+          '[FirebaseClient] ✓ Firebase already initialized ([DEFAULT] reused)',
+        );
         return true;
       }
       debugPrint('[FirebaseClient] ✕ Firebase init failed: $e');
@@ -48,4 +53,3 @@ abstract final class FirebaseClient {
     }
   }
 }
-

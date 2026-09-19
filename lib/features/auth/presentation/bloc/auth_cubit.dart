@@ -1,4 +1,5 @@
 import 'dart:convert';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -8,6 +9,7 @@ import 'package:alex_transportation/core/services/secure_prefs.dart';
 import 'package:alex_transportation/features/auth/data/models/user_account_model.dart';
 import 'package:alex_transportation/core/network/firestore_sync_service.dart';
 import 'package:alex_transportation/features/auth/presentation/bloc/auth_states.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 /// Manages ISL + Password authentication, User Registration, Session State, and Biometrics.
 class AuthCubit extends Cubit<AuthStates> {
@@ -100,8 +102,12 @@ class AuthCubit extends Cubit<AuthStates> {
       if (jsonStr != null && jsonStr.isNotEmpty) {
         final List<dynamic> decoded = jsonDecode(jsonStr);
         for (final item in decoded) {
-          final account = UserAccountModel.fromJson(item as Map<String, dynamic>);
-          if (!_accounts.any((a) => a.isl.toUpperCase() == account.isl.toUpperCase())) {
+          final account = UserAccountModel.fromJson(
+            item as Map<String, dynamic>,
+          );
+          if (!_accounts.any(
+            (a) => a.isl.toUpperCase() == account.isl.toUpperCase(),
+          )) {
             _accounts.insert(0, account);
           }
         }
@@ -117,12 +123,21 @@ class AuthCubit extends Cubit<AuthStates> {
       final prefs = await SharedPreferences.getInstance();
       // Save all non-default accounts
       final customAccounts = _accounts
-          .where((a) => a.isl != 'ADM-9001' && a.isl != 'ADM-9002' &&
-              a.isl != 'DRV-2001' && a.isl != 'DRV-2002' &&
-              a.isl != '10492' && a.isl != 'EMP-1001')
+          .where(
+            (a) =>
+                a.isl != 'ADM-9001' &&
+                a.isl != 'ADM-9002' &&
+                a.isl != 'DRV-2001' &&
+                a.isl != 'DRV-2002' &&
+                a.isl != '10492' &&
+                a.isl != 'EMP-1001',
+          )
           .map((a) => a.toJson())
           .toList();
-      await prefs.setString(_kRegisteredAccountsKey, jsonEncode(customAccounts));
+      await prefs.setString(
+        _kRegisteredAccountsKey,
+        jsonEncode(customAccounts),
+      );
     } catch (_) {}
   }
 
@@ -146,7 +161,8 @@ class AuthCubit extends Cubit<AuthStates> {
       _currentRole = prefs.getString(_kUserRoleKey) ?? 'employee';
       _currentIsl = prefs.getString(_kUserIslKey) ?? token;
       _currentUserName = prefs.getString(_kUserNameKey) ?? 'Bank Employee';
-      _isAdminAccount = prefs.getBool(_kIsAdminKey) ?? (_currentRole == 'admin');
+      _isAdminAccount =
+          prefs.getBool(_kIsAdminKey) ?? (_currentRole == 'admin');
       return true;
     }
     return false;
@@ -171,25 +187,36 @@ class AuthCubit extends Cubit<AuthStates> {
     }
 
     if (cleanIsl.isEmpty) {
-      safeEmit(const AuthStates.error(message: 'Please enter your Bank Staff ISL'));
+      safeEmit(
+        const AuthStates.error(message: 'Please enter your Bank Staff ISL'),
+      );
       return;
     }
 
-    if (cleanPassword.length < 4) {
-      safeEmit(const AuthStates.error(message: 'Password must be at least 4 characters'));
+    if (cleanPassword.length < 6) {
+      safeEmit(
+        const AuthStates.error(
+          message: 'Password must be at least 6 characters',
+        ),
+      );
       return;
     }
 
     // Check if account already exists
     final exists = _accounts.any(
-      (a) => a.isl.toUpperCase() == cleanIsl ||
-          a.isl.replaceAll('-', '').toUpperCase() == cleanIsl.replaceAll('-', ''),
+      (a) =>
+          a.isl.toUpperCase() == cleanIsl ||
+          a.isl.replaceAll('-', '').toUpperCase() ==
+              cleanIsl.replaceAll('-', ''),
     );
 
     if (exists) {
-      safeEmit(AuthStates.error(
-        message: 'An account with ISL $cleanIsl already exists. Please Sign In.',
-      ));
+      safeEmit(
+        AuthStates.error(
+          message:
+              'An account with ISL $cleanIsl already exists. Please Sign In.',
+        ),
+      );
       return;
     }
 
@@ -209,11 +236,7 @@ class AuthCubit extends Cubit<AuthStates> {
     await _persistAccounts();
 
     // Auto sign-in with newly registered credentials
-    await loginWithIsl(
-      isl: cleanIsl,
-      password: cleanPassword,
-      role: role,
-    );
+    await loginWithIsl(isl: cleanIsl, password: cleanPassword, role: role);
   }
 
   /// Primary login method with Bank Staff ISL, Password, and Role selection.
@@ -226,12 +249,18 @@ class AuthCubit extends Cubit<AuthStates> {
     final cleanPassword = password.trim();
 
     if (cleanIsl.isEmpty) {
-      safeEmit(const AuthStates.error(message: 'Please enter your Bank Staff ISL'));
+      safeEmit(
+        const AuthStates.error(message: 'Please enter your Bank Staff ISL'),
+      );
       return;
     }
 
-    if (cleanPassword.length < 4) {
-      safeEmit(const AuthStates.error(message: 'Password must be at least 4 characters'));
+    if (cleanPassword.length < 6) {
+      safeEmit(
+        const AuthStates.error(
+          message: 'Password must be at least 6 characters',
+        ),
+      );
       return;
     }
 
@@ -240,14 +269,19 @@ class AuthCubit extends Cubit<AuthStates> {
 
     // Look up registered account
     final index = _accounts.indexWhere(
-      (a) => a.isl.toUpperCase() == cleanIsl ||
-          a.isl.replaceAll('-', '').toUpperCase() == cleanIsl.replaceAll('-', ''),
+      (a) =>
+          a.isl.toUpperCase() == cleanIsl ||
+          a.isl.replaceAll('-', '').toUpperCase() ==
+              cleanIsl.replaceAll('-', ''),
     );
 
     if (index == -1) {
-      safeEmit(AuthStates.error(
-        message: 'Account with ISL $cleanIsl not found. Please register first.',
-      ));
+      safeEmit(
+        AuthStates.error(
+          message:
+              'Account with ISL $cleanIsl not found. Please register first.',
+        ),
+      );
       return;
     }
 
@@ -255,9 +289,12 @@ class AuthCubit extends Cubit<AuthStates> {
 
     // Validate Password
     if (matchingAccount.password != cleanPassword) {
-      safeEmit(AuthStates.error(
-        message: 'Invalid credentials. Password does not match ISL $cleanIsl.',
-      ));
+      safeEmit(
+        AuthStates.error(
+          message:
+              'Invalid credentials. Password does not match ISL $cleanIsl.',
+        ),
+      );
       return;
     }
 
@@ -270,23 +307,31 @@ class AuthCubit extends Cubit<AuthStates> {
 
     if (matchingAccount.role == 'employee') {
       if (role != 'employee') {
-        safeEmit(AuthStates.error(
-          message: 'Access Denied: ISL $cleanIsl is registered as Normal User (Employee). You cannot log in as ${role.toUpperCase()}.',
-        ));
+        safeEmit(
+          AuthStates.error(
+            message:
+                'Access Denied: ISL $cleanIsl is registered as Normal User (Employee). You cannot log in as ${role.toUpperCase()}.',
+          ),
+        );
         return;
       }
     } else if (matchingAccount.role == 'driver') {
       if (role != 'driver') {
-        safeEmit(AuthStates.error(
-          message: 'Access Denied: ISL $cleanIsl is registered as Driver Captain. Please choose Driver role.',
-        ));
+        safeEmit(
+          AuthStates.error(
+            message:
+                'Access Denied: ISL $cleanIsl is registered as Driver Captain. Please choose Driver role.',
+          ),
+        );
         return;
       }
     } else if (matchingAccount.role == 'admin') {
       if (role == 'driver') {
-        safeEmit(const AuthStates.error(
-          message: 'Admin credentials cannot log in as Driver. Select Admin or Normal User.',
-        ));
+        safeEmit(
+          const AuthStates.error(
+            message: 'Admin credentials cannot log in as Driver. Select Admin or Normal User.',
+          ),
+        );
         return;
       }
       isActuallyAdmin = true;
@@ -312,13 +357,24 @@ class AuthCubit extends Cubit<AuthStates> {
     await prefs.setString(_kUserNameKey, matchingAccount.name);
     await prefs.setBool(_kIsAdminKey, isActuallyAdmin);
 
-    // Sync user account to Firestore (fire-and-forget)
-    FirestoreSyncService.instance.syncUserAccount(
-      isl: matchingAccount.isl,
-      name: matchingAccount.name,
-      department: matchingAccount.department,
-      role: resolvedRole,
-    );
+    // Authenticate session with Firebase Auth & sync users/{uid} for Firestore Security Rules
+    try {
+      final auth = FirebaseAuth.instance;
+      if (auth.currentUser == null) {
+        await auth.signInAnonymously();
+      }
+      final uid = auth.currentUser?.uid;
+      if (uid != null) {
+        await FirestoreSyncService.instance.syncUserAccount(
+          uid: uid,
+          isl: matchingAccount.isl,
+          name: matchingAccount.name,
+          department: matchingAccount.department,
+        );
+      }
+    } catch (_) {
+      // Graceful fallback for offline execution and automated test runners
+    }
 
     safeEmit(AuthStates.success(resolvedRole));
   }
@@ -342,17 +398,21 @@ class AuthCubit extends Cubit<AuthStates> {
   Future<void> loginWithBiometrics() async {
     final isSupported = await BiometricHelper.isBiometricSupported();
     if (!isSupported) {
-      safeEmit(const AuthStates.error(
-        message: 'Biometric authentication is not supported on this device.',
-      ));
+      safeEmit(
+        const AuthStates.error(
+          message: 'Biometric authentication is not supported on this device.',
+        ),
+      );
       return;
     }
 
     final creds = await SecurePrefs.getBiometricCredentials();
     if (creds == null) {
-      safeEmit(const AuthStates.error(
-        message: 'No saved biometric credentials found. Please sign in with your ISL.',
-      ));
+      safeEmit(
+        const AuthStates.error(
+          message: 'No saved biometric credentials found. Please sign in with your ISL.',
+        ),
+      );
       return;
     }
 
@@ -361,9 +421,11 @@ class AuthCubit extends Cubit<AuthStates> {
     );
 
     if (!authenticated) {
-      safeEmit(const AuthStates.error(
-        message: 'Biometric authentication cancelled or failed.',
-      ));
+      safeEmit(
+        const AuthStates.error(
+          message: 'Biometric authentication cancelled or failed.',
+        ),
+      );
       return;
     }
 
@@ -415,13 +477,21 @@ class AuthCubit extends Cubit<AuthStates> {
     final cleanPassword = password.trim();
 
     if (cleanIsl.isEmpty || cleanName.isEmpty || cleanPassword.isEmpty) {
-      safeEmit(const AuthStates.error(message: 'Please fill all required admin fields'));
+      safeEmit(
+        const AuthStates.error(
+          message: 'Please fill all required admin fields',
+        ),
+      );
       return;
     }
 
     final exists = _accounts.any((a) => a.isl.toUpperCase() == cleanIsl);
     if (exists) {
-      safeEmit(AuthStates.error(message: 'An account with ISL $cleanIsl already exists.'));
+      safeEmit(
+        AuthStates.error(
+          message: 'An account with ISL $cleanIsl already exists.',
+        ),
+      );
       return;
     }
 
@@ -436,7 +506,11 @@ class AuthCubit extends Cubit<AuthStates> {
 
     _accounts.insert(0, newAdmin);
     await _persistAccounts();
-    safeEmit(AuthStates.success('New Admin "$cleanName" ($cleanIsl) registered successfully'));
+    safeEmit(
+      AuthStates.success(
+        'New Admin "$cleanName" ($cleanIsl) registered successfully',
+      ),
+    );
   }
 
   /// Sets active role in memory (used during role switching in dev/admin).
@@ -448,13 +522,17 @@ class AuthCubit extends Cubit<AuthStates> {
   Future<void> verifyInviteCode(String code) async {
     final cleanCode = code.trim().toUpperCase();
     if (cleanCode.length < 4) {
-      safeEmit(const AuthStates.error(message: 'Please enter a valid invite code'));
+      safeEmit(
+        const AuthStates.error(message: 'Please enter a valid invite code'),
+      );
       return;
     }
 
     final role = (cleanCode == 'ADMIN' || cleanCode.startsWith('ADM'))
         ? 'admin'
-        : ((cleanCode == 'DRIVER' || cleanCode.startsWith('DRV')) ? 'driver' : 'employee');
+        : ((cleanCode == 'DRIVER' || cleanCode.startsWith('DRV'))
+              ? 'driver'
+              : 'employee');
 
     await loginWithIsl(isl: cleanCode, password: 'alex123', role: role);
   }
@@ -478,6 +556,11 @@ class AuthCubit extends Cubit<AuthStates> {
     _currentRole = 'employee';
     _isAdminAccount = false;
     clearLastCredentials();
+
+    try {
+      await FirebaseAuth.instance.signOut();
+    } catch (_) {}
+
     safeEmit(const AuthStates.initial());
   }
 }

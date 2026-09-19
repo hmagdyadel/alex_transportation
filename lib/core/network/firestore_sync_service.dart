@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 
 import 'package:alex_transportation/core/network/firebase_client.dart';
@@ -29,7 +30,8 @@ class FirestoreSyncService {
 
   // Local memory cache for fast offline access and isolated test runners
   final Map<String, Map<String, Map<String, dynamic>>> _cache = {};
-  final Map<String, StreamController<List<Map<String, dynamic>>>> _streamControllers = {};
+  final Map<String, StreamController<List<Map<String, dynamic>>>>
+  _streamControllers = {};
 
   void _initCacheWithMasterData() {
     for (final r in FirestoreDataSeeder.initialRoutes) {
@@ -48,20 +50,38 @@ class FirestoreSyncService {
       _cache.putIfAbsent('invite_codes', () => {})[code.id] = code.toJson();
     }
     for (final sub in FirestoreDataSeeder.initialSubscriptions) {
-      _cache.putIfAbsent('garage_subscriptions', () => {})[sub.id] = sub.toJson();
+      _cache.putIfAbsent('garage_subscriptions', () => {})[sub.id] = sub
+          .toJson();
     }
-    _cache.putIfAbsent('driver_trips', () => {})[FirestoreDataSeeder.initialDriverTrip.tripId] =
-        FirestoreDataSeeder.initialDriverTrip.toJson();
+    _cache.putIfAbsent(
+      'driver_trips',
+      () => {},
+    )[FirestoreDataSeeder.initialDriverTrip.tripId] = FirestoreDataSeeder
+        .initialDriverTrip
+        .toJson();
   }
 
   /// Whether Firestore is actively connected.
   bool get isAvailable => _available;
 
+  /// Whether Firestore is connected AND an authenticated session exists.
+  /// Prevents unauthenticated queries on app boot that would violate security rules.
+  bool get _canAccessCloud {
+    if (!_available || _db == null) return false;
+    try {
+      return FirebaseAuth.instance.currentUser != null;
+    } catch (_) {
+      return false;
+    }
+  }
+
   /// Initialize Firestore connection. Safe to call multiple times.
   Future<void> initialize() async {
     if (_available) return;
     if (!FirebaseClient.isInitialized) {
-      debugPrint('[FirestoreSync] Firebase not initialized — running with local persistence cache.');
+      debugPrint(
+        '[FirestoreSync] Firebase not initialized — running with local persistence cache.',
+      );
       return;
     }
 
@@ -72,14 +92,20 @@ class FirestoreSyncService {
         cacheSizeBytes: Settings.CACHE_SIZE_UNLIMITED,
       );
       _available = true;
-      debugPrint('[FirestoreSync] ✓ Firestore connected with offline persistence.');
+      debugPrint(
+        '[FirestoreSync] ✓ Firestore connected with offline persistence.',
+      );
     } catch (e) {
-      debugPrint('[FirestoreSync] ✕ Firestore init failed: $e — running with local cache.');
+      debugPrint(
+        '[FirestoreSync] ✕ Firestore init failed: $e — running with local cache.',
+      );
       _available = false;
     }
   }
 
-  StreamController<List<Map<String, dynamic>>> _getStreamController(String collection) {
+  StreamController<List<Map<String, dynamic>>> _getStreamController(
+    String collection,
+  ) {
     return _streamControllers.putIfAbsent(
       collection,
       () => StreamController<List<Map<String, dynamic>>>.broadcast(),
@@ -98,25 +124,23 @@ class FirestoreSyncService {
   // ──────────────────────────────────────────────────────────────────────────
 
   /// Write or merge a document. Returns `true` on success.
-  Future<bool> upsert(String collection, String docId, Map<String, dynamic> data) async {
+  Future<bool> upsert(
+    String collection,
+    String docId,
+    Map<String, dynamic> data,
+  ) async {
     // 1. Update local cache
-    _cache.putIfAbsent(collection, () => {})[docId] = {
-      'id': docId,
-      ...data,
-    };
+    _cache.putIfAbsent(collection, () => {})[docId] = {'id': docId, ...data};
     _notifyCacheUpdate(collection);
 
-    // 2. Write to Cloud Firestore if connected
-    if (!_available || _db == null) return true;
+    // 2. Write to Cloud Firestore if connected and authenticated
+    if (!_canAccessCloud) return true;
 
     try {
-      await _db!.collection(collection).doc(docId).set(
-        {
-          ...data,
-          'updatedAt': FieldValue.serverTimestamp(),
-        },
-        SetOptions(merge: true),
-      );
+      await _db!.collection(collection).doc(docId).set({
+        ...data,
+        'updatedAt': FieldValue.serverTimestamp(),
+      }, SetOptions(merge: true));
       debugPrint('[FirestoreSync] ✓ Upserted $collection/$docId to Firestore');
       return true;
     } catch (e) {
@@ -127,7 +151,7 @@ class FirestoreSyncService {
 
   /// Read a single document. Returns `null` on failure or when unavailable.
   Future<Map<String, dynamic>?> read(String collection, String docId) async {
-    if (_available && _db != null) {
+    if (_canAccessCloud) {
       try {
         final snap = await _db!.collection(collection).doc(docId).get();
         if (snap.exists && snap.data() != null) {
@@ -144,17 +168,20 @@ class FirestoreSyncService {
 
   /// Listen to a document in real-time. Returns a broadcast stream.
   Stream<Map<String, dynamic>?> listen(String collection, String docId) {
-    if (!_available || _db == null) {
+    if (!_canAccessCloud) {
       return Stream.value(_cache[collection]?[docId]);
     }
     return _db!
         .collection(collection)
         .doc(docId)
         .snapshots()
-        .map((snap) => snap.data() != null ? {'id': snap.id, ...snap.data()!} : null)
+        .map(
+          (snap) =>
+              snap.data() != null ? {'id': snap.id, ...snap.data()!} : null,
+        )
         .handleError((e) {
-      debugPrint('[FirestoreSync] ✕ Listener $collection/$docId error: $e');
-    });
+          debugPrint('[FirestoreSync] ✕ Listener $collection/$docId error: $e');
+        });
   }
 
   /// List all documents in a collection with optional query filters.
@@ -164,7 +191,7 @@ class FirestoreSyncService {
     dynamic isEqualTo,
     int? limit,
   }) async {
-    if (_available && _db != null) {
+    if (_canAccessCloud) {
       try {
         Query<Map<String, dynamic>> query = _db!.collection(collection);
         if (whereField != null && isEqualTo != null) {
@@ -203,7 +230,7 @@ class FirestoreSyncService {
     String? whereField,
     dynamic isEqualTo,
   }) {
-    if (!_available || _db == null) {
+    if (!_canAccessCloud) {
       return _getStreamController(collection).stream.map((list) {
         if (whereField != null && isEqualTo != null) {
           return list.where((item) => item[whereField] == isEqualTo).toList();
@@ -217,15 +244,21 @@ class FirestoreSyncService {
       query = query.where(whereField, isEqualTo: isEqualTo);
     }
 
-    return query.snapshots().map((snap) {
-      final list = snap.docs.map((d) => {'id': d.id, ...d.data()}).toList();
-      for (final item in list) {
-        _cache.putIfAbsent(collection, () => {})[item['id'] as String] = item;
-      }
-      return list;
-    }).handleError((e) {
-      debugPrint('[FirestoreSync] ✕ Collection listener $collection error: $e');
-    });
+    return query
+        .snapshots()
+        .map((snap) {
+          final list = snap.docs.map((d) => {'id': d.id, ...d.data()}).toList();
+          for (final item in list) {
+            _cache.putIfAbsent(collection, () => {})[item['id'] as String] =
+                item;
+          }
+          return list;
+        })
+        .handleError((e) {
+          debugPrint(
+            '[FirestoreSync] ✕ Collection listener $collection error: $e',
+          );
+        });
   }
 
   /// Delete a document.
@@ -233,7 +266,7 @@ class FirestoreSyncService {
     _cache[collection]?.remove(docId);
     _notifyCacheUpdate(collection);
 
-    if (!_available || _db == null) return true;
+    if (!_canAccessCloud) return true;
 
     try {
       await _db!.collection(collection).doc(docId).delete();
@@ -268,22 +301,30 @@ class FirestoreSyncService {
   }
 
   Stream<List<BusRouteModel>> streamBusRoutes() {
-    return listenCollection('bus_routes').map((list) => list.map(BusRouteModel.fromJson).toList());
+    return listenCollection('bus_routes')
+        .map((list) => list.map(BusRouteModel.fromJson).toList());
   }
 
   Future<bool> saveBusRoute(BusRouteModel route) {
     return upsert('bus_routes', route.id, route.toJson());
   }
 
-  Future<List<BusBoardingPassModel>> getBusBookings({String? routeId, String? employeeName}) async {
+  Future<List<BusBoardingPassModel>> getBusBookings({
+    String? routeId,
+    String? employeeName,
+  }) async {
     final docs = await list(
       'bus_bookings',
       whereField: routeId != null ? 'routeId' : null,
       isEqualTo: routeId,
     );
-    final bookings = docs.isNotEmpty ? docs.map(BusBoardingPassModel.fromJson).toList() : getCachedBusBookings();
+    final bookings = docs.isNotEmpty
+        ? docs.map(BusBoardingPassModel.fromJson).toList()
+        : getCachedBusBookings();
     if (employeeName != null) {
-      return bookings.where((b) => b.employeeName.trim() == employeeName.trim()).toList();
+      return bookings
+          .where((b) => b.employeeName.trim() == employeeName.trim())
+          .toList();
     }
     return bookings;
   }
@@ -364,9 +405,13 @@ class FirestoreSyncService {
     return upsert('errand_fleet', car.id, car.toJson());
   }
 
-  Future<List<ErrandRequestModel>> getErrandRequests({String? employeeIsl}) async {
+  Future<List<ErrandRequestModel>> getErrandRequests({
+    String? employeeIsl,
+  }) async {
     final docs = await list('errand_requests');
-    final reqs = docs.isNotEmpty ? docs.map(ErrandRequestModel.fromJson).toList() : getCachedErrandRequests();
+    final reqs = docs.isNotEmpty
+        ? docs.map(ErrandRequestModel.fromJson).toList()
+        : getCachedErrandRequests();
     if (employeeIsl != null) {
       return reqs.where((r) => r.employeeIsl == employeeIsl).toList();
     }
@@ -432,26 +477,52 @@ class FirestoreSyncService {
   }
 
   Stream<DriverTripModel?> streamDriverTrip(String tripId) {
-    return listen('driver_trips', tripId).map((data) => data != null ? DriverTripModel.fromJson(data) : null);
+    return listen(
+      'driver_trips',
+      tripId,
+    ).map((data) => data != null ? DriverTripModel.fromJson(data) : null);
   }
 
   Future<bool> saveDriverTrip(DriverTripModel trip) {
     return upsert('driver_trips', trip.tripId, trip.toJson());
   }
 
-  // Legacy sync helpers
+  /// Syncs authenticated user profile to Firestore `users/{uid}`.
+  /// Strictly complies with firestore.rules:
+  /// - Document creation: NO 'role' key permitted (role is assigned server-side only)
+  /// - Document update: 'role' cannot be modified by client
   Future<bool> syncUserAccount({
+    required String uid,
     required String isl,
     required String name,
     required String department,
-    required String role,
-  }) {
-    return upsert('users', isl, {
-      'name': name,
-      'department': department,
-      'role': role,
-      'lastLogin': FieldValue.serverTimestamp(),
-    });
+  }) async {
+    if (!_canAccessCloud) return false;
+    try {
+      final docRef = _db!.collection('users').doc(uid);
+      final docSnap = await docRef.get();
+      if (!docSnap.exists) {
+        await docRef.set({
+          'uid': uid,
+          'isl': isl,
+          'name': name,
+          'department': department,
+          'createdAt': FieldValue.serverTimestamp(),
+          'lastLogin': FieldValue.serverTimestamp(),
+        });
+      } else {
+        await docRef.update({
+          'isl': isl,
+          'name': name,
+          'department': department,
+          'lastLogin': FieldValue.serverTimestamp(),
+        });
+      }
+      return true;
+    } catch (e) {
+      debugPrint('[FirestoreSyncService] syncUserAccount failed: $e');
+      return false;
+    }
   }
 
   Future<bool> syncGarageEvent({
@@ -459,12 +530,16 @@ class FirestoreSyncService {
     required String eventType,
     String? slotLabel,
   }) {
-    return upsert('garage_events', '${isl}_${DateTime.now().millisecondsSinceEpoch}', {
-      'isl': isl,
-      'eventType': eventType,
-      'slotLabel': slotLabel,
-      'timestamp': FieldValue.serverTimestamp(),
-    });
+    return upsert(
+      'garage_events',
+      '${isl}_${DateTime.now().millisecondsSinceEpoch}',
+      {
+        'isl': isl,
+        'eventType': eventType,
+        'slotLabel': slotLabel,
+        'timestamp': FieldValue.serverTimestamp(),
+      },
+    );
   }
 
   Future<bool> syncDriverTripStatus(DriverTripModel trip) {

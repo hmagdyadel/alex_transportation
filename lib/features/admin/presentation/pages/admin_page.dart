@@ -67,9 +67,18 @@ class _AdminPageContentState extends State<_AdminPageContent>
     final l10n = context.l10n;
 
     final tabs = [
-      Tab(icon: const Icon(Icons.directions_bus_rounded), text: l10n.adminTabBuses),
-      Tab(icon: const Icon(Icons.local_parking_rounded), text: l10n.adminTabGarage),
-      Tab(icon: const Icon(Icons.directions_car_rounded), text: l10n.adminTabErrand),
+      Tab(
+        icon: const Icon(Icons.directions_bus_rounded),
+        text: l10n.adminTabBuses,
+      ),
+      Tab(
+        icon: const Icon(Icons.local_parking_rounded),
+        text: l10n.adminTabGarage,
+      ),
+      Tab(
+        icon: const Icon(Icons.directions_car_rounded),
+        text: l10n.adminTabErrand,
+      ),
       Tab(icon: const Icon(Icons.badge_rounded), text: l10n.adminTabDrivers),
       Tab(icon: const Icon(Icons.vpn_key_rounded), text: l10n.adminTabSecurity),
     ];
@@ -100,7 +109,8 @@ class _AdminPageContentState extends State<_AdminPageContent>
         }
       },
       builder: (context, state) {
-        final isLoading = state is Loading ||
+        final isLoading =
+            state is Loading ||
             state is GeneratingCode ||
             state is Approving ||
             state is Rejecting;
@@ -154,12 +164,18 @@ class _AdminPageContentState extends State<_AdminPageContent>
                 const LanguageSelectorButton(),
                 IconButton(
                   tooltip: l10n.adminSwitchToEmployeeView,
-                  icon: const Icon(Icons.home_outlined, color: AppColors.primary),
+                  icon: const Icon(
+                    Icons.home_outlined,
+                    color: AppColors.primary,
+                  ),
                   onPressed: () => context.go('/home'),
                 ),
                 IconButton(
                   tooltip: l10n.adminExitToAccessGate,
-                  icon: const Icon(Icons.logout_rounded, color: AppColors.textSecondary),
+                  icon: const Icon(
+                    Icons.logout_rounded,
+                    color: AppColors.textSecondary,
+                  ),
                   onPressed: () => context.go('/access'),
                 ),
               ],

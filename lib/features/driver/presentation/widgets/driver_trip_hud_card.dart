@@ -94,13 +94,13 @@ class DriverTripHudCard extends StatelessWidget {
                   label: trip.isCompleted
                       ? context.l10n.driverStatusCompleted
                       : trip.isInProgress
-                          ? context.l10n.driverStatusInProgress
-                          : context.l10n.driverStatusScheduled,
+                      ? context.l10n.driverStatusInProgress
+                      : context.l10n.driverStatusScheduled,
                   type: trip.isCompleted
                       ? StatusPillType.neutral
                       : trip.isInProgress
-                          ? StatusPillType.active
-                          : StatusPillType.gold,
+                      ? StatusPillType.active
+                      : StatusPillType.gold,
                 ),
               ],
             ),
@@ -252,7 +252,10 @@ class DriverTripHudCard extends StatelessWidget {
                               Row(
                                 children: [
                                   Text(
-                                    context.l10n.driverStopOfTotal(trip.currentStopIndex + 1, trip.stops.length),
+                                    context.l10n.driverStopOfTotal(
+                                      trip.currentStopIndex + 1,
+                                      trip.stops.length,
+                                    ),
                                     style: AppTypography.caption.copyWith(
                                       fontSize: 9,
                                       fontWeight: FontWeight.w800,
@@ -359,7 +362,9 @@ class DriverTripHudCard extends StatelessWidget {
                                 ),
                                 if (distanceToNextStop != null && !isLastStop)
                                   Text(
-                                    context.l10n.gpsDistanceToNextStop(distanceToNextStop!),
+                                    context.l10n.gpsDistanceToNextStop(
+                                      distanceToNextStop!,
+                                    ),
                                     style: AppTypography.caption.copyWith(
                                       fontWeight: FontWeight.w800,
                                       fontSize: 11,
@@ -382,7 +387,9 @@ class DriverTripHudCard extends StatelessWidget {
                               color: isAutoGeofenceEnabled
                                   ? AppColors.primary
                                   : AppColors.border,
-                              borderRadius: BorderRadius.circular(AppRadius.pill),
+                              borderRadius: BorderRadius.circular(
+                                AppRadius.pill,
+                              ),
                             ),
                             child: Row(
                               children: [
@@ -422,7 +429,11 @@ class DriverTripHudCard extends StatelessWidget {
                 if (trip.isScheduled)
                   AppButton(
                     label: context.l10n.driverStartTripOpenManifest,
-                    leadingIcon: const Icon(Icons.play_arrow_rounded, color: Colors.white, size: 20),
+                    leadingIcon: const Icon(
+                      Icons.play_arrow_rounded,
+                      color: Colors.white,
+                      size: 20,
+                    ),
                     onPressed: onStartTrip,
                   ),
 
@@ -434,7 +445,11 @@ class DriverTripHudCard extends StatelessWidget {
                           flex: 3,
                           child: AppButton(
                             label: context.l10n.driverArrivedAtNextStop,
-                            leadingIcon: const Icon(Icons.skip_next_rounded, color: Colors.white, size: 20),
+                            leadingIcon: const Icon(
+                              Icons.skip_next_rounded,
+                              color: Colors.white,
+                              size: 20,
+                            ),
                             onPressed: onAdvanceStop,
                           ),
                         ),
@@ -445,15 +460,27 @@ class DriverTripHudCard extends StatelessWidget {
                             borderRadius: BorderRadius.circular(AppRadius.md),
                             child: Container(
                               height: 48,
-                              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: AppSpacing.sm,
+                              ),
                               decoration: BoxDecoration(
                                 color: AppColors.goldLight,
-                                borderRadius: BorderRadius.circular(AppRadius.md),
-                                border: Border.all(color: AppColors.accentGold.withValues(alpha: 0.5)),
+                                borderRadius: BorderRadius.circular(
+                                  AppRadius.md,
+                                ),
+                                border: Border.all(
+                                  color: AppColors.accentGold.withValues(
+                                    alpha: 0.5,
+                                  ),
+                                ),
                               ),
                               child: Row(
                                 children: [
-                                  const Icon(Icons.radar_rounded, size: 16, color: AppColors.accentGold),
+                                  const Icon(
+                                    Icons.radar_rounded,
+                                    size: 16,
+                                    color: AppColors.accentGold,
+                                  ),
                                   const SizedBox(width: 4),
                                   Text(
                                     context.l10n.gpsSimulateArrival,
@@ -472,7 +499,10 @@ class DriverTripHudCard extends StatelessWidget {
                       if (isLastStop)
                         Expanded(
                           child: ElevatedButton.icon(
-                            icon: const Icon(Icons.check_circle_rounded, size: 18),
+                            icon: const Icon(
+                              Icons.check_circle_rounded,
+                              size: 18,
+                            ),
                             label: Text(context.l10n.driverCompleteTripAction),
                             style: ElevatedButton.styleFrom(
                               backgroundColor: AppColors.primaryLight,
@@ -480,8 +510,9 @@ class DriverTripHudCard extends StatelessWidget {
                               padding: const EdgeInsets.symmetric(vertical: 12),
                               minimumSize: const Size(0, 48),
                               shape: RoundedRectangleBorder(
-                                borderRadius:
-                                    BorderRadius.circular(AppRadius.md),
+                                borderRadius: BorderRadius.circular(
+                                  AppRadius.md,
+                                ),
                               ),
                             ),
                             onPressed: onCompleteTrip,

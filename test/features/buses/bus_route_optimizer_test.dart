@@ -40,7 +40,11 @@ void main() {
 
       // 2. Stops 1 to 5 are skipped
       for (int i = 0; i < 5; i++) {
-        expect(plan.optimizedStops[i].isSkipped, isTrue, reason: 'Stop ${i + 1} should be skipped');
+        expect(
+          plan.optimizedStops[i].isSkipped,
+          isTrue,
+          reason: 'Stop ${i + 1} should be skipped',
+        );
         expect(plan.optimizedStops[i].riderCount, equals(0));
         expect(plan.optimizedStops[i].isCompleted, isTrue);
       }
@@ -67,12 +71,10 @@ void main() {
       // Total counts
       expect(plan.totalRiders, equals(4));
       expect(plan.skippedStopsCount, equals(6)); // Stops 1, 2, 3, 4, 5, 7
-      expect(plan.activeStops.map((s) => s.name).toList(), equals([
-        'Stop 6',
-        'Stop 8',
-        'Stop 9',
-        'Stop 10',
-      ]));
+      expect(
+        plan.activeStops.map((s) => s.name).toList(),
+        equals(['Stop 6', 'Stop 8', 'Stop 9', 'Stop 10']),
+      );
     });
 
     test('Edge Case: No riders booked anywhere today keeps schedule on default start', () {
@@ -97,7 +99,10 @@ void main() {
       expect(plan.startingStop.name, equals('Stop 1'));
       expect(plan.optimizedStops[0].isSkipped, isFalse);
       expect(plan.optimizedStops[1].isSkipped, isFalse);
-      expect(plan.optimizedStops[2].isSkipped, isTrue); // Stop 3 has 0 riders -> skipped
+      expect(
+        plan.optimizedStops[2].isSkipped,
+        isTrue,
+      ); // Stop 3 has 0 riders -> skipped
     });
   });
 }

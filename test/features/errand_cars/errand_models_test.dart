@@ -174,19 +174,13 @@ void main() {
 
     test('distanceDriven computes correctly with endMileage', () {
       final model = ErrandDispatchPassModel.fromJson(json);
-      final completed = model.copyWith(
-        status: 'completed',
-        endMileage: 34580,
-      );
+      final completed = model.copyWith(status: 'completed', endMileage: 34580);
       expect(completed.distanceDriven, 60);
     });
 
     test('copyWith overrides status and mileage', () {
       final model = ErrandDispatchPassModel.fromJson(json);
-      final updated = model.copyWith(
-        status: 'completed',
-        endMileage: 34600,
-      );
+      final updated = model.copyWith(status: 'completed', endMileage: 34600);
       expect(updated.status, 'completed');
       expect(updated.endMileage, 34600);
       expect(updated.startMileage, 34520);

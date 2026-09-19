@@ -68,8 +68,13 @@ class ErrandAdminView extends StatelessWidget {
                         ),
                         const SizedBox(width: AppSpacing.xs),
                         StatusPill(
-                          label: context.l10n.adminAvailableCarsCount(availableCars, fleet.length),
-                          type: availableCars > 0 ? StatusPillType.active : StatusPillType.danger,
+                          label: context.l10n.adminAvailableCarsCount(
+                            availableCars,
+                            fleet.length,
+                          ),
+                          type: availableCars > 0
+                              ? StatusPillType.active
+                              : StatusPillType.danger,
                         ),
                       ],
                     ),
@@ -87,14 +92,19 @@ class ErrandAdminView extends StatelessWidget {
                               color: AppColors.background,
                               borderRadius: BorderRadius.circular(AppRadius.md),
                               border: Border.all(
-                                color: isAvailable ? AppColors.primaryLight.withValues(alpha: 0.4) : AppColors.border,
+                                color: isAvailable
+                                    ? AppColors.primaryLight.withValues(
+                                        alpha: 0.4,
+                                      )
+                                    : AppColors.border,
                               ),
                             ),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(
                                       car.id,
@@ -108,7 +118,9 @@ class ErrandAdminView extends StatelessWidget {
                                       height: 8,
                                       decoration: BoxDecoration(
                                         shape: BoxShape.circle,
-                                        color: isAvailable ? AppColors.primaryMid : AppColors.accentGold,
+                                        color: isAvailable
+                                            ? AppColors.primaryMid
+                                            : AppColors.accentGold,
                                       ),
                                     ),
                                   ],
@@ -125,7 +137,9 @@ class ErrandAdminView extends StatelessWidget {
                                 ),
                                 Text(
                                   car.plateNumber,
-                                  style: AppTypography.caption.copyWith(fontSize: 10),
+                                  style: AppTypography.caption.copyWith(
+                                    fontSize: 10,
+                                  ),
                                 ),
                                 const SizedBox(height: 4),
                                 Text(
@@ -186,10 +200,11 @@ class ErrandAdminView extends StatelessWidget {
                                     children: [
                                       Text(
                                         req.id,
-                                        style: AppTypography.labelMedium.copyWith(
-                                          color: AppColors.primary,
-                                          fontWeight: FontWeight.w800,
-                                        ),
+                                        style: AppTypography.labelMedium
+                                            .copyWith(
+                                              color: AppColors.primary,
+                                              fontWeight: FontWeight.w800,
+                                            ),
                                       ),
                                       const SizedBox(width: AppSpacing.xs),
                                       Expanded(
@@ -205,7 +220,10 @@ class ErrandAdminView extends StatelessWidget {
                                     ],
                                   ),
                                   Text(
-                                    context.l10n.adminDeptSupervisor(req.department, req.supervisorName),
+                                    context.l10n.adminDeptSupervisor(
+                                      req.department,
+                                      req.supervisorName,
+                                    ),
                                     style: AppTypography.caption.copyWith(
                                       color: AppColors.textSecondary,
                                       fontSize: 10,
@@ -222,8 +240,8 @@ class ErrandAdminView extends StatelessWidget {
                               type: isApproved
                                   ? StatusPillType.active
                                   : isPending
-                                      ? StatusPillType.pending
-                                      : StatusPillType.neutral,
+                                  ? StatusPillType.pending
+                                  : StatusPillType.neutral,
                             ),
                           ],
                         ),
@@ -318,8 +336,12 @@ class ErrandAdminView extends StatelessWidget {
                           children: [
                             Expanded(
                               child: Text(
-                                context.l10n.adminPurposeWithDetails(req.purpose),
-                                style: AppTypography.caption.copyWith(color: AppColors.textMid),
+                                context.l10n.adminPurposeWithDetails(
+                                  req.purpose,
+                                ),
+                                style: AppTypography.caption.copyWith(
+                                  color: AppColors.textMid,
+                                ),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                               ),
@@ -338,7 +360,11 @@ class ErrandAdminView extends StatelessWidget {
                           const SizedBox(height: AppSpacing.xs),
                           Row(
                             children: [
-                              const Icon(Icons.directions_car_rounded, size: 14, color: AppColors.primaryMid),
+                              const Icon(
+                                Icons.directions_car_rounded,
+                                size: 14,
+                                color: AppColors.primaryMid,
+                              ),
                               const SizedBox(width: 4),
                               Text(
                                 '${req.assignedCarMake} (${req.assignedCarPlate})',

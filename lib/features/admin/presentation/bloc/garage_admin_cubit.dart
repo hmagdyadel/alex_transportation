@@ -19,8 +19,10 @@ class GarageAdminCubit extends Cubit<GarageAdminStates> {
   }
 
   List<Map<String, dynamic>> get waitingList => List.unmodifiable(_waitingList);
-  List<Map<String, dynamic>> get cancellations => List.unmodifiable(_cancellations);
-  List<Map<String, dynamic>> get subscriptions => List.unmodifiable(_subscriptions);
+  List<Map<String, dynamic>> get cancellations =>
+      List.unmodifiable(_cancellations);
+  List<Map<String, dynamic>> get subscriptions =>
+      List.unmodifiable(_subscriptions);
 
   /// Current monthly parking fee.
   int get monthlyFee => GarageCubit.monthlyFee;
@@ -29,14 +31,20 @@ class GarageAdminCubit extends Cubit<GarageAdminStates> {
   void setMonthlyFee(int newFee) {
     if (newFee <= 0) return;
     GarageCubit.monthlyFee = newFee;
-    safeEmit(GarageAdminStates.success('Monthly parking fee updated to EGP $newFee'));
+    safeEmit(
+      GarageAdminStates.success('Monthly parking fee updated to EGP $newFee'),
+    );
     safeEmit(const GarageAdminStates.loaded());
   }
 
   /// Allows Admin to increase the monthly parking fee.
   void increaseMonthlyFee([int step = 100]) {
     GarageCubit.monthlyFee += step;
-    safeEmit(GarageAdminStates.success('Monthly parking fee increased to EGP ${GarageCubit.monthlyFee}'));
+    safeEmit(
+      GarageAdminStates.success(
+        'Monthly parking fee increased to EGP ${GarageCubit.monthlyFee}',
+      ),
+    );
     safeEmit(const GarageAdminStates.loaded());
   }
 
@@ -44,7 +52,11 @@ class GarageAdminCubit extends Cubit<GarageAdminStates> {
   void decreaseMonthlyFee([int step = 100]) {
     if (GarageCubit.monthlyFee - step >= 100) {
       GarageCubit.monthlyFee -= step;
-      safeEmit(GarageAdminStates.success('Monthly parking fee decreased to EGP ${GarageCubit.monthlyFee}'));
+      safeEmit(
+        GarageAdminStates.success(
+          'Monthly parking fee decreased to EGP ${GarageCubit.monthlyFee}',
+        ),
+      );
       safeEmit(const GarageAdminStates.loaded());
     }
   }
@@ -76,7 +88,8 @@ class GarageAdminCubit extends Cubit<GarageAdminStates> {
 
       if (s.status == 'waiting') {
         _waitingList.add(map);
-      } else if (s.status == 'cancellation_requested' || s.status == 'cancellation_pending') {
+      } else if (s.status == 'cancellation_requested' ||
+          s.status == 'cancellation_pending') {
         _cancellations.add(map);
       } else {
         _subscriptions.add(map);
@@ -95,7 +108,8 @@ class GarageAdminCubit extends Cubit<GarageAdminStates> {
       };
       if (s.status == 'waiting' && !_waitingList.any((w) => w['id'] == s.id)) {
         _waitingList.add(map);
-      } else if ((s.status == 'cancellation_requested' || s.status == 'cancellation_pending') &&
+      } else if ((s.status == 'cancellation_requested' ||
+              s.status == 'cancellation_pending') &&
           !_cancellations.any((c) => c['id'] == s.id)) {
         _cancellations.add(map);
       }
@@ -110,7 +124,8 @@ class GarageAdminCubit extends Cubit<GarageAdminStates> {
     if (index == -1) return;
 
     final item = _waitingList.removeAt(index);
-    final assignedBay = 'BAY-${(_subscriptions.length + 1).toString().padLeft(2, '0')}';
+    final assignedBay =
+        'BAY-${(_subscriptions.length + 1).toString().padLeft(2, '0')}';
     item['slot'] = assignedBay;
     item['status'] = 'active';
     _subscriptions.add(item);
@@ -159,10 +174,16 @@ class GarageAdminCubit extends Cubit<GarageAdminStates> {
   Future<void> runMonthlyDeduction() async {
     safeEmit(const GarageAdminStates.runningDeduction());
 
-    final activeCount = _subscriptions.where((s) => s['status'] == 'active').length;
+    final activeCount = _subscriptions
+        .where((s) => s['status'] == 'active')
+        .length;
     final totalAmount = activeCount * monthlyFee;
 
-    safeEmit(GarageAdminStates.success('Processed $activeCount deductions totaling EGP $totalAmount'));
+    safeEmit(
+      GarageAdminStates.success(
+        'Processed $activeCount deductions totaling EGP $totalAmount',
+      ),
+    );
     safeEmit(const GarageAdminStates.loaded());
   }
 

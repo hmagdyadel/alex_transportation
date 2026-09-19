@@ -74,11 +74,17 @@ class GaragePassCard extends StatelessWidget {
                 label: isCheckedIn
                     ? l10n.garageCheckedInStatus.toUpperCase()
                     : l10n.garageCheckedOutStatus.toUpperCase(),
-                type: isCheckedIn ? StatusPillType.active : StatusPillType.neutral,
+                type: isCheckedIn
+                    ? StatusPillType.active
+                    : StatusPillType.neutral,
                 icon: Icon(
-                  isCheckedIn ? Icons.check_circle : Icons.radio_button_unchecked,
+                  isCheckedIn
+                      ? Icons.check_circle
+                      : Icons.radio_button_unchecked,
                   size: 14,
-                  color: isCheckedIn ? AppColors.primaryMid : AppColors.textSecondary,
+                  color: isCheckedIn
+                      ? AppColors.primaryMid
+                      : AppColors.textSecondary,
                 ),
               ),
             ],
@@ -91,14 +97,8 @@ class GaragePassCard extends StatelessWidget {
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: isCheckedIn
-                    ? [
-                        AppColors.greenLight,
-                        AppColors.surface,
-                      ]
-                    : [
-                        AppColors.background,
-                        AppColors.surface,
-                      ],
+                    ? [AppColors.greenLight, AppColors.surface]
+                    : [AppColors.background, AppColors.surface],
               ),
               borderRadius: AppRadius.borderLg,
               border: Border.all(
@@ -116,7 +116,9 @@ class GaragePassCard extends StatelessWidget {
                     Container(
                       padding: const EdgeInsets.all(AppSpacing.sm),
                       decoration: BoxDecoration(
-                        color: isCheckedIn ? AppColors.primary : AppColors.primaryMid,
+                        color: isCheckedIn
+                            ? AppColors.primary
+                            : AppColors.primaryMid,
                         shape: BoxShape.circle,
                       ),
                       child: const Icon(
@@ -159,7 +161,10 @@ class GaragePassCard extends StatelessWidget {
                   children: [
                     _buildInfoColumn('LEVEL', 'B2'),
                     _buildInfoColumn('ISL', subscription.isl),
-                    _buildInfoColumn('STATUS', isCheckedIn ? l10n.active : l10n.pending),
+                    _buildInfoColumn(
+                      'STATUS',
+                      isCheckedIn ? l10n.active : l10n.pending,
+                    ),
                   ],
                 ),
               ],
@@ -202,7 +207,9 @@ class GaragePassCard extends StatelessWidget {
                             : l10n.garageCheckedOutStatus,
                         style: AppTypography.bodySmall.copyWith(
                           fontWeight: FontWeight.w700,
-                          color: isCheckedIn ? AppColors.primary : AppColors.textPrimary,
+                          color: isCheckedIn
+                              ? AppColors.primary
+                              : AppColors.textPrimary,
                         ),
                       ),
                       if (isCheckedIn && subscription.checkedInAt != null)
@@ -223,8 +230,12 @@ class GaragePassCard extends StatelessWidget {
 
           // Toggle Action Button (Check in / Check out)
           AppButton(
-            label: isCheckedIn ? l10n.garageCheckOutAction : l10n.garageCheckInAction,
-            variant: isCheckedIn ? AppButtonVariant.secondary : AppButtonVariant.primary,
+            label: isCheckedIn
+                ? l10n.garageCheckOutAction
+                : l10n.garageCheckInAction,
+            variant: isCheckedIn
+                ? AppButtonVariant.secondary
+                : AppButtonVariant.primary,
             onPressed: isLoading ? null : onCheckInOut,
             leadingIcon: Icon(
               isCheckedIn ? Icons.logout_rounded : Icons.login_rounded,

@@ -28,7 +28,8 @@ class ErrandCarsPage extends StatefulWidget {
 }
 
 class _ErrandCarsPageState extends State<ErrandCarsPage> {
-  int _selectedSubTab = 0; // 0: My Missions, 1: Request Vehicle, 2: Track Status
+  int _selectedSubTab =
+      0; // 0: My Missions, 1: Request Vehicle, 2: Track Status
 
   // Request Form Controllers
   final _nameController = TextEditingController();
@@ -95,8 +96,18 @@ class _ErrandCarsPageState extends State<ErrandCarsPage> {
 
   String _monthName(int month) {
     const months = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
     ];
     return months[month - 1];
   }
@@ -115,17 +126,17 @@ class _ErrandCarsPageState extends State<ErrandCarsPage> {
 
   void _submitRequest(BuildContext context) {
     context.read<ErrandCarCubit>().submitRequest(
-          employeeName: _nameController.text,
-          employeeIsl: _islController.text,
-          department: _selectedDept,
-          pickupLocation: _pickupController.text,
-          destination: _destinationController.text,
-          purpose: _purposeController.text,
-          requestedDate: _requestedDate,
-          requestedTime: _requestedTime,
-          estimatedReturnTime: _estimatedReturn,
-          supervisorName: _supervisorController.text,
-        );
+      employeeName: _nameController.text,
+      employeeIsl: _islController.text,
+      department: _selectedDept,
+      pickupLocation: _pickupController.text,
+      destination: _destinationController.text,
+      purpose: _purposeController.text,
+      requestedDate: _requestedDate,
+      requestedTime: _requestedTime,
+      estimatedReturnTime: _estimatedReturn,
+      supervisorName: _supervisorController.text,
+    );
   }
 
   @override
@@ -167,7 +178,8 @@ class _ErrandCarsPageState extends State<ErrandCarsPage> {
       builder: (context, state) {
         final l10n = context.l10n;
         final cubit = context.read<ErrandCarCubit>();
-        final isLoading = state is Loading ||
+        final isLoading =
+            state is Loading ||
             state is SubmittingRequest ||
             state is CancellingRequest ||
             state is StartingMission ||
@@ -249,7 +261,9 @@ class _ErrandCarsPageState extends State<ErrandCarsPage> {
                             style: AppTypography.caption,
                           ),
                           Text(
-                            l10n.errandUtilizedPercent((utilizationRate * 100).toInt()),
+                            l10n.errandUtilizedPercent(
+                              (utilizationRate * 100).toInt(),
+                            ),
                             style: AppTypography.caption.copyWith(
                               fontWeight: FontWeight.w600,
                             ),
@@ -272,11 +286,20 @@ class _ErrandCarsPageState extends State<ErrandCarsPage> {
                   child: Row(
                     children: [
                       _buildSubTabItem(
-                          0, l10n.errandTabMyMissions, Icons.assignment_rounded),
+                        0,
+                        l10n.errandTabMyMissions,
+                        Icons.assignment_rounded,
+                      ),
                       _buildSubTabItem(
-                          1, l10n.errandTabRequestVehicle, Icons.add_circle_outline_rounded),
+                        1,
+                        l10n.errandTabRequestVehicle,
+                        Icons.add_circle_outline_rounded,
+                      ),
                       _buildSubTabItem(
-                          2, l10n.errandTabTrackStatus, Icons.timeline_rounded),
+                        2,
+                        l10n.errandTabTrackStatus,
+                        Icons.timeline_rounded,
+                      ),
                     ],
                   ),
                 ),
@@ -363,10 +386,8 @@ class _ErrandCarsPageState extends State<ErrandCarsPage> {
                 ? () => cubit.startMission(activePass.id)
                 : null,
             onEndMission: null,
-            onCancel: () => _confirmCancelRequest(
-              context,
-              activePass.requestId,
-            ),
+            onCancel: () =>
+                _confirmCancelRequest(context, activePass.requestId),
           ),
           const SizedBox(height: AppSpacing.lg),
         ],
@@ -399,8 +420,9 @@ class _ErrandCarsPageState extends State<ErrandCarsPage> {
                   label: context.l10n.errandCompleteMissionAndReturn,
                   variant: AppButtonVariant.secondary,
                   onPressed: () {
-                    final mileage =
-                        int.tryParse(_endMileageController.text.trim());
+                    final mileage = int.tryParse(
+                      _endMileageController.text.trim(),
+                    );
                     if (mileage == null) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
@@ -449,8 +471,7 @@ class _ErrandCarsPageState extends State<ErrandCarsPage> {
                 const SizedBox(height: AppSpacing.md),
                 AppButton(
                   label: context.l10n.errandRequestAVehicleAction,
-                  onPressed: () =>
-                      setState(() => _selectedSubTab = 1),
+                  onPressed: () => setState(() => _selectedSubTab = 1),
                 ),
               ],
             ),
@@ -470,13 +491,13 @@ class _ErrandCarsPageState extends State<ErrandCarsPage> {
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             itemCount: requests.length,
-            separatorBuilder: (_, _) =>
-                const SizedBox(height: AppSpacing.sm),
+            separatorBuilder: (_, _) => const SizedBox(height: AppSpacing.sm),
             itemBuilder: (context, index) {
               final request = requests[index];
               return ErrandRequestHistoryCard(
                 request: request,
-                onCancel: (request.status == 'pending' ||
+                onCancel:
+                    (request.status == 'pending' ||
                         request.status == 'approved')
                     ? () => _confirmCancelRequest(context, request.id)
                     : null,
@@ -504,10 +525,7 @@ class _ErrandCarsPageState extends State<ErrandCarsPage> {
             ),
           ),
           const SizedBox(height: AppSpacing.xxs),
-          Text(
-            context.l10n.errandRequestDesc,
-            style: AppTypography.bodySmall,
-          ),
+          Text(context.l10n.errandRequestDesc, style: AppTypography.bodySmall),
           const SizedBox(height: AppSpacing.md),
 
           // Employee Name
@@ -565,7 +583,11 @@ class _ErrandCarsPageState extends State<ErrandCarsPage> {
             controller: _pickupController,
             label: context.l10n.errandPickupLocation,
             hint: 'e.g. Smart Village Operations Hub',
-            prefixIcon: const Icon(Icons.trip_origin_rounded, color: AppColors.accentGold, size: 20),
+            prefixIcon: const Icon(
+              Icons.trip_origin_rounded,
+              color: AppColors.accentGold,
+              size: 20,
+            ),
           ),
           const SizedBox(height: AppSpacing.xs),
           SingleChildScrollView(
@@ -576,12 +598,24 @@ class _ErrandCarsPageState extends State<ErrandCarsPage> {
                 return Padding(
                   padding: const EdgeInsets.only(right: AppSpacing.xs),
                   child: ActionChip(
-                    label: Text(loc, style: TextStyle(fontSize: 11, color: isSelected ? Colors.white : AppColors.textPrimary)),
-                    backgroundColor: isSelected ? AppColors.primary : AppColors.surface,
+                    label: Text(
+                      loc,
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: isSelected
+                            ? Colors.white
+                            : AppColors.textPrimary,
+                      ),
+                    ),
+                    backgroundColor: isSelected
+                        ? AppColors.primary
+                        : AppColors.surface,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(AppRadius.sm),
                       side: BorderSide(
-                        color: isSelected ? AppColors.primary : AppColors.border,
+                        color: isSelected
+                            ? AppColors.primary
+                            : AppColors.border,
                       ),
                     ),
                     onPressed: () {
@@ -601,7 +635,11 @@ class _ErrandCarsPageState extends State<ErrandCarsPage> {
             controller: _destinationController,
             label: context.l10n.errandDestination,
             hint: 'e.g. Alexandria Main Branch',
-            prefixIcon: const Icon(Icons.location_on_rounded, color: AppColors.primary, size: 20),
+            prefixIcon: const Icon(
+              Icons.location_on_rounded,
+              color: AppColors.primary,
+              size: 20,
+            ),
           ),
           const SizedBox(height: AppSpacing.xs),
           SingleChildScrollView(
@@ -612,12 +650,24 @@ class _ErrandCarsPageState extends State<ErrandCarsPage> {
                 return Padding(
                   padding: const EdgeInsets.only(right: AppSpacing.xs),
                   child: ActionChip(
-                    label: Text(loc, style: TextStyle(fontSize: 11, color: isSelected ? Colors.white : AppColors.textPrimary)),
-                    backgroundColor: isSelected ? AppColors.primary : AppColors.surface,
+                    label: Text(
+                      loc,
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: isSelected
+                            ? Colors.white
+                            : AppColors.textPrimary,
+                      ),
+                    ),
+                    backgroundColor: isSelected
+                        ? AppColors.primary
+                        : AppColors.surface,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(AppRadius.sm),
                       side: BorderSide(
-                        color: isSelected ? AppColors.primary : AppColors.border,
+                        color: isSelected
+                            ? AppColors.primary
+                            : AppColors.border,
                       ),
                     ),
                     onPressed: () {
@@ -790,8 +840,9 @@ class _ErrandCarsPageState extends State<ErrandCarsPage> {
 
     // Status summary chips
     final pending = requests.where((r) => r.status == 'pending').length;
-    final approved = requests.where((r) =>
-        r.status == 'approved' || r.status == 'in_progress').length;
+    final approved = requests
+        .where((r) => r.status == 'approved' || r.status == 'in_progress')
+        .length;
     final completed = requests.where((r) => r.status == 'completed').length;
 
     return Column(
@@ -800,14 +851,26 @@ class _ErrandCarsPageState extends State<ErrandCarsPage> {
         // Summary chips
         Row(
           children: [
-            _buildSummaryChip(context.l10n.errandPendingMissions, pending, AppColors.accentGold,
-                AppColors.goldLight),
+            _buildSummaryChip(
+              context.l10n.errandPendingMissions,
+              pending,
+              AppColors.accentGold,
+              AppColors.goldLight,
+            ),
             const SizedBox(width: AppSpacing.xs),
-            _buildSummaryChip(context.l10n.errandActiveMissions, approved, AppColors.primaryMid,
-                AppColors.greenLight),
+            _buildSummaryChip(
+              context.l10n.errandActiveMissions,
+              approved,
+              AppColors.primaryMid,
+              AppColors.greenLight,
+            ),
             const SizedBox(width: AppSpacing.xs),
-            _buildSummaryChip(context.l10n.errandCompletedMissions, completed, AppColors.accentBlue,
-                AppColors.blueLight),
+            _buildSummaryChip(
+              context.l10n.errandCompletedMissions,
+              completed,
+              AppColors.accentBlue,
+              AppColors.blueLight,
+            ),
           ],
         ),
         const SizedBox(height: AppSpacing.md),
@@ -817,14 +880,13 @@ class _ErrandCarsPageState extends State<ErrandCarsPage> {
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
           itemCount: requests.length,
-          separatorBuilder: (_, _) =>
-              const SizedBox(height: AppSpacing.sm),
+          separatorBuilder: (_, _) => const SizedBox(height: AppSpacing.sm),
           itemBuilder: (context, index) {
             final request = requests[index];
             return ErrandRequestHistoryCard(
               request: request,
-              onCancel: (request.status == 'pending' ||
-                      request.status == 'approved')
+              onCancel:
+                  (request.status == 'pending' || request.status == 'approved')
                   ? () => _confirmCancelRequest(context, request.id)
                   : null,
             );
@@ -881,7 +943,10 @@ class _ErrandCarsPageState extends State<ErrandCarsPage> {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppRadius.lg),
         ),
-        title: Text(context.l10n.errandCancelRequestTitle, style: AppTypography.titleLarge),
+        title: Text(
+          context.l10n.errandCancelRequestTitle,
+          style: AppTypography.titleLarge,
+        ),
         content: Text(
           context.l10n.errandCancelRequestConfirm,
           style: AppTypography.bodyMedium,

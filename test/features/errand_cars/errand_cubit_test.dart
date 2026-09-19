@@ -146,7 +146,10 @@ void main() {
       expect(result, true);
       expect(cubit.myRequests.length, initialRequests + 1);
       expect(cubit.myRequests.first.status, 'approved');
-      expect(cubit.myRequests.first.pickupLocation, 'AlexBank Downtown Cairo HQ');
+      expect(
+        cubit.myRequests.first.pickupLocation,
+        'AlexBank Downtown Cairo HQ',
+      );
       expect(cubit.myRequests.first.assignedCarId, isNotNull);
       expect(cubit.availableCars, initialAvailable - 1);
     });
@@ -174,7 +177,9 @@ void main() {
       final result = await cubit.cancelRequest(newRequest.id);
 
       expect(result, true);
-      final cancelled = cubit.myRequests.firstWhere((r) => r.id == newRequest.id);
+      final cancelled = cubit.myRequests.firstWhere(
+        (r) => r.id == newRequest.id,
+      );
       expect(cancelled.status, 'cancelled');
 
       // Car should be freed

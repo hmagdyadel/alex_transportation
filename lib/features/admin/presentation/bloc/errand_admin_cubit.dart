@@ -29,7 +29,11 @@ class ErrandAdminCubit extends Cubit<ErrandAdminStates> {
   }
 
   /// Approves an errand car request and dispatches a vehicle in Firestore.
-  Future<void> approveRequest(String requestId, {String? errandCarId, String? driverId}) async {
+  Future<void> approveRequest(
+    String requestId, {
+    String? errandCarId,
+    String? driverId,
+  }) async {
     final index = _requests.indexWhere((r) => r.id == requestId);
     if (index == -1) {
       safeEmit(const ErrandAdminStates.error(message: 'Request not found'));
@@ -55,7 +59,9 @@ class ErrandAdminCubit extends Cubit<ErrandAdminStates> {
       assignedCarId: errandCarId ?? 'CAR-001',
       assignedCarPlate: 'أ ب ج 4567',
       assignedCarMake: 'Mercedes-Benz E-Class',
-      assignedDriverName: driverId != null ? 'Captain $driverId' : 'Captain Tarek',
+      assignedDriverName: driverId != null
+          ? 'Captain $driverId'
+          : 'Captain Tarek',
       submittedAt: current.submittedAt,
       approvedAt: DateTime.now(),
     );

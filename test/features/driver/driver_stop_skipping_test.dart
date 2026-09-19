@@ -135,7 +135,10 @@ void main() {
       final updatedTrip = cubit.activeTrip!;
       expect(updatedTrip.currentStopIndex, equals(7)); // Jumped to Station 8
       expect(updatedTrip.currentStop?.name, equals('Station 8'));
-      expect(updatedTrip.stops[6].isCompleted, isTrue); // Station 7 marked passed
+      expect(
+        updatedTrip.stops[6].isCompleted,
+        isTrue,
+      ); // Station 7 marked passed
       expect(updatedTrip.stops[6].isSkipped, isTrue);
 
       // Next stop after Station 8 is Station 9

@@ -180,22 +180,31 @@ class AdminCubit extends Cubit<AdminStates> {
 
     final current = _inviteCodes[index];
     _inviteCodes[index] = current.copyWith(isActive: !current.isActive);
-    safeEmit(AdminStates.success(
-      'Code ${current.code} is now ${!current.isActive ? "ACTIVE" : "INACTIVE"}',
-    ));
+    safeEmit(
+      AdminStates.success(
+        'Code ${current.code} is now ${!current.isActive ? "ACTIVE" : "INACTIVE"}',
+      ),
+    );
     safeEmit(const AdminStates.loaded());
   }
 
   /// Revokes / deletes an invite code.
   void revokeInviteCode(String id) {
-    final code = _inviteCodes.firstWhere((c) => c.id == id, orElse: () => _inviteCodes.first);
+    final code = _inviteCodes.firstWhere(
+      (c) => c.id == id,
+      orElse: () => _inviteCodes.first,
+    );
     _inviteCodes.removeWhere((c) => c.id == id);
     safeEmit(AdminStates.success('Invite code ${code.code} has been revoked'));
     safeEmit(const AdminStates.loaded());
   }
 
   /// Reassigns a driver to a bus route or errand duty.
-  void reassignDriver(String driverId, {required String newRouteId, required String newRouteName}) {
+  void reassignDriver(
+    String driverId, {
+    required String newRouteId,
+    required String newRouteName,
+  }) {
     final index = _captains.indexWhere((d) => d.id == driverId);
     if (index == -1) return;
 
@@ -204,7 +213,9 @@ class AdminCubit extends Cubit<AdminStates> {
       assignedRouteId: newRouteId,
       assignedRouteName: newRouteName,
     );
-    safeEmit(AdminStates.success('Driver ${current.name} reassigned to $newRouteName'));
+    safeEmit(
+      AdminStates.success('Driver ${current.name} reassigned to $newRouteName'),
+    );
     safeEmit(const AdminStates.loaded());
   }
 }

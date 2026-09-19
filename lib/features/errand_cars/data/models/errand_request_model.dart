@@ -17,7 +17,8 @@ class ErrandRequestModel {
   final String requestedTime;
   final String estimatedReturnTime;
   final String supervisorName;
-  final String status; // pending, approved, rejected, in_progress, completed, cancelled
+  final String
+  status; // pending, approved, rejected, in_progress, completed, cancelled
   final String? assignedCarId;
   final String? assignedCarPlate;
   final String? assignedCarMake;

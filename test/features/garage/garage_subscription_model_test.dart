@@ -71,10 +71,7 @@ void main() {
     });
 
     test('copyWith updates specified fields correctly', () {
-      final updated = testModel.copyWith(
-        checkedIn: false,
-        slotLabel: 'P2-105',
-      );
+      final updated = testModel.copyWith(checkedIn: false, slotLabel: 'P2-105');
 
       expect(updated.id, testModel.id);
       expect(updated.name, testModel.name);

@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-import 'package:alex_transportation/core/design_system/tokens.dart';
 import 'package:alex_transportation/core/di/injector.dart';
 import 'package:alex_transportation/features/auth/presentation/bloc/auth_cubit.dart';
 import 'package:alex_transportation/features/auth/presentation/pages/access_gate_page.dart';
@@ -77,34 +75,30 @@ class AppRouter {
       GoRoute(
         path: '/home',
         name: 'home',
-        builder: (context, state) => const HomePage(),
+        builder: (context, state) => const HomePage(initialModuleIndex: 0),
         routes: [
           GoRoute(
             path: 'garage',
             name: 'garage',
-            builder: (context, state) =>
-                const _PlaceholderScreen(title: 'Garage'),
+            builder: (context, state) => const HomePage(initialModuleIndex: 0),
           ),
           GoRoute(
             path: 'buses',
             name: 'buses',
-            builder: (context, state) =>
-                const _PlaceholderScreen(title: 'Buses'),
+            builder: (context, state) => const HomePage(initialModuleIndex: 1),
             routes: [
               GoRoute(
                 path: ':busId',
                 name: 'bus-detail',
-                builder: (context, state) => _PlaceholderScreen(
-                  title: 'Bus ${state.pathParameters['busId']}',
-                ),
+                builder: (context, state) =>
+                    const HomePage(initialModuleIndex: 1),
               ),
             ],
           ),
           GoRoute(
             path: 'errand',
             name: 'errand',
-            builder: (context, state) =>
-                const _PlaceholderScreen(title: 'Errand Cars'),
+            builder: (context, state) => const HomePage(initialModuleIndex: 2),
           ),
         ],
       ),
@@ -125,40 +119,4 @@ class AppRouter {
       ),
     ],
   );
-}
-
-/// Temporary placeholder used until real screens are built.
-class _PlaceholderScreen extends StatelessWidget {
-  const _PlaceholderScreen({required this.title});
-
-  final String title;
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      body: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Icon(
-              Icons.construction_rounded,
-              size: 48,
-              color: AppColors.primaryLight,
-            ),
-            const SizedBox(height: AppSpacing.md),
-            Text(
-              title,
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
-            const SizedBox(height: AppSpacing.xs),
-            Text(
-              'Coming soon',
-              style: Theme.of(context).textTheme.bodySmall,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
 }

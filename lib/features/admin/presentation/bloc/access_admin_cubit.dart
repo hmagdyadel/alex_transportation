@@ -44,10 +44,12 @@ class AccessAdminCubit extends Cubit<AccessAdminStates> {
     final prefix = role.toLowerCase() == 'admin'
         ? 'ADM'
         : role.toLowerCase() == 'driver'
-            ? 'DRV'
-            : 'EMP';
+        ? 'DRV'
+        : 'EMP';
 
-    final entropy = DateTime.now().millisecondsSinceEpoch.toString().substring(8);
+    final entropy = DateTime.now().millisecondsSinceEpoch.toString().substring(
+      8,
+    );
     final generatedCode = '$prefix-$entropy';
 
     final newInvite = InviteCodeModel(
@@ -80,7 +82,9 @@ class AccessAdminCubit extends Cubit<AccessAdminStates> {
     await FirestoreSyncService.instance.saveInviteCode(updated);
 
     final statusMsg = updated.isActive ? 'activated' : 'deactivated';
-    safeEmit(AccessAdminStates.success('Invite code ${updated.code} $statusMsg.'));
+    safeEmit(
+      AccessAdminStates.success('Invite code ${updated.code} $statusMsg.'),
+    );
     safeEmit(const AccessAdminStates.loaded());
   }
 
@@ -92,7 +96,9 @@ class AccessAdminCubit extends Cubit<AccessAdminStates> {
     final existing = _codes.removeAt(index);
     await FirestoreSyncService.instance.deleteInviteCode(codeId);
 
-    safeEmit(AccessAdminStates.success('Invite code ${existing.code} revoked.'));
+    safeEmit(
+      AccessAdminStates.success('Invite code ${existing.code} revoked.'),
+    );
     safeEmit(const AccessAdminStates.loaded());
   }
 }

@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 
 import 'package:alex_transportation/core/network/firestore_sync_service.dart';
@@ -25,25 +26,42 @@ class FirestoreDataSeeder {
   static List<ErrandRequestModel> get initialRequests => _initialRequests;
   static ErrandDispatchPassModel get initialErrandPass => _initialErrandPass;
   static List<InviteCodeModel> get initialCodes => _initialCodes;
-  static List<GarageSubscriptionModel> get initialSubscriptions => _initialSubscriptions;
+  static List<GarageSubscriptionModel> get initialSubscriptions =>
+      _initialSubscriptions;
   static BusBoardingPassModel get initialBusPass => _initialBusPass;
-  static List<BusBoardingPassModel> get initialBusBookings => _initialBusBookings;
+  static List<BusBoardingPassModel> get initialBusBookings =>
+      _initialBusBookings;
   static DriverProfileModel get initialDriverProfile => _initialDriverProfile;
   static DriverTripModel get initialDriverTrip => _initialDriverTrip;
 
   /// Checks Firestore collections and seeds production data if empty.
   static Future<void> seedInitialDataIfNeeded() async {
     final sync = FirestoreSyncService.instance;
+    if (!sync.isAvailable) return;
+    try {
+      if (FirebaseAuth.instance.currentUser == null) {
+        debugPrint(
+          '[FirestoreSeeder] Device not authenticated — running with local master cache.',
+        );
+        return;
+      }
+    } catch (_) {
+      return;
+    }
 
     try {
       // 1. Bus Routes
       final routes = await sync.getBusRoutes();
       if (routes.isEmpty) {
-        debugPrint('[FirestoreSeeder] Seeding official bus routes to Firestore...');
+        debugPrint(
+          '[FirestoreSeeder] Seeding official bus routes to Firestore...',
+        );
         for (final route in _initialRoutes) {
           await sync.saveBusRoute(route);
         }
-        debugPrint('[FirestoreSeeder] ✓ Seeded ${_initialRoutes.length} bus routes.');
+        debugPrint(
+          '[FirestoreSeeder] ✓ Seeded ${_initialRoutes.length} bus routes.',
+        );
       }
 
       // 2. Bus Bookings
@@ -62,7 +80,9 @@ class FirestoreDataSeeder {
         for (final car in _initialFleet) {
           await sync.saveErrandCar(car);
         }
-        debugPrint('[FirestoreSeeder] ✓ Seeded ${_initialFleet.length} errand cars.');
+        debugPrint(
+          '[FirestoreSeeder] ✓ Seeded ${_initialFleet.length} errand cars.',
+        );
       }
 
       // 4. Errand Requests
@@ -77,27 +97,37 @@ class FirestoreDataSeeder {
       // 5. Invite Codes
       final codes = await sync.getInviteCodes();
       if (codes.isEmpty) {
-        debugPrint('[FirestoreSeeder] Seeding access invite codes to Firestore...');
+        debugPrint(
+          '[FirestoreSeeder] Seeding access invite codes to Firestore...',
+        );
         for (final code in _initialCodes) {
           await sync.saveInviteCode(code);
         }
-        debugPrint('[FirestoreSeeder] ✓ Seeded ${_initialCodes.length} invite codes.');
+        debugPrint(
+          '[FirestoreSeeder] ✓ Seeded ${_initialCodes.length} invite codes.',
+        );
       }
 
       // 6. Garage Subscriptions
       final subscriptions = await sync.getGarageSubscriptions();
       if (subscriptions.isEmpty) {
-        debugPrint('[FirestoreSeeder] Seeding garage subscriptions to Firestore...');
+        debugPrint(
+          '[FirestoreSeeder] Seeding garage subscriptions to Firestore...',
+        );
         for (final sub in _initialSubscriptions) {
           await sync.saveGarageSubscription(sub);
         }
-        debugPrint('[FirestoreSeeder] ✓ Seeded ${_initialSubscriptions.length} garage subscriptions.');
+        debugPrint(
+          '[FirestoreSeeder] ✓ Seeded ${_initialSubscriptions.length} garage subscriptions.',
+        );
       }
 
       // 7. Driver Trip
       final trip = await sync.getDriverTrip('TRIP-20260918-101');
       if (trip == null) {
-        debugPrint('[FirestoreSeeder] Seeding driver active trip to Firestore...');
+        debugPrint(
+          '[FirestoreSeeder] Seeding driver active trip to Firestore...',
+        );
         await sync.saveDriverTrip(_initialDriverTrip);
       }
     } catch (e) {
@@ -639,7 +669,8 @@ class FirestoreDataSeeder {
       department: 'IT',
       pickupLocation: 'Smart Village Operations Hub',
       destination: 'Finance Hub Branch',
-      purpose: 'Deliver signed audit documents to Finance Hub for quarterly review',
+      purpose:
+          'Deliver signed audit documents to Finance Hub for quarterly review',
       requestedDate: '18 Sep 2026',
       requestedTime: '10:00 AM',
       estimatedReturnTime: '02:00 PM',
@@ -719,21 +750,22 @@ class FirestoreDataSeeder {
     ),
   ];
 
-  static const ErrandDispatchPassModel _initialErrandPass = ErrandDispatchPassModel(
-    id: 'ABX-3942',
-    requestId: 'ERQ-3942',
-    missionCode: 'CPT-912',
-    employeeName: 'Ahmed Hassan',
-    pickupLocation: 'Smart Village Operations Hub',
-    destination: 'Finance Hub Branch',
-    carPlate: 'أ ب ج 4567',
-    carMake: 'Mercedes-Benz E-Class',
-    departureTime: '10:00 AM',
-    estimatedReturn: '02:00 PM',
-    status: 'active',
-    startMileage: 34520,
-    qrPayload: 'ALEXBANK:ERRAND:ABX-3942:CPT-912:AHMED-HASSAN:FINANCE-HUB',
-  );
+  static const ErrandDispatchPassModel _initialErrandPass =
+      ErrandDispatchPassModel(
+        id: 'ABX-3942',
+        requestId: 'ERQ-3942',
+        missionCode: 'CPT-912',
+        employeeName: 'Ahmed Hassan',
+        pickupLocation: 'Smart Village Operations Hub',
+        destination: 'Finance Hub Branch',
+        carPlate: 'أ ب ج 4567',
+        carMake: 'Mercedes-Benz E-Class',
+        departureTime: '10:00 AM',
+        estimatedReturn: '02:00 PM',
+        status: 'active',
+        startMileage: 34520,
+        qrPayload: 'ALEXBANK:ERRAND:ABX-3942:CPT-912:AHMED-HASSAN:FINANCE-HUB',
+      );
 
   // ──────────────────────────────────────────────────────────────────────────
   // ACCESS INVITE CODES
@@ -801,7 +833,9 @@ class FirestoreDataSeeder {
       slotLabel: 'P1-002',
       status: 'active',
       checkedIn: true,
-      checkedInAt: DateTime.now().subtract(const Duration(hours: 2, minutes: 15)),
+      checkedInAt: DateTime.now().subtract(
+        const Duration(hours: 2, minutes: 15),
+      ),
       submittedAt: DateTime(2026, 3, 2, 8, 30),
     ),
     // Waitlist and Cancellation for Admin Tests

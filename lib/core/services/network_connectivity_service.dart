@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
@@ -47,7 +48,9 @@ class NetworkConnectivityService {
         _isConnected = await _connectionChecker.hasConnection;
       }
     } catch (e) {
-      debugPrint('[NetworkService] Native connectivity plugin unavailable (full restart needed): $e');
+      debugPrint(
+        '[NetworkService] Native connectivity plugin unavailable (full restart needed): $e',
+      );
       try {
         _isConnected = await _connectionChecker.hasConnection;
       } catch (_) {
@@ -59,7 +62,9 @@ class NetworkConnectivityService {
       _connectivitySubscription = _connectivity.onConnectivityChanged.listen(
         _onConnectivityChanged,
         onError: (error) {
-          debugPrint('[NetworkService] Connectivity stream error (full app restart required): $error');
+          debugPrint(
+            '[NetworkService] Connectivity stream error (full app restart required): $error',
+          );
         },
       );
     } catch (e) {
@@ -67,7 +72,9 @@ class NetworkConnectivityService {
     }
 
     _isInitialized = true;
-    debugPrint('[NetworkService] Initialized. Current isConnected: $_isConnected');
+    debugPrint(
+      '[NetworkService] Initialized. Current isConnected: $_isConnected',
+    );
   }
 
   void _onConnectivityChanged(List<ConnectivityResult> results) async {
@@ -87,7 +94,9 @@ class NetworkConnectivityService {
   void _updateStatus(bool isConnected) {
     if (_isConnected != isConnected) {
       _isConnected = isConnected;
-      debugPrint('[NetworkService] Status updated -> isConnected: $_isConnected');
+      debugPrint(
+        '[NetworkService] Status updated -> isConnected: $_isConnected',
+      );
       _connectionStreamController?.add(_isConnected);
     }
   }

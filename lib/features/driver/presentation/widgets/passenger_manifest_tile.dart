@@ -39,7 +39,9 @@ class PassengerManifestTile extends StatelessWidget {
               color: isBoarded ? AppColors.primary : AppColors.goldLight,
               borderRadius: BorderRadius.circular(AppRadius.md),
               border: Border.all(
-                color: isBoarded ? AppColors.primary : AppColors.accentGold.withValues(alpha: 0.5),
+                color: isBoarded
+                    ? AppColors.primary
+                    : AppColors.accentGold.withValues(alpha: 0.5),
               ),
             ),
             child: Icon(
@@ -141,7 +143,9 @@ class PassengerManifestTile extends StatelessWidget {
                   ),
                   const SizedBox(width: 4),
                   Text(
-                    isBoarded ? context.l10n.driverBoardedBadge : context.l10n.driverBoardButton,
+                    isBoarded
+                        ? context.l10n.driverBoardedBadge
+                        : context.l10n.driverBoardButton,
                     style: AppTypography.caption.copyWith(
                       color: isBoarded ? Colors.white : AppColors.primary,
                       fontWeight: FontWeight.w800,

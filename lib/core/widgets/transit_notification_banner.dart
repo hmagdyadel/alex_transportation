@@ -15,10 +15,7 @@ import 'package:alex_transportation/core/services/push_notification_service.dart
 class TransitNotificationBanner extends StatefulWidget {
   final Widget child;
 
-  const TransitNotificationBanner({
-    super.key,
-    required this.child,
-  });
+  const TransitNotificationBanner({super.key, required this.child});
 
   @override
   State<TransitNotificationBanner> createState() =>
@@ -43,18 +40,19 @@ class _TransitNotificationBannerState extends State<TransitNotificationBanner>
       duration: const Duration(milliseconds: 400),
     );
 
-    _slideAnimation = Tween<Offset>(
-      begin: const Offset(0, -1.2),
-      end: Offset.zero,
-    ).animate(CurvedAnimation(
-      parent: _animController,
-      curve: Curves.easeOutCubic,
-      reverseCurve: Curves.easeInCubic,
-    ));
+    _slideAnimation =
+        Tween<Offset>(begin: const Offset(0, -1.2), end: Offset.zero).animate(
+          CurvedAnimation(
+            parent: _animController,
+            curve: Curves.easeOutCubic,
+            reverseCurve: Curves.easeInCubic,
+          ),
+        );
 
-    _opacityAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _animController, curve: Curves.easeOut),
-    );
+    _opacityAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _animController, curve: Curves.easeOut));
 
     _sub = PushNotificationService.instance.notificationStream.listen(_show);
   }
@@ -124,10 +122,7 @@ class _TransitNotificationBannerState extends State<TransitNotificationBanner>
                     ),
                     decoration: BoxDecoration(
                       gradient: const LinearGradient(
-                        colors: [
-                          Color(0xFF1B4332),
-                          Color(0xFF2D6A4F),
-                        ],
+                        colors: [Color(0xFF1B4332), Color(0xFF2D6A4F)],
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                       ),

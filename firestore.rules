@@ -1,0 +1,132 @@
+rules_version = '2';
+
+// ─────────────────────────────────────────────────────────────────────────
+// AlexBank — Firestore Security Rules
+//
+// PREREQUISITE: These rules assume every request carries a real Firebase
+// Auth identity, and that a `users/{uid}` document exists with a `role`
+// field set SERVER-SIDE ONLY (Cloud Function with Admin SDK) — never by
+// the client.
+// ─────────────────────────────────────────────────────────────────────────
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function userRole() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role;
+    }
+
+    function isAdmin() {
+      return isSignedIn() && userRole() == 'admin';
+    }
+
+    function isDriver() {
+      return isSignedIn() && userRole() == 'driver';
+    }
+
+    function isEmployee() {
+      return isSignedIn() && userRole() == 'employee';
+    }
+
+    function isOwner(field) {
+      return isSignedIn() && request.auth.uid == resource.data[field];
+    }
+
+    function isCreatingOwnRecord(field) {
+      return isSignedIn() && request.auth.uid == request.resource.data[field];
+    }
+
+    match /users/{uid} {
+      allow get: if isSignedIn() && (request.auth.uid == uid || isAdmin());
+      allow list: if isAdmin();
+      allow create: if isSignedIn() && request.auth.uid == uid
+                    && !('role' in request.resource.data);
+      allow update: if isSignedIn() && request.auth.uid == uid
+                    && request.resource.data.role == resource.data.role;
+      allow update: if isAdmin();
+      allow delete: if isAdmin();
+    }
+
+    match /garage_subscriptions/{subId} {
+      allow get: if isOwner('employeeId') || isAdmin();
+      allow list: if isAdmin();
+      allow create: if isCreatingOwnRecord('employeeId')
+                    && !('slotLabel' in request.resource.data)
+                    && !('priorityTier' in request.resource.data || request.resource.data.priorityTier == 'standard');
+      allow update: if isOwner('employeeId')
+                    && request.resource.data.diff(resource.data).affectedKeys()
+                       .hasOnly(['checkedIn', 'checkedInAt']);
+      allow update, delete: if isAdmin();
+    }
+
+    match /garage_deductions/{deductionId} {
+      allow get: if isOwner('employeeId') || isAdmin();
+      allow list: if isAdmin();
+      allow create, update, delete: if isAdmin();
+    }
+
+    match /bus_routes/{routeId} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin();
+    }
+
+    match /bus_bookings/{bookingId} {
+      allow get: if isOwner('employeeId') || isAdmin() || isDriver();
+      allow list: if isAdmin();
+      allow create: if isCreatingOwnRecord('employeeId');
+      allow update: if isOwner('employeeId')
+                    && request.resource.data.diff(resource.data).affectedKeys()
+                       .hasOnly(['checkedInToday', 'checkedInAt', 'stopName']);
+      allow update, delete: if isAdmin();
+    }
+
+    match /driver_trips/{tripId} {
+      allow read: if isSignedIn();
+      allow create, update: if isOwner('driverId') || isAdmin();
+      allow delete: if isAdmin();
+    }
+
+    match /errand_fleet/{carId} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin();
+    }
+
+    match /errand_requests/{requestId} {
+      allow get: if isOwner('employeeId') || isAdmin()
+                 || (isDriver() && resource.data.assignedDriverId == request.auth.uid);
+      allow list: if isAdmin();
+      allow create: if isCreatingOwnRecord('employeeId')
+                    && request.resource.data.status == 'pending';
+      allow update: if isAdmin()
+                    || (isDriver() && resource.data.assignedDriverId == request.auth.uid
+                        && request.resource.data.diff(resource.data).affectedKeys()
+                           .hasOnly(['odometerStart', 'odometerEnd', 'fuelLog', 'missionStatus']));
+      allow delete: if isAdmin();
+    }
+
+    match /driver_profiles/{uid} {
+      allow get: if isSignedIn() && (request.auth.uid == uid || isAdmin());
+      allow list: if isAdmin();
+      allow create: if isCreatingOwnRecord('driverId') && request.auth.uid == uid;
+      allow update: if isAdmin()
+                    || (isSignedIn() && request.auth.uid == uid
+                        && request.resource.data.diff(resource.data).affectedKeys()
+                           .hasOnly(['phone', 'licenseNumber']));
+      allow delete: if isAdmin();
+    }
+
+    match /invite_codes/{code} {
+      allow get: if true;
+      allow list: if isAdmin();
+      allow create, update, delete: if isAdmin();
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

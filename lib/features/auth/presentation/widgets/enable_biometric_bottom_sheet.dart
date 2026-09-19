@@ -11,10 +11,7 @@ import 'package:alex_transportation/features/auth/presentation/bloc/auth_cubit.d
 class EnableBiometricBottomSheet extends StatelessWidget {
   final VoidCallback onContinue;
 
-  const EnableBiometricBottomSheet({
-    super.key,
-    required this.onContinue,
-  });
+  const EnableBiometricBottomSheet({super.key, required this.onContinue});
 
   @override
   Widget build(BuildContext context) {
@@ -123,7 +120,10 @@ class EnableBiometricBottomSheet extends StatelessWidget {
             // Enable Primary Action
             AppButton(
               label: context.l10n.enableButton,
-              leadingIcon: const Icon(Icons.check_circle_outline_rounded, size: 18),
+              leadingIcon: const Icon(
+                Icons.check_circle_outline_rounded,
+                size: 18,
+              ),
               onPressed: () async {
                 final isl = cubit.lastIsl;
                 final password = cubit.lastPassword;

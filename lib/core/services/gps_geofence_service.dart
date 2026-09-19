@@ -48,7 +48,9 @@ class GpsGeofenceService {
       }
 
       if (permission == LocationPermission.deniedForever) {
-        debugPrint('[GpsGeofenceService] Location permissions are permanently denied');
+        debugPrint(
+          '[GpsGeofenceService] Location permissions are permanently denied',
+        );
         return false;
       }
 
@@ -67,7 +69,9 @@ class GpsGeofenceService {
 
     final hasPermission = await checkAndRequestPermission();
     if (!hasPermission) {
-      debugPrint('[GpsGeofenceService] Proceeding in fallback/simulation mode without native GPS');
+      debugPrint(
+        '[GpsGeofenceService] Proceeding in fallback/simulation mode without native GPS',
+      );
     }
 
     try {
@@ -76,18 +80,18 @@ class GpsGeofenceService {
         distanceFilter: 10, // Minimum change of 10 meters
       );
 
-      _positionSubscription = Geolocator.getPositionStream(
-        locationSettings: locationSettings,
-      ).listen(
-        (position) {
-          _lastKnownPosition = position;
-          _positionController.add(position);
-          onPosition?.call(position);
-        },
-        onError: (e) {
-          debugPrint('[GpsGeofenceService] GPS stream error: $e');
-        },
-      );
+      _positionSubscription =
+          Geolocator.getPositionStream(locationSettings: locationSettings)
+              .listen(
+                (position) {
+                  _lastKnownPosition = position;
+                  _positionController.add(position);
+                  onPosition?.call(position);
+                },
+                onError: (e) {
+                  debugPrint('[GpsGeofenceService] GPS stream error: $e');
+                },
+              );
 
       _isListening = true;
       debugPrint('[GpsGeofenceService] GPS tracking started.');
@@ -140,7 +144,8 @@ class GpsGeofenceService {
     final dLat = _degreesToRadians(lat2 - lat1);
     final dLon = _degreesToRadians(lon2 - lon1);
 
-    final a = math.sin(dLat / 2) * math.sin(dLat / 2) +
+    final a =
+        math.sin(dLat / 2) * math.sin(dLat / 2) +
         math.cos(_degreesToRadians(lat1)) *
             math.cos(_degreesToRadians(lat2)) *
             math.sin(dLon / 2) *

@@ -121,16 +121,19 @@ void main() {
       expect(cubit.monthlyFee, 1400);
     });
 
-    test('approveWaiting converts applicant into active subscription', () async {
-      await cubit.loadData();
-      final initialWaitCount = cubit.waitingList.length;
-      final initialSubCount = cubit.subscriptions.length;
+    test(
+      'approveWaiting converts applicant into active subscription',
+      () async {
+        await cubit.loadData();
+        final initialWaitCount = cubit.waitingList.length;
+        final initialSubCount = cubit.subscriptions.length;
 
-      await cubit.approveWaiting('WAIT-001');
+        await cubit.approveWaiting('WAIT-001');
 
-      expect(cubit.waitingList.length, initialWaitCount - 1);
-      expect(cubit.subscriptions.length, initialSubCount + 1);
-    });
+        expect(cubit.waitingList.length, initialWaitCount - 1);
+        expect(cubit.subscriptions.length, initialSubCount + 1);
+      },
+    );
 
     test('rejectWaiting removes applicant from waitlist', () async {
       await cubit.loadData();
@@ -179,15 +182,18 @@ void main() {
       expect(cubit.requests.isNotEmpty, isTrue);
     });
 
-    test('approveRequest marks status as approved and assigns driver/car', () async {
-      await cubit.loadData();
-      await cubit.approveRequest('REQ-101');
+    test(
+      'approveRequest marks status as approved and assigns driver/car',
+      () async {
+        await cubit.loadData();
+        await cubit.approveRequest('REQ-101');
 
-      final req = cubit.requests.firstWhere((r) => r.id == 'REQ-101');
-      expect(req.status, 'approved');
-      expect(req.assignedDriverName, isNotNull);
-      expect(req.assignedCarPlate, isNotNull);
-    });
+        final req = cubit.requests.firstWhere((r) => r.id == 'REQ-101');
+        expect(req.status, 'approved');
+        expect(req.assignedDriverName, isNotNull);
+        expect(req.assignedCarPlate, isNotNull);
+      },
+    );
 
     test('rejectRequest marks status as rejected', () async {
       await cubit.loadData();

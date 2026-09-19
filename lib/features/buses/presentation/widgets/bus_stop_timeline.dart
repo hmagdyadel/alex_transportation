@@ -55,8 +55,8 @@ class BusStopTimeline extends StatelessWidget {
                         color: isFirst
                             ? Colors.transparent
                             : (stop.isCompleted
-                                ? AppColors.primaryLight
-                                : AppColors.border),
+                                  ? AppColors.primaryLight
+                                  : AppColors.border),
                       ),
                       _buildNodeIndicator(stop),
                       Container(
@@ -65,8 +65,8 @@ class BusStopTimeline extends StatelessWidget {
                         color: isLast
                             ? Colors.transparent
                             : (stop.isCompleted
-                                ? AppColors.primaryLight
-                                : AppColors.border),
+                                  ? AppColors.primaryLight
+                                  : AppColors.border),
                       ),
                     ],
                   ),
@@ -128,13 +128,15 @@ class BusStopTimeline extends StatelessWidget {
                             label: 'BUS CURRENTLY HERE',
                             type: StatusPillType.gold,
                           ),
-                        ] else if (stop.riderCount > 0 && !stop.isCompleted) ...[
+                        ] else if (stop.riderCount > 0 &&
+                            !stop.isCompleted) ...[
                           const SizedBox(height: 4),
                           StatusPill(
                             label: '${stop.riderCount} RIDERS BOOKED',
                             type: StatusPillType.active,
                           ),
-                        ] else if (stop.latitude != null && !stop.isCompleted) ...[
+                        ] else if (stop.latitude != null &&
+                            !stop.isCompleted) ...[
                           const SizedBox(height: 4),
                           Row(
                             children: [
@@ -175,7 +177,10 @@ class BusStopTimeline extends StatelessWidget {
         decoration: BoxDecoration(
           color: AppColors.background,
           shape: BoxShape.circle,
-          border: Border.all(color: AppColors.textSecondary.withValues(alpha: 0.5), width: 1.5),
+          border: Border.all(
+            color: AppColors.textSecondary.withValues(alpha: 0.5),
+            width: 1.5,
+          ),
         ),
         child: const Icon(
           Icons.redo_rounded,
@@ -216,11 +221,7 @@ class BusStopTimeline extends StatelessWidget {
           color: AppColors.primaryLight,
           shape: BoxShape.circle,
         ),
-        child: const Icon(
-          Icons.check_rounded,
-          size: 12,
-          color: Colors.white,
-        ),
+        child: const Icon(Icons.check_rounded, size: 12, color: Colors.white),
       );
     }
 

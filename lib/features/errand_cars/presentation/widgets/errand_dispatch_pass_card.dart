@@ -332,7 +332,9 @@ class ErrandDispatchPassCard extends StatelessWidget {
                         ),
                       ),
                       const Padding(
-                        padding: EdgeInsets.symmetric(horizontal: AppSpacing.xs),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: AppSpacing.xs,
+                        ),
                         child: Icon(
                           Icons.arrow_forward_rounded,
                           size: 16,
@@ -506,7 +508,9 @@ class ErrandDispatchPassCard extends StatelessWidget {
                               vertical: 2,
                             ),
                             decoration: BoxDecoration(
-                              color: AppColors.accentBlue.withValues(alpha: 0.15),
+                              color: AppColors.accentBlue.withValues(
+                                alpha: 0.15,
+                              ),
                               borderRadius: BorderRadius.circular(AppRadius.sm),
                             ),
                             child: Text(
@@ -548,8 +552,7 @@ class ErrandDispatchPassCard extends StatelessWidget {
                             padding: const EdgeInsets.symmetric(vertical: 12),
                             minimumSize: const Size(0, 44),
                             shape: RoundedRectangleBorder(
-                              borderRadius:
-                                  BorderRadius.circular(AppRadius.md),
+                              borderRadius: BorderRadius.circular(AppRadius.md),
                             ),
                           ),
                           onPressed: onStartMission ?? onEndMission,
@@ -563,12 +566,12 @@ class ErrandDispatchPassCard extends StatelessWidget {
                             style: OutlinedButton.styleFrom(
                               foregroundColor: AppColors.danger,
                               side: const BorderSide(color: AppColors.danger),
-                              padding:
-                                  const EdgeInsets.symmetric(vertical: 12),
+                              padding: const EdgeInsets.symmetric(vertical: 12),
                               minimumSize: const Size(0, 44),
                               shape: RoundedRectangleBorder(
-                                borderRadius:
-                                    BorderRadius.circular(AppRadius.md),
+                                borderRadius: BorderRadius.circular(
+                                  AppRadius.md,
+                                ),
                               ),
                             ),
                             onPressed: onCancel,

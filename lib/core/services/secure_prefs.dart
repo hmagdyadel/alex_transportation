@@ -100,7 +100,9 @@ class SecurePrefs {
     await setString('biometric_name', name);
     await enableBiometric();
     await setString('biometric_action', 'enabled');
-    debugPrint('[SecurePrefs] ✅ Biometric credentials securely saved for ISL: $isl');
+    debugPrint(
+      '[SecurePrefs] ✅ Biometric credentials securely saved for ISL: $isl',
+    );
   }
 
   /// Get stored biometric login credentials
@@ -116,12 +118,7 @@ class SecurePrefs {
         return null;
       }
 
-      return {
-        'isl': isl,
-        'password': password,
-        'role': role,
-        'name': name,
-      };
+      return {'isl': isl, 'password': password, 'role': role, 'name': name};
     } catch (e) {
       debugPrint('[SecurePrefs] Error getting biometric credentials: $e');
       return null;

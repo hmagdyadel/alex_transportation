@@ -102,10 +102,11 @@ class GarageAdminView extends StatelessWidget {
                                     children: [
                                       TextSpan(
                                         text: ' ${context.l10n.adminEgpMonth}',
-                                        style: AppTypography.labelSmall.copyWith(
-                                          color: AppColors.textSecondary,
-                                          fontWeight: FontWeight.w700,
-                                        ),
+                                        style: AppTypography.labelSmall
+                                            .copyWith(
+                                              color: AppColors.textSecondary,
+                                              fontWeight: FontWeight.w700,
+                                            ),
                                       ),
                                     ],
                                   ),
@@ -124,18 +125,26 @@ class GarageAdminView extends StatelessWidget {
                               IconButton.filled(
                                 visualDensity: VisualDensity.compact,
                                 padding: EdgeInsets.zero,
-                                constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
+                                constraints: const BoxConstraints(
+                                  minWidth: 36,
+                                  minHeight: 36,
+                                ),
                                 style: IconButton.styleFrom(
                                   backgroundColor: AppColors.surface,
                                   foregroundColor: AppColors.textPrimary,
                                 ),
-                                icon: const Icon(Icons.remove_rounded, size: 18),
+                                icon: const Icon(
+                                  Icons.remove_rounded,
+                                  size: 18,
+                                ),
                                 tooltip: 'Decrease by 100 EGP',
                                 onPressed: () {
                                   garageCubit.decreaseMonthlyFee(100);
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
-                                      content: Text('Monthly parking fee updated to ${garageCubit.currentMonthlyFee} EGP'),
+                                      content: Text(
+                                        'Monthly parking fee updated to ${garageCubit.currentMonthlyFee} EGP',
+                                      ),
                                       behavior: SnackBarBehavior.floating,
                                       duration: const Duration(seconds: 1),
                                     ),
@@ -146,7 +155,10 @@ class GarageAdminView extends StatelessWidget {
                               IconButton.filled(
                                 visualDensity: VisualDensity.compact,
                                 padding: EdgeInsets.zero,
-                                constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
+                                constraints: const BoxConstraints(
+                                  minWidth: 36,
+                                  minHeight: 36,
+                                ),
                                 style: IconButton.styleFrom(
                                   backgroundColor: AppColors.primary,
                                   foregroundColor: Colors.white,
@@ -157,7 +169,9 @@ class GarageAdminView extends StatelessWidget {
                                   garageCubit.increaseMonthlyFee(100);
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
-                                      content: Text('Monthly parking fee updated to ${garageCubit.currentMonthlyFee} EGP'),
+                                      content: Text(
+                                        'Monthly parking fee updated to ${garageCubit.currentMonthlyFee} EGP',
+                                      ),
                                       behavior: SnackBarBehavior.floating,
                                       duration: const Duration(seconds: 1),
                                     ),
@@ -168,10 +182,20 @@ class GarageAdminView extends StatelessWidget {
                               IconButton(
                                 visualDensity: VisualDensity.compact,
                                 padding: EdgeInsets.zero,
-                                constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
-                                icon: const Icon(Icons.edit_note_rounded, size: 20),
+                                constraints: const BoxConstraints(
+                                  minWidth: 36,
+                                  minHeight: 36,
+                                ),
+                                icon: const Icon(
+                                  Icons.edit_note_rounded,
+                                  size: 20,
+                                ),
                                 tooltip: 'Set Exact Tariff',
-                                onPressed: () => _showEditFeeDialog(context, garageCubit, fee),
+                                onPressed: () => _showEditFeeDialog(
+                                  context,
+                                  garageCubit,
+                                  fee,
+                                ),
                               ),
                             ],
                           ),
@@ -181,7 +205,9 @@ class GarageAdminView extends StatelessWidget {
                     const SizedBox(height: AppSpacing.sm),
                     Text(
                       '• Note: Rate applies dynamically to upcoming month-end payroll deduction cycles for all active parking subscribers.',
-                      style: AppTypography.caption.copyWith(color: AppColors.textMid),
+                      style: AppTypography.caption.copyWith(
+                        color: AppColors.textMid,
+                      ),
                     ),
                   ],
                 ),
@@ -283,7 +309,10 @@ class GarageAdminView extends StatelessWidget {
                           ),
                           const SizedBox(width: AppSpacing.xs),
                           StatusPill(
-                            label: subscription.status.toUpperCase().replaceAll('_', ' '),
+                            label: subscription.status.toUpperCase().replaceAll(
+                              '_',
+                              ' ',
+                            ),
                             type: subscription.status == 'active'
                                 ? StatusPillType.active
                                 : StatusPillType.pending,
@@ -300,7 +329,10 @@ class GarageAdminView extends StatelessWidget {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text('ASSIGNED BAY', style: AppTypography.caption),
+                                Text(
+                                  'ASSIGNED BAY',
+                                  style: AppTypography.caption,
+                                ),
                                 Text(
                                   subscription.slotLabel ?? 'P1-014',
                                   style: AppTypography.bodySmall.copyWith(
@@ -317,9 +349,14 @@ class GarageAdminView extends StatelessWidget {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text('PRESENCE STATUS', style: AppTypography.caption),
                                 Text(
-                                  subscription.checkedIn ? 'Inside Facility' : 'Outside',
+                                  'PRESENCE STATUS',
+                                  style: AppTypography.caption,
+                                ),
+                                Text(
+                                  subscription.checkedIn
+                                      ? 'Inside Facility'
+                                      : 'Outside',
                                   style: AppTypography.bodySmall.copyWith(
                                     fontWeight: FontWeight.w700,
                                     color: subscription.checkedIn
@@ -336,7 +373,10 @@ class GarageAdminView extends StatelessWidget {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text('CURRENT TARIFF', style: AppTypography.caption),
+                                Text(
+                                  'CURRENT TARIFF',
+                                  style: AppTypography.caption,
+                                ),
                                 Text(
                                   '$fee EGP',
                                   style: AppTypography.bodySmall.copyWith(
@@ -407,7 +447,11 @@ class GarageAdminView extends StatelessWidget {
     );
   }
 
-  void _showEditFeeDialog(BuildContext context, GarageCubit cubit, int currentFee) {
+  void _showEditFeeDialog(
+    BuildContext context,
+    GarageCubit cubit,
+    int currentFee,
+  ) {
     final controller = TextEditingController(text: '$currentFee');
 
     showDialog(
@@ -422,9 +466,14 @@ class GarageAdminView extends StatelessWidget {
             keyboardType: TextInputType.number,
           ),
           actions: [
-            TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
+            TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: const Text('Cancel'),
+            ),
             ElevatedButton(
-              style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.primary,
+              ),
               onPressed: () {
                 final val = int.tryParse(controller.text.trim());
                 if (val != null && val > 0) {
@@ -432,7 +481,10 @@ class GarageAdminView extends StatelessWidget {
                 }
                 Navigator.pop(ctx);
               },
-              child: const Text('Update Rate', style: TextStyle(color: Colors.white)),
+              child: const Text(
+                'Update Rate',
+                style: TextStyle(color: Colors.white),
+              ),
             ),
           ],
         );

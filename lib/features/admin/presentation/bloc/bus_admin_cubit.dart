@@ -80,7 +80,10 @@ class BusAdminCubit extends Cubit<BusAdminStates> {
     if (routeIndex != -1) {
       final currentRoute = _routes[routeIndex];
       final updatedRoute = currentRoute.copyWith(
-        availableSeats: (currentRoute.availableSeats + 1).clamp(0, currentRoute.totalSeats),
+        availableSeats: (currentRoute.availableSeats + 1).clamp(
+          0,
+          currentRoute.totalSeats,
+        ),
       );
       _routes[routeIndex] = updatedRoute;
       await FirestoreSyncService.instance.saveBusRoute(updatedRoute);

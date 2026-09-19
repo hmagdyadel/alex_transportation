@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:alex_transportation/core/design_system/tokens.dart';
 import 'package:alex_transportation/core/localization/locale_cubit.dart';
+
 class _LanguageOption {
   final String code;
   final String flag;
@@ -77,7 +78,12 @@ class LanguageSelectorButton extends StatelessWidget {
     final effectiveBgColor = backgroundColor ?? AppColors.surface;
 
     return Padding(
-      padding: margin ?? const EdgeInsets.symmetric(horizontal: AppSpacing.xxs, vertical: AppSpacing.xxs),
+      padding:
+          margin ??
+          const EdgeInsets.symmetric(
+            horizontal: AppSpacing.xxs,
+            vertical: AppSpacing.xxs,
+          ),
       child: PopupMenuButton<String>(
         tooltip: 'Change Language / تغيير اللغة / Cambia Lingua',
         borderRadius: AppRadius.borderPill,
@@ -96,7 +102,10 @@ class LanguageSelectorButton extends StatelessWidget {
           final isSelected = lang.code == currentLocale.languageCode;
           return PopupMenuItem<String>(
             value: lang.code,
-            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm, vertical: AppSpacing.xxs),
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.sm,
+              vertical: AppSpacing.xxs,
+            ),
             child: Row(
               children: [
                 Container(
@@ -115,10 +124,7 @@ class LanguageSelectorButton extends StatelessWidget {
                       width: 1,
                     ),
                   ),
-                  child: Text(
-                    lang.flag,
-                    style: const TextStyle(fontSize: 18),
-                  ),
+                  child: Text(lang.flag, style: const TextStyle(fontSize: 18)),
                 ),
                 const SizedBox(width: AppSpacing.sm),
                 Expanded(
@@ -129,8 +135,12 @@ class LanguageSelectorButton extends StatelessWidget {
                       Text(
                         lang.title,
                         style: AppTypography.bodySmall.copyWith(
-                          fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-                          color: isSelected ? AppColors.primary : AppColors.textPrimary,
+                          fontWeight: isSelected
+                              ? FontWeight.w700
+                              : FontWeight.w500,
+                          color: isSelected
+                              ? AppColors.primary
+                              : AppColors.textPrimary,
                         ),
                       ),
                       Text(

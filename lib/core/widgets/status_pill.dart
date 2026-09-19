@@ -50,17 +50,11 @@ class StatusPill extends StatelessWidget {
         horizontal: AppSpacing.sm,
         vertical: AppSpacing.xxs,
       ),
-      decoration: BoxDecoration(
-        color: bg,
-        borderRadius: AppRadius.borderPill,
-      ),
+      decoration: BoxDecoration(color: bg, borderRadius: AppRadius.borderPill),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          if (icon != null) ...[
-            icon!,
-            const SizedBox(width: AppSpacing.xxs),
-          ],
+          if (icon != null) ...[icon!, const SizedBox(width: AppSpacing.xxs)],
           Text(
             label,
             style: AppTypography.labelSmall.copyWith(

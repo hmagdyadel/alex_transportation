@@ -67,7 +67,9 @@ class DriverAdminCubit extends Cubit<DriverAdminStates> {
 
     _drivers[index] = updated;
 
-    safeEmit(DriverAdminStates.success('Driver $driverId assigned to $routeId'));
+    safeEmit(
+      DriverAdminStates.success('Driver $driverId assigned to $routeId'),
+    );
     safeEmit(const DriverAdminStates.loaded());
   }
 }

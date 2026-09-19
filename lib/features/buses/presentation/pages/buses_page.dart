@@ -61,7 +61,8 @@ class _BusesPageState extends State<BusesPage> {
       },
       builder: (context, state) {
         final cubit = context.read<BusCubit>();
-        final isLoading = state is Loading ||
+        final isLoading =
+            state is Loading ||
             state is BookingSeat ||
             state is CancellingBooking ||
             state is CheckingInToday;
@@ -106,7 +107,8 @@ class _BusesPageState extends State<BusesPage> {
                     BusBoardingPassCard(
                       pass: activePass,
                       onCheckIn: () => cubit.checkInForToday(),
-                      onCancel: () => _confirmCancelBooking(context, activePass.id),
+                      onCancel: () =>
+                          _confirmCancelBooking(context, activePass.id),
                     ),
                     const SizedBox(height: AppSpacing.lg),
                   ],
@@ -123,50 +125,61 @@ class _BusesPageState extends State<BusesPage> {
                         ),
                       ),
                       Row(
-                        children: [
-                          {'key': 'All', 'label': l10n.busFilterAll},
-                          {'key': 'Morning', 'label': l10n.busFilterMorning},
-                          {'key': 'Evening', 'label': l10n.busFilterEvening},
-                        ].map((shiftItem) {
-                          final shiftKey = shiftItem['key']!;
-                          final shiftLabel = shiftItem['label']!;
-                          final isSelected = selectedShift == shiftKey;
-                          return Padding(
-                            padding: const EdgeInsets.only(left: 4),
-                            child: InkWell(
-                              onTap: () => cubit.filterShift(shiftKey),
-                              borderRadius: BorderRadius.circular(AppRadius.pill),
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 10,
-                                  vertical: 4,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: isSelected
-                                      ? AppColors.primary
-                                      : AppColors.surface,
-                                  borderRadius: BorderRadius.circular(AppRadius.pill),
-                                  border: Border.all(
-                                    color: isSelected
-                                        ? AppColors.primary
-                                        : AppColors.border,
+                        children:
+                            [
+                              {'key': 'All', 'label': l10n.busFilterAll},
+                              {
+                                'key': 'Morning',
+                                'label': l10n.busFilterMorning,
+                              },
+                              {
+                                'key': 'Evening',
+                                'label': l10n.busFilterEvening,
+                              },
+                            ].map((shiftItem) {
+                              final shiftKey = shiftItem['key']!;
+                              final shiftLabel = shiftItem['label']!;
+                              final isSelected = selectedShift == shiftKey;
+                              return Padding(
+                                padding: const EdgeInsets.only(left: 4),
+                                child: InkWell(
+                                  onTap: () => cubit.filterShift(shiftKey),
+                                  borderRadius: BorderRadius.circular(
+                                    AppRadius.pill,
+                                  ),
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 10,
+                                      vertical: 4,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: isSelected
+                                          ? AppColors.primary
+                                          : AppColors.surface,
+                                      borderRadius: BorderRadius.circular(
+                                        AppRadius.pill,
+                                      ),
+                                      border: Border.all(
+                                        color: isSelected
+                                            ? AppColors.primary
+                                            : AppColors.border,
+                                      ),
+                                    ),
+                                    child: Text(
+                                      shiftLabel,
+                                      style: AppTypography.caption.copyWith(
+                                        color: isSelected
+                                            ? Colors.white
+                                            : AppColors.textMid,
+                                        fontWeight: isSelected
+                                            ? FontWeight.w700
+                                            : FontWeight.w500,
+                                      ),
+                                    ),
                                   ),
                                 ),
-                                child: Text(
-                                  shiftLabel,
-                                  style: AppTypography.caption.copyWith(
-                                    color: isSelected
-                                        ? Colors.white
-                                        : AppColors.textMid,
-                                    fontWeight: isSelected
-                                        ? FontWeight.w700
-                                        : FontWeight.w500,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          );
-                        }).toList(),
+                              );
+                            }).toList(),
                       ),
                     ],
                   ),
@@ -190,11 +203,17 @@ class _BusesPageState extends State<BusesPage> {
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
                       itemCount: routes.length,
-                      separatorBuilder: (_, _) => const SizedBox(height: AppSpacing.sm),
+                      separatorBuilder: (_, _) =>
+                          const SizedBox(height: AppSpacing.sm),
                       itemBuilder: (context, index) {
                         final route = routes[index];
                         final isExpanded = _expandedRouteId == route.id;
-                        return _buildRouteCard(context, route, isExpanded, activePass != null);
+                        return _buildRouteCard(
+                          context,
+                          route,
+                          isExpanded,
+                          activePass != null,
+                        );
                       },
                     ),
 
@@ -281,7 +300,9 @@ class _BusesPageState extends State<BusesPage> {
                         label: isFull
                             ? l10n.busRouteFull.toUpperCase()
                             : '${route.availableSeats} ${l10n.busAvailableSeats.toUpperCase()}',
-                        type: isFull ? StatusPillType.danger : StatusPillType.active,
+                        type: isFull
+                            ? StatusPillType.danger
+                            : StatusPillType.active,
                       ),
                     ],
                   ),
@@ -400,7 +421,9 @@ class _BusesPageState extends State<BusesPage> {
                           onPressed: () {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
-                                content: Text('${route.driverName} (${route.driverPhone})'),
+                                content: Text(
+                                  '${route.driverName} (${route.driverPhone})',
+                                ),
                                 behavior: SnackBarBehavior.floating,
                               ),
                             );
@@ -440,7 +463,9 @@ class _BusesPageState extends State<BusesPage> {
                       decoration: BoxDecoration(
                         color: AppColors.goldLight,
                         borderRadius: BorderRadius.circular(AppRadius.md),
-                        border: Border.all(color: AppColors.accentGold.withValues(alpha: 0.5)),
+                        border: Border.all(
+                          color: AppColors.accentGold.withValues(alpha: 0.5),
+                        ),
                       ),
                       child: Text(
                         l10n.busActivePassHeader,
@@ -453,7 +478,9 @@ class _BusesPageState extends State<BusesPage> {
                     )
                   else
                     AppButton(
-                      label: isFull ? l10n.busRouteFull : '${l10n.busReserveSeatAction} (${route.routeNumber})',
+                      label: isFull
+                          ? l10n.busRouteFull
+                          : '${l10n.busReserveSeatAction} (${route.routeNumber})',
                       onPressed: isFull
                           ? null
                           : () {

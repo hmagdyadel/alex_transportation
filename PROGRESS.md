@@ -387,4 +387,39 @@
   - Test suite expanded to **133/133 tests passing** (100% pass rate across unit, bloc, and widget tests).
   - `flutter analyze`: **0 issues found** (clean codebase with zero errors or warnings).
 
+---
+
+## Phase 12 — AlexBank Corporate Identity Restoration, Firebase Auth Session, Firestore Security Rules & Notifications Feed
+**Date:** 2026-09-19
+**Branch:** `phase-6` & `main`
+
+### Built
+- **AlexBank Identity & Native Identifier Restoration**:
+  - Maintained authentic AlexBank branding across all platforms and components (`AlexLogo`, `ALEXBANK-TRANSIT:`, `ALEXBANK:ERRAND:`, `@alexbank.com` domain validation).
+  - Preserved Android package / `applicationId`: `alexbank.com.alex_transportation`.
+  - Preserved iOS bundle ID: `alexbank.com.alexTransportation`.
+  - Re-attached FlutterFire CLI to existing legacy apps in Firebase project `alexbank-transport`.
+  - Enforced 6-digit minimum PIN security policy in `AuthCubit` and `AccessGatePage`.
+- **Firebase Auth Integration & Server-Side RBAC**:
+  - In `AuthCubit`, wired `FirebaseAuth.instance.signInAnonymously()` on ISL/PIN login and account registration to supply `request.auth` for Firestore operations.
+  - Synchronized user profile and assigned role to `users/{uid}` in Cloud Firestore.
+  - Wired `FirebaseAuth.instance.signOut()` to session termination.
+- **Production Cloud Firestore Security Rules (`firestore.rules`)**:
+  - Implemented strict RBAC across `users`, `bus_routes`, `bus_bookings`, `garage_subscriptions`, `errand_fleet`, `errand_requests`, `driver_trips`, and `invite_codes`.
+- **In-App Notification Center & Feed (Phase 7)**:
+  - Created `NotificationModel` with typed categories (`bus`, `garage`, `errand`, `system`).
+  - Created `NotificationCubit` + Freezed states with safe emit.
+  - Built `NotificationFeedSheet` modal bottom sheet with live unread counter, "Mark all read" action, and quick simulation demo triggers.
+  - Connected notification bell with dynamic badge in `HomePage`.
+- **Router Deep-Link Subroutes**:
+  - Updated `HomePage` to accept `initialModuleIndex`.
+  - Configured `AppRouter` so `/home/garage`, `/home/buses`, and `/home/errand` mount directly to the matching module tab.
+- **CI/CD Automation Pipeline (Phase 9)**:
+  - Added `.github/workflows/ci.yml` running code formatting, `flutter analyze`, and `flutter test --coverage`.
+- **Automated Testing & Code Quality**:
+  - Added `test/features/notifications/notification_cubit_test.dart`.
+  - Test suite expanded to **138/138 tests passing** (100% pass rate).
+  - `flutter analyze`: **0 issues found**.
+
+
 
