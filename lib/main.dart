@@ -14,6 +14,7 @@ import 'package:alex_transportation/core/services/secure_prefs.dart';
 import 'package:alex_transportation/core/widgets/no_internet_screen.dart';
 import 'package:alex_transportation/core/widgets/transit_notification_banner.dart';
 import 'package:alex_transportation/features/auth/presentation/bloc/auth_cubit.dart';
+import 'package:alex_transportation/features/notifications/presentation/bloc/notification_cubit.dart';
 import 'package:alex_transportation/l10n/app_localizations.dart';
 
 void main() async {
@@ -53,6 +54,9 @@ class TransitApp extends StatelessWidget {
         ),
         BlocProvider<AuthCubit>(
           create: (_) => sl<AuthCubit>(),
+        ),
+        BlocProvider<NotificationCubit>(
+          create: (_) => sl<NotificationCubit>(),
         ),
       ],
       child: BlocBuilder<LocaleCubit, Locale>(

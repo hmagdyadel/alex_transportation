@@ -8,8 +8,10 @@ import 'package:alex_transportation/core/di/injector.dart';
 import 'package:alex_transportation/core/extensions/l10n_extension.dart';
 import 'package:alex_transportation/core/widgets/alex_logo.dart';
 import 'package:alex_transportation/core/widgets/language_selector_button.dart';
+import 'package:alex_transportation/core/widgets/notification_feed_sheet.dart';
 import 'package:alex_transportation/core/widgets/status_pill.dart';
-import 'package:alex_transportation/core/services/push_notification_service.dart';
+import 'package:alex_transportation/features/notifications/presentation/bloc/notification_cubit.dart';
+import 'package:alex_transportation/features/notifications/presentation/bloc/notification_states.dart';
 import 'package:alex_transportation/features/auth/presentation/bloc/auth_cubit.dart';
 import 'package:alex_transportation/features/buses/presentation/bloc/bus_cubit.dart';
 import 'package:alex_transportation/features/buses/presentation/pages/buses_page.dart';
@@ -307,89 +309,40 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
-/// Notification bell icon with demo push trigger menu.
+/// Notification bell icon with unread badge opening the interactive NotificationFeedSheet.
 class _NotificationBell extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return PopupMenuButton<String>(
-      icon: const Icon(
-        Icons.notifications_outlined,
-        color: AppColors.textMid,
-        size: 21,
-      ),
-      tooltip: 'Notifications',
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(AppRadius.lg),
-        side: const BorderSide(color: AppColors.border, width: 1),
-      ),
-      elevation: 8,
-      position: PopupMenuPosition.under,
-      offset: const Offset(0, 8),
-      onSelected: (value) {
-        HapticFeedback.mediumImpact();
-        final svc = PushNotificationService.instance;
-        switch (value) {
-          case 'bus':
-            svc.demoBusArrival();
-          case 'errand':
-            svc.demoErrandApproval();
-          case 'garage':
-            svc.demoGarageConfirmed();
-        }
+    return BlocBuilder<NotificationCubit, NotificationStates>(
+      builder: (context, _) {
+        final cubit = context.read<NotificationCubit>();
+        final unread = cubit.unreadCount;
+
+        return IconButton(
+          icon: Badge(
+            isLabelVisible: unread > 0,
+            label: Text(
+              '$unread',
+              style: const TextStyle(
+                fontSize: 10,
+                fontWeight: FontWeight.w700,
+                color: Colors.white,
+              ),
+            ),
+            backgroundColor: AppColors.primary,
+            child: const Icon(
+              Icons.notifications_outlined,
+              color: AppColors.textMid,
+              size: 22,
+            ),
+          ),
+          tooltip: 'Notifications',
+          onPressed: () {
+            HapticFeedback.lightImpact();
+            NotificationFeedSheet.show(context);
+          },
+        );
       },
-      itemBuilder: (_) => [
-        PopupMenuItem(
-          value: 'bus',
-          child: Row(
-            children: [
-              const Text('🚌', style: TextStyle(fontSize: 16)),
-              const SizedBox(width: AppSpacing.xs),
-              Expanded(
-                child: Text(
-                  'Bus Approaching Alert',
-                  style: AppTypography.bodySmall.copyWith(
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-        PopupMenuItem(
-          value: 'errand',
-          child: Row(
-            children: [
-              const Text('🚗', style: TextStyle(fontSize: 16)),
-              const SizedBox(width: AppSpacing.xs),
-              Expanded(
-                child: Text(
-                  'Errand Approved Alert',
-                  style: AppTypography.bodySmall.copyWith(
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-        PopupMenuItem(
-          value: 'garage',
-          child: Row(
-            children: [
-              const Text('🅿️', style: TextStyle(fontSize: 16)),
-              const SizedBox(width: AppSpacing.xs),
-              Expanded(
-                child: Text(
-                  'Parking Pass Confirmed',
-                  style: AppTypography.bodySmall.copyWith(
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
     );
   }
 }
