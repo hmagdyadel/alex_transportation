@@ -5,10 +5,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 class CustomLoadingIndicator extends StatefulWidget {
   final double size;
 
-  const CustomLoadingIndicator({
-    super.key,
-    this.size = 64,
-  });
+  const CustomLoadingIndicator({super.key, this.size = 64});
 
   @override
   State<CustomLoadingIndicator> createState() => _CustomLoadingIndicatorState();

@@ -255,7 +255,9 @@ class _OnboardingPageState extends State<OnboardingPage> {
 
                   // Action Button
                   AppButton(
-                    label: isLast ? l10n.onboardingGetStarted : l10n.onboardingNext,
+                    label: isLast
+                        ? l10n.onboardingGetStarted
+                        : l10n.onboardingNext,
                     variant: AppButtonVariant.primary,
                     onPressed: _nextPage,
                     leadingIcon: isLast

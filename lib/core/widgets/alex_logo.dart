@@ -6,10 +6,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 class AlexLogo extends StatelessWidget {
   final double size;
 
-  const AlexLogo({
-    super.key,
-    this.size = 46,
-  });
+  const AlexLogo({super.key, this.size = 46});
 
   @override
   Widget build(BuildContext context) {

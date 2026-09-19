@@ -26,7 +26,9 @@ class ErrandCarCubit extends Cubit<ErrandCarStates> {
     _fleet.clear();
     _fleet.addAll(sync.getCachedErrandFleet());
     _requests.clear();
-    _requests.addAll(sync.getCachedErrandRequests().where((r) => r.id.startsWith('ERQ-')));
+    _requests.addAll(
+      sync.getCachedErrandRequests().where((r) => r.id.startsWith('ERQ-')),
+    );
     _activePass = FirestoreDataSeeder.initialErrandPass;
   }
 
@@ -34,8 +36,7 @@ class ErrandCarCubit extends Cubit<ErrandCarStates> {
   List<ErrandRequestModel> get myRequests => List.unmodifiable(_requests);
   ErrandDispatchPassModel? get activePass => _activePass;
 
-  int get availableCars =>
-      _fleet.where((c) => c.status == 'available').length;
+  int get availableCars => _fleet.where((c) => c.status == 'available').length;
 
   List<ErrandCarModel> get availableCarsList =>
       _fleet.where((c) => c.status == 'available').toList();
@@ -62,7 +63,9 @@ class ErrandCarCubit extends Cubit<ErrandCarStates> {
     );
 
     // If an approved request exists, recreate or load active dispatch pass
-    final approved = _requests.where((r) => r.status == 'approved' || r.status == 'in_progress').toList();
+    final approved = _requests
+        .where((r) => r.status == 'approved' || r.status == 'in_progress')
+        .toList();
     if (approved.isNotEmpty) {
       final req = approved.first;
       final assignedCar = _fleet.firstWhere(
@@ -110,14 +113,20 @@ class ErrandCarCubit extends Cubit<ErrandCarStates> {
     required String supervisorName,
   }) async {
     if (purpose.trim().length < 10) {
-      safeEmit(const ErrandCarStates.error(
-          message: 'Please provide a detailed purpose (minimum 10 characters)'));
+      safeEmit(
+        const ErrandCarStates.error(
+          message: 'Please provide a detailed purpose (minimum 10 characters)',
+        ),
+      );
       return false;
     }
 
     if (supervisorName.trim().isEmpty) {
-      safeEmit(const ErrandCarStates.error(
-          message: 'Supervisor name is required for mission approval'));
+      safeEmit(
+        const ErrandCarStates.error(
+          message: 'Supervisor name is required for mission approval',
+        ),
+      );
       return false;
     }
 
@@ -125,7 +134,8 @@ class ErrandCarCubit extends Cubit<ErrandCarStates> {
 
     final available = _fleet.where((c) => c.status == 'available').toList();
     final assignedCar = available.isNotEmpty ? available.first : null;
-    final requestId = 'ERQ-${DateTime.now().millisecondsSinceEpoch.toString().substring(7)}';
+    final requestId =
+        'ERQ-${DateTime.now().millisecondsSinceEpoch.toString().substring(7)}';
 
     final request = ErrandRequestModel(
       id: requestId,
@@ -165,7 +175,8 @@ class ErrandCarCubit extends Cubit<ErrandCarStates> {
 
     // If approved, create a dispatch pass
     if (assignedCar != null) {
-      final missionCode = 'CPT-${DateTime.now().millisecondsSinceEpoch.toString().substring(9)}';
+      final missionCode =
+          'CPT-${DateTime.now().millisecondsSinceEpoch.toString().substring(9)}';
       final passId = 'ABX-${requestId.replaceAll('ERQ-', '')}';
 
       _activePass = ErrandDispatchPassModel(
@@ -187,8 +198,11 @@ class ErrandCarCubit extends Cubit<ErrandCarStates> {
 
       safeEmit(ErrandCarStates.success(request));
     } else {
-      safeEmit(const ErrandCarStates.success(
-          'Request submitted. Awaiting vehicle availability and supervisor approval.'));
+      safeEmit(
+        const ErrandCarStates.success(
+          'Request submitted. Awaiting vehicle availability and supervisor approval.',
+        ),
+      );
     }
 
     safeEmit(const ErrandCarStates.loaded());
@@ -205,8 +219,11 @@ class ErrandCarCubit extends Cubit<ErrandCarStates> {
 
     final request = _requests[index];
     if (request.status != 'pending' && request.status != 'approved') {
-      safeEmit(const ErrandCarStates.error(
-          message: 'Only pending or approved requests can be cancelled'));
+      safeEmit(
+        const ErrandCarStates.error(
+          message: 'Only pending or approved requests can be cancelled',
+        ),
+      );
       return false;
     }
 
@@ -232,7 +249,9 @@ class ErrandCarCubit extends Cubit<ErrandCarStates> {
       _activePass = null;
     }
 
-    safeEmit(const ErrandCarStates.success('Errand request cancelled successfully'));
+    safeEmit(
+      const ErrandCarStates.success('Errand request cancelled successfully'),
+    );
     safeEmit(const ErrandCarStates.loaded());
     return true;
   }
@@ -246,10 +265,13 @@ class ErrandCarCubit extends Cubit<ErrandCarStates> {
 
     safeEmit(const ErrandCarStates.startingMission());
 
-    final requestIndex =
-        _requests.indexWhere((r) => r.id == _activePass!.requestId);
+    final requestIndex = _requests.indexWhere(
+      (r) => r.id == _activePass!.requestId,
+    );
     if (requestIndex != -1) {
-      final updatedReq = _requests[requestIndex].copyWith(status: 'in_progress');
+      final updatedReq = _requests[requestIndex].copyWith(
+        status: 'in_progress',
+      );
       _requests[requestIndex] = updatedReq;
       await FirestoreSyncService.instance.saveErrandRequest(updatedReq);
     }
@@ -267,9 +289,13 @@ class ErrandCarCubit extends Cubit<ErrandCarStates> {
       return;
     }
 
-    if (_activePass!.startMileage != null && endMileage < _activePass!.startMileage!) {
-      safeEmit(const ErrandCarStates.error(
-          message: 'Return mileage cannot be less than departure mileage'));
+    if (_activePass!.startMileage != null &&
+        endMileage < _activePass!.startMileage!) {
+      safeEmit(
+        const ErrandCarStates.error(
+          message: 'Return mileage cannot be less than departure mileage',
+        ),
+      );
       return;
     }
 
@@ -283,8 +309,9 @@ class ErrandCarCubit extends Cubit<ErrandCarStates> {
     final sync = FirestoreSyncService.instance;
 
     // Update request status in Firestore
-    final requestIndex =
-        _requests.indexWhere((r) => r.id == _activePass!.requestId);
+    final requestIndex = _requests.indexWhere(
+      (r) => r.id == _activePass!.requestId,
+    );
     if (requestIndex != -1) {
       final updatedReq = _requests[requestIndex].copyWith(status: 'completed');
       _requests[requestIndex] = updatedReq;
@@ -308,8 +335,11 @@ class ErrandCarCubit extends Cubit<ErrandCarStates> {
     }
 
     final distance = _activePass!.distanceDriven ?? 0;
-    safeEmit(ErrandCarStates.success(
-        'Mission completed! Total distance: $distance km'));
+    safeEmit(
+      ErrandCarStates.success(
+        'Mission completed! Total distance: $distance km',
+      ),
+    );
 
     _activePass = null;
     safeEmit(const ErrandCarStates.loaded());

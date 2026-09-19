@@ -31,7 +31,9 @@ class BusCubit extends Cubit<BusStates> {
 
     final optimizedRoutes = <BusRouteModel>[];
     for (final route in cachedRoutes) {
-      final routeBookings = allBookings.where((b) => b.routeId == route.id).toList();
+      final routeBookings = allBookings
+          .where((b) => b.routeId == route.id)
+          .toList();
       final bookedStops = routeBookings.map((b) => b.stopName).toList();
 
       final plan = BusRouteOptimizer.optimizeRoute(
@@ -43,10 +45,9 @@ class BusCubit extends Cubit<BusStates> {
           ? (route.totalSeats - routeBookings.length).clamp(0, route.totalSeats)
           : route.availableSeats;
 
-      optimizedRoutes.add(route.copyWith(
-        stops: plan.optimizedStops,
-        availableSeats: available,
-      ));
+      optimizedRoutes.add(
+        route.copyWith(stops: plan.optimizedStops, availableSeats: available),
+      );
     }
 
     _routes = optimizedRoutes;
@@ -62,7 +63,9 @@ class BusCubit extends Cubit<BusStates> {
 
   List<BusRouteModel> get filteredRoutes {
     if (_selectedShift == 'All') return _routes;
-    return _routes.where((r) => r.shift.toLowerCase() == _selectedShift.toLowerCase()).toList();
+    return _routes
+        .where((r) => r.shift.toLowerCase() == _selectedShift.toLowerCase())
+        .toList();
   }
 
   /// Loads official bus routes from Firestore and optimizes stops based on active passenger bookings.
@@ -83,7 +86,9 @@ class BusCubit extends Cubit<BusStates> {
 
     final optimizedRoutes = <BusRouteModel>[];
     for (final route in loadedRoutes) {
-      final routeBookings = allBookings.where((b) => b.routeId == route.id).toList();
+      final routeBookings = allBookings
+          .where((b) => b.routeId == route.id)
+          .toList();
       final bookedStops = routeBookings.map((b) => b.stopName).toList();
 
       final plan = BusRouteOptimizer.optimizeRoute(
@@ -95,17 +100,18 @@ class BusCubit extends Cubit<BusStates> {
           ? (route.totalSeats - routeBookings.length).clamp(0, route.totalSeats)
           : route.availableSeats;
 
-      optimizedRoutes.add(route.copyWith(
-        stops: plan.optimizedStops,
-        availableSeats: available,
-      ));
+      optimizedRoutes.add(
+        route.copyWith(stops: plan.optimizedStops, availableSeats: available),
+      );
     }
 
     _routes = optimizedRoutes;
 
     // Check for employee's active pass in Firestore
     if (employeeName != null) {
-      final userBookings = await sync.getBusBookings(employeeName: employeeName);
+      final userBookings = await sync.getBusBookings(
+        employeeName: employeeName,
+      );
       _activePass = userBookings.isNotEmpty ? userBookings.first : null;
     }
 
@@ -139,13 +145,19 @@ class BusCubit extends Cubit<BusStates> {
   }) async {
     final routeIndex = _routes.indexWhere((r) => r.id == routeId);
     if (routeIndex == -1) {
-      safeEmit(const BusStates.error(message: 'Selected bus route was not found'));
+      safeEmit(
+        const BusStates.error(message: 'Selected bus route was not found'),
+      );
       return false;
     }
 
     final route = _routes[routeIndex];
     if (route.availableSeats <= 0) {
-      safeEmit(const BusStates.error(message: 'Sorry, this route is already at full capacity'));
+      safeEmit(
+        const BusStates.error(
+          message: 'Sorry, this route is already at full capacity',
+        ),
+      );
       return false;
     }
 
@@ -159,7 +171,8 @@ class BusCubit extends Cubit<BusStates> {
     safeEmit(const BusStates.bookingSeat());
 
     final assignedSeat = (route.totalSeats - route.availableSeats) + 1;
-    final passId = 'PASS-${DateTime.now().millisecondsSinceEpoch.toString().substring(7)}';
+    final passId =
+        'PASS-${DateTime.now().millisecondsSinceEpoch.toString().substring(7)}';
 
     final newPass = BusBoardingPassModel(
       id: passId,
@@ -169,10 +182,13 @@ class BusCubit extends Cubit<BusStates> {
       busNumber: 'Bus #${route.id.replaceAll(RegExp(r'[^0-9]'), '')}',
       stopName: selectedStop.name,
       seatNumber: assignedSeat,
-      employeeName: employeeName.trim().isEmpty ? 'Employee' : employeeName.trim(),
+      employeeName: employeeName.trim().isEmpty
+          ? 'Employee'
+          : employeeName.trim(),
       departureTime: selectedStop.scheduledTime,
       status: 'active',
-      qrPayload: 'ALEXBANK-TRANSIT:${route.routeNumber}:SEAT-$assignedSeat:${employeeName.trim()}:$passId',
+      qrPayload:
+          'ALEXBANK-TRANSIT:${route.routeNumber}:SEAT-$assignedSeat:${employeeName.trim()}:$passId',
       bookedAt: DateTime.now(),
     );
 
@@ -219,7 +235,9 @@ class BusCubit extends Cubit<BusStates> {
 
     _activePass = null;
 
-    safeEmit(const BusStates.success('Seat reservation cancelled successfully'));
+    safeEmit(
+      const BusStates.success('Seat reservation cancelled successfully'),
+    );
     safeEmit(const BusStates.loaded());
     return true;
   }
@@ -227,7 +245,9 @@ class BusCubit extends Cubit<BusStates> {
   /// Checks in for today's bus ride using digital pass.
   Future<void> checkInForToday() async {
     if (_activePass == null) {
-      safeEmit(const BusStates.error(message: 'No active boarding pass to check in'));
+      safeEmit(
+        const BusStates.error(message: 'No active boarding pass to check in'),
+      );
       return;
     }
 
@@ -235,7 +255,9 @@ class BusCubit extends Cubit<BusStates> {
     _activePass = _activePass!.copyWith(status: 'boarded');
     await FirestoreSyncService.instance.saveBusBooking(_activePass!);
 
-    safeEmit(const BusStates.success('Checked in with driver! Enjoy your ride.'));
+    safeEmit(
+      const BusStates.success('Checked in with driver! Enjoy your ride.'),
+    );
     safeEmit(const BusStates.loaded());
   }
 
@@ -254,7 +276,11 @@ class BusCubit extends Cubit<BusStates> {
     _routes[index] = updatedRoute;
     FirestoreSyncService.instance.saveBusRoute(updatedRoute);
 
-    safeEmit(BusStates.success('Station "${newStop.name}" added to ${route.routeNumber}'));
+    safeEmit(
+      BusStates.success(
+        'Station "${newStop.name}" added to ${route.routeNumber}',
+      ),
+    );
     safeEmit(const BusStates.loaded());
   }
 
@@ -316,7 +342,9 @@ class BusCubit extends Cubit<BusStates> {
     _routes[index] = updatedRoute;
     FirestoreSyncService.instance.saveBusRoute(updatedRoute);
 
-    safeEmit(BusStates.success('Route details updated for ${route.routeNumber}'));
+    safeEmit(
+      BusStates.success('Route details updated for ${route.routeNumber}'),
+    );
     safeEmit(const BusStates.loaded());
   }
 
@@ -332,10 +360,15 @@ class BusCubit extends Cubit<BusStates> {
   }) {
     final morningRoute = _routes.firstWhere(
       (r) => r.id == morningRouteId,
-      orElse: () => FirestoreDataSeeder.initialRoutes.firstWhere((r) => r.id == morningRouteId),
+      orElse: () => FirestoreDataSeeder.initialRoutes.firstWhere(
+        (r) => r.id == morningRouteId,
+      ),
     );
     final eveningRouteId = morningRoute.id.replaceFirst('R1', 'R2');
-    final eveningRouteNumber = morningRoute.routeNumber.replaceFirst('10', '20');
+    final eveningRouteNumber = morningRoute.routeNumber.replaceFirst(
+      '10',
+      '20',
+    );
 
     // Reverse stops: Smart Village HQ becomes stop #1, and preceding stations reverse order.
     final reversedMorningStops = morningRoute.stops.reversed.toList();
@@ -354,8 +387,8 @@ class BusCubit extends Cubit<BusStates> {
           scheduledTime: isFirst
               ? departureTime
               : isLast
-                  ? estimatedArrival
-                  : 'Transit Stop',
+              ? estimatedArrival
+              : 'Transit Stop',
           order: i + 1,
           latitude: s.latitude,
           longitude: s.longitude,
@@ -388,7 +421,11 @@ class BusCubit extends Cubit<BusStates> {
 
     FirestoreSyncService.instance.saveBusRoute(eveningRoute);
 
-    safeEmit(BusStates.success('Mirrored evening return route synced for $eveningRouteNumber'));
+    safeEmit(
+      BusStates.success(
+        'Mirrored evening return route synced for $eveningRouteNumber',
+      ),
+    );
     safeEmit(const BusStates.loaded());
     return eveningRoute;
   }

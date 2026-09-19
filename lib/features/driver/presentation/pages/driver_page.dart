@@ -37,9 +37,7 @@ class _DriverPageState extends State<DriverPage> {
       context: context,
       builder: (ctx) => AlertDialog(
         title: Text(context.l10n.driverEndShift),
-        content: Text(
-          context.l10n.driverEndShiftConfirm,
-        ),
+        content: Text(context.l10n.driverEndShiftConfirm),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(),
@@ -95,7 +93,8 @@ class _DriverPageState extends State<DriverPage> {
         final cubit = context.read<DriverCubit>();
         final profile = cubit.profile;
         final trip = cubit.activeTrip;
-        final isLoading = state is Loading ||
+        final isLoading =
+            state is Loading ||
             state is StartingTrip ||
             state is AdvancingStop ||
             state is BoardingPassenger ||
@@ -246,7 +245,8 @@ class _DriverPageState extends State<DriverPage> {
                       _buildSubTabButton(
                         index: 1,
                         icon: Icons.people_alt_rounded,
-                        label: '${context.l10n.driverTabManifest} (${cubit.boardedCount}/${cubit.totalPassengers})',
+                        label:
+                            '${context.l10n.driverTabManifest} (${cubit.boardedCount}/${cubit.totalPassengers})',
                       ),
                       const SizedBox(width: AppSpacing.xs),
                       _buildSubTabButton(
@@ -262,9 +262,7 @@ class _DriverPageState extends State<DriverPage> {
                 // Tab View Content
                 Expanded(
                   child: trip == null
-                      ? const Center(
-                          child: CircularProgressIndicator(),
-                        )
+                      ? const Center(child: CircularProgressIndicator())
                       : IndexedStack(
                           index: _selectedTab,
                           children: [
@@ -394,8 +392,8 @@ class _DriverPageState extends State<DriverPage> {
                               color: isCompleted
                                   ? AppColors.primaryLight
                                   : isCurrent
-                                      ? AppColors.accentGold
-                                      : Colors.white,
+                                  ? AppColors.accentGold
+                                  : Colors.white,
                               border: Border.all(
                                 color: isCompleted || isCurrent
                                     ? Colors.transparent
@@ -405,8 +403,9 @@ class _DriverPageState extends State<DriverPage> {
                               boxShadow: isCurrent
                                   ? [
                                       BoxShadow(
-                                        color: AppColors.accentGold
-                                            .withValues(alpha: 0.4),
+                                        color: AppColors.accentGold.withValues(
+                                          alpha: 0.4,
+                                        ),
                                         blurRadius: 8,
                                         spreadRadius: 1,
                                       ),
@@ -417,8 +416,8 @@ class _DriverPageState extends State<DriverPage> {
                               isCompleted
                                   ? Icons.check
                                   : isCurrent
-                                      ? Icons.navigation_rounded
-                                      : Icons.circle,
+                                  ? Icons.navigation_rounded
+                                  : Icons.circle,
                               size: isCompleted || isCurrent ? 14 : 8,
                               color: isCompleted || isCurrent
                                   ? Colors.white
@@ -458,8 +457,8 @@ class _DriverPageState extends State<DriverPage> {
                                         color: isCurrent
                                             ? AppColors.textPrimary
                                             : isCompleted
-                                                ? AppColors.textMid
-                                                : AppColors.textSecondary,
+                                            ? AppColors.textMid
+                                            : AppColors.textSecondary,
                                       ),
                                     ),
                                     if (stop.nameAr != null)
@@ -482,8 +481,9 @@ class _DriverPageState extends State<DriverPage> {
                                   color: isCurrent
                                       ? AppColors.goldLight
                                       : AppColors.background,
-                                  borderRadius:
-                                      BorderRadius.circular(AppRadius.sm),
+                                  borderRadius: BorderRadius.circular(
+                                    AppRadius.sm,
+                                  ),
                                 ),
                                 child: Text(
                                   stop.scheduledTime,
@@ -553,7 +553,10 @@ class _DriverPageState extends State<DriverPage> {
                       ],
                     ),
                     Text(
-                      context.l10n.driverBoardedRatio(cubit.boardedCount, cubit.totalPassengers),
+                      context.l10n.driverBoardedRatio(
+                        cubit.boardedCount,
+                        cubit.totalPassengers,
+                      ),
                       style: AppTypography.caption.copyWith(
                         color: AppColors.primaryMid,
                         fontWeight: FontWeight.w700,
@@ -569,7 +572,9 @@ class _DriverPageState extends State<DriverPage> {
                         ? cubit.boardedCount / cubit.totalPassengers
                         : 0.0,
                     backgroundColor: AppColors.border,
-                    valueColor: const AlwaysStoppedAnimation<Color>(AppColors.primary),
+                    valueColor: const AlwaysStoppedAnimation<Color>(
+                      AppColors.primary,
+                    ),
                     minHeight: 8,
                   ),
                 ),
@@ -606,10 +611,15 @@ class _DriverPageState extends State<DriverPage> {
                 decoration: BoxDecoration(
                   color: AppColors.greenLight,
                   borderRadius: BorderRadius.circular(AppRadius.pill),
-                  border: Border.all(color: AppColors.primaryLight.withValues(alpha: 0.3)),
+                  border: Border.all(
+                    color: AppColors.primaryLight.withValues(alpha: 0.3),
+                  ),
                 ),
                 child: Text(
-                  context.l10n.driverBoardedRatio(cubit.boardedCount, cubit.totalPassengers),
+                  context.l10n.driverBoardedRatio(
+                    cubit.boardedCount,
+                    cubit.totalPassengers,
+                  ),
                   style: AppTypography.caption.copyWith(
                     fontWeight: FontWeight.w800,
                     color: AppColors.primary,
@@ -624,23 +634,34 @@ class _DriverPageState extends State<DriverPage> {
           // Filter Segment
           Row(
             children: [
-              _buildFilterChip(0, '${context.l10n.driverFilterAll} (${trip.totalPassengers})'),
+              _buildFilterChip(
+                0,
+                '${context.l10n.driverFilterAll} (${trip.totalPassengers})',
+              ),
               const SizedBox(width: AppSpacing.xs),
-              _buildFilterChip(1, '${context.l10n.driverFilterAwaiting} (${trip.totalPassengers - trip.boardedCount})'),
+              _buildFilterChip(
+                1,
+                '${context.l10n.driverFilterAwaiting} (${trip.totalPassengers - trip.boardedCount})',
+              ),
               const SizedBox(width: AppSpacing.xs),
-              _buildFilterChip(2, '${context.l10n.driverFilterBoarded} (${trip.boardedCount})'),
+              _buildFilterChip(
+                2,
+                '${context.l10n.driverFilterBoarded} (${trip.boardedCount})',
+              ),
             ],
           ),
           const SizedBox(height: AppSpacing.sm),
 
           // Passenger Roster List
-          ...filteredPassengers.map((passenger) => Padding(
-                padding: const EdgeInsets.only(bottom: AppSpacing.xs),
-                child: PassengerManifestTile(
-                  passenger: passenger,
-                  onToggleBoarding: () => cubit.boardPassenger(passenger.id),
-                ),
-              )),
+          ...filteredPassengers.map(
+            (passenger) => Padding(
+              padding: const EdgeInsets.only(bottom: AppSpacing.xs),
+              child: PassengerManifestTile(
+                passenger: passenger,
+                onToggleBoarding: () => cubit.boardPassenger(passenger.id),
+              ),
+            ),
+          ),
         ],
       ),
     );
@@ -728,7 +749,9 @@ class _DriverPageState extends State<DriverPage> {
         children: [
           // Readiness Banner
           AppCard(
-            backgroundColor: isReady ? AppColors.greenLight : AppColors.goldLight,
+            backgroundColor: isReady
+                ? AppColors.greenLight
+                : AppColors.goldLight,
             borderSide: BorderSide(
               color: isReady
                   ? AppColors.primaryLight.withValues(alpha: 0.4)
@@ -753,13 +776,18 @@ class _DriverPageState extends State<DriverPage> {
                             ? context.l10n.driverVehicleReady
                             : context.l10n.driverInspectionInProgress,
                         style: AppTypography.labelLarge.copyWith(
-                          color: isReady ? AppColors.primary : AppColors.textPrimary,
+                          color: isReady
+                              ? AppColors.primary
+                              : AppColors.textPrimary,
                           fontWeight: FontWeight.w800,
                           fontSize: 12,
                         ),
                       ),
                       Text(
-                        context.l10n.driverInspectionProgressText(checkedCount, totalCount),
+                        context.l10n.driverInspectionProgressText(
+                          checkedCount,
+                          totalCount,
+                        ),
                         style: AppTypography.caption.copyWith(
                           color: AppColors.textMid,
                           fontSize: 11,
@@ -791,12 +819,16 @@ class _DriverPageState extends State<DriverPage> {
               padding: const EdgeInsets.only(bottom: AppSpacing.xs),
               child: AppCard(
                 padding: const EdgeInsets.all(AppSpacing.sm),
-                backgroundColor: isChecked ? AppColors.surface : AppColors.background,
+                backgroundColor: isChecked
+                    ? AppColors.surface
+                    : AppColors.background,
                 child: Row(
                   children: [
                     Icon(
                       item['icon'] as IconData,
-                      color: isChecked ? AppColors.primary : AppColors.textSecondary,
+                      color: isChecked
+                          ? AppColors.primary
+                          : AppColors.textSecondary,
                       size: 22,
                     ),
                     const SizedBox(width: AppSpacing.sm),

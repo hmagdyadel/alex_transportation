@@ -194,7 +194,6 @@ class _AccessGatePageState extends State<AccessGatePage> {
     );
   }
 
-
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;

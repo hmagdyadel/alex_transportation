@@ -32,13 +32,18 @@ class BiometricHelper {
   static Future<bool> authenticate({String? localizedReason}) async {
     try {
       final bool didAuthenticate = await _auth.authenticate(
-        localizedReason: localizedReason ?? 'Please authenticate to access AlexBank Transit',
-        biometricOnly: false, // Allows fallback to device PIN/Passcode if biometrics fail
-        persistAcrossBackgrounding: true, // Retains auth prompt state during brief backgrounding
+        localizedReason:
+            localizedReason ?? 'Please authenticate to access AlexBank Transit',
+        biometricOnly:
+            false, // Allows fallback to device PIN/Passcode if biometrics fail
+        persistAcrossBackgrounding:
+            true, // Retains auth prompt state during brief backgrounding
       );
       return didAuthenticate;
     } on PlatformException catch (e) {
-      debugPrint('[BiometricHelper] Biometric auth error: ${e.code} - ${e.message}');
+      debugPrint(
+        '[BiometricHelper] Biometric auth error: ${e.code} - ${e.message}',
+      );
       return false;
     } catch (e) {
       debugPrint('[BiometricHelper] Unexpected biometric error: $e');

@@ -49,15 +49,9 @@ class TransitApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider<LocaleCubit>(
-          create: (_) => sl<LocaleCubit>(),
-        ),
-        BlocProvider<AuthCubit>(
-          create: (_) => sl<AuthCubit>(),
-        ),
-        BlocProvider<NotificationCubit>(
-          create: (_) => sl<NotificationCubit>(),
-        ),
+        BlocProvider<LocaleCubit>(create: (_) => sl<LocaleCubit>()),
+        BlocProvider<AuthCubit>(create: (_) => sl<AuthCubit>()),
+        BlocProvider<NotificationCubit>(create: (_) => sl<NotificationCubit>()),
       ],
       child: BlocBuilder<LocaleCubit, Locale>(
         builder: (context, locale) {
@@ -92,4 +86,3 @@ class TransitApp extends StatelessWidget {
     );
   }
 }
-

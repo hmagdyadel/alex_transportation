@@ -39,14 +39,18 @@ class PushNotificationService {
   bool get isInitialized => _initialized;
 
   /// Broadcast stream of notifications for in-app banner display.
-  final _notificationController = StreamController<TransitNotification>.broadcast();
-  Stream<TransitNotification> get notificationStream => _notificationController.stream;
+  final _notificationController =
+      StreamController<TransitNotification>.broadcast();
+  Stream<TransitNotification> get notificationStream =>
+      _notificationController.stream;
 
   /// Initialize FCM. Safe to call multiple times; idempotent.
   Future<void> initialize() async {
     if (_initialized) return;
     if (!FirebaseClient.isInitialized) {
-      debugPrint('[PushNotification] Firebase not initialized — push disabled.');
+      debugPrint(
+        '[PushNotification] Firebase not initialized — push disabled.',
+      );
       return;
     }
 
@@ -71,7 +75,9 @@ class PushNotificationService {
 
       // Get FCM token
       _fcmToken = await _messaging!.getToken();
-      debugPrint('[PushNotification] ✓ FCM Token: ${_fcmToken?.substring(0, 20)}...');
+      debugPrint(
+        '[PushNotification] ✓ FCM Token: ${_fcmToken?.substring(0, 20)}...',
+      );
 
       // Listen for token refresh
       _messaging!.onTokenRefresh.listen((newToken) {
@@ -101,12 +107,14 @@ class PushNotificationService {
   void _handleForegroundMessage(RemoteMessage message) {
     final notification = message.notification;
     if (notification != null) {
-      _notificationController.add(TransitNotification(
-        title: notification.title ?? 'AlexBank Transit',
-        body: notification.body ?? '',
-        route: message.data['route'] as String?,
-        timestamp: DateTime.now(),
-      ));
+      _notificationController.add(
+        TransitNotification(
+          title: notification.title ?? 'AlexBank Transit',
+          body: notification.body ?? '',
+          route: message.data['route'] as String?,
+          timestamp: DateTime.now(),
+        ),
+      );
     }
   }
 
@@ -121,42 +129,50 @@ class PushNotificationService {
 
   /// Simulate a bus arrival push notification.
   void demoBusArrival() {
-    _notificationController.add(TransitNotification(
-      title: '🚌 Bus Approaching',
-      body: 'Route 101 (Maadi → Smart Village) is 5 minutes away from your pickup stop.',
-      route: '/home',
-      timestamp: DateTime.now(),
-    ));
+    _notificationController.add(
+      TransitNotification(
+        title: '🚌 Bus Approaching',
+        body: 'Route 101 (Maadi → Smart Village) is 5 minutes away from your pickup stop.',
+        route: '/home',
+        timestamp: DateTime.now(),
+      ),
+    );
   }
 
   /// Simulate an errand request approval.
   void demoErrandApproval() {
-    _notificationController.add(TransitNotification(
-      title: '🚗 Errand Approved',
-      body: 'Your vehicle request has been approved. BMW 520i (D-H-W 8901) assigned for your mission.',
-      route: '/home',
-      timestamp: DateTime.now(),
-    ));
+    _notificationController.add(
+      TransitNotification(
+        title: '🚗 Errand Approved',
+        body: 'Your vehicle request has been approved. BMW 520i (D-H-W 8901) assigned for your mission.',
+        route: '/home',
+        timestamp: DateTime.now(),
+      ),
+    );
   }
 
   /// Simulate a garage subscription confirmation.
   void demoGarageConfirmed() {
-    _notificationController.add(TransitNotification(
-      title: '🅿️ Parking Pass Confirmed',
-      body: 'Your monthly parking subscription is active. Assigned bay: P1-018. Monthly deduction: 1,200 EGP.',
-      route: '/home',
-      timestamp: DateTime.now(),
-    ));
+    _notificationController.add(
+      TransitNotification(
+        title: '🅿️ Parking Pass Confirmed',
+        body: 'Your monthly parking subscription is active. Assigned bay: P1-018. Monthly deduction: 1,200 EGP.',
+        route: '/home',
+        timestamp: DateTime.now(),
+      ),
+    );
   }
 
   /// Simulate a driver shift reminder.
   void demoDriverShiftReminder() {
-    _notificationController.add(TransitNotification(
-      title: '🔔 Shift Reminder',
-      body: 'Your morning shift starts in 30 minutes. Route 101 (Maadi → Smart Village). Please start your pre-trip inspection.',
-      route: '/driver',
-      timestamp: DateTime.now(),
-    ));
+    _notificationController.add(
+      TransitNotification(
+        title: '🔔 Shift Reminder',
+        body: 'Your morning shift starts in 30 minutes. Route 101 (Maadi → Smart Village). Please start your pre-trip inspection.',
+        route: '/driver',
+        timestamp: DateTime.now(),
+      ),
+    );
   }
 
   /// Dispose the notification stream.

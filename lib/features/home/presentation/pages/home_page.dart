@@ -59,10 +59,7 @@ class _HomePageState extends State<HomePage> {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppRadius.lg),
         ),
-        title: Text(
-          l10n.signOutConfirmTitle,
-          style: AppTypography.titleLarge,
-        ),
+        title: Text(l10n.signOutConfirmTitle, style: AppTypography.titleLarge),
         content: Text(
           l10n.signOutConfirmMessage,
           style: AppTypography.bodyMedium,
@@ -165,7 +162,9 @@ class _HomePageState extends State<HomePage> {
           _NotificationBell(),
           StatusPill(
             label: isAdmin
-                ? (userRole == 'employee' ? l10n.roleAdminUserMode : l10n.roleAdminBadge)
+                ? (userRole == 'employee'
+                      ? l10n.roleAdminUserMode
+                      : l10n.roleAdminBadge)
                 : l10n.roleEmployee,
             type: isAdmin ? StatusPillType.gold : StatusPillType.active,
           ),
@@ -200,10 +199,7 @@ class _HomePageState extends State<HomePage> {
             decoration: const BoxDecoration(
               color: AppColors.surface,
               border: Border(
-                bottom: BorderSide(
-                  color: AppColors.border,
-                  width: 1,
-                ),
+                bottom: BorderSide(color: AppColors.border, width: 1),
               ),
             ),
             child: Row(

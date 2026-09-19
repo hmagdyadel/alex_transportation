@@ -62,7 +62,8 @@ class GarageCubit extends Cubit<GarageStates> {
   int get availableSlots => _availableSlots;
   int get waitingCount => _waitingCount;
   GarageSubscriptionModel? get currentSubscription => _currentSubscription;
-  List<GarageSubscriptionModel> get subscriptions => List.unmodifiable(_subscriptions);
+  List<GarageSubscriptionModel> get subscriptions =>
+      List.unmodifiable(_subscriptions);
 
   /// Loads garage status and active subscriptions directly from Cloud Firestore.
   Future<void> loadGarageData({String? userIsl}) async {
@@ -100,7 +101,9 @@ class GarageCubit extends Cubit<GarageStates> {
       return _subscriptions.firstWhere(
         (s) =>
             s.isl.toLowerCase() == cleanIsl &&
-            (cleanEmail == null || cleanEmail.isEmpty || s.email.toLowerCase() == cleanEmail),
+            (cleanEmail == null ||
+                cleanEmail.isEmpty ||
+                s.email.toLowerCase() == cleanEmail),
       );
     } catch (_) {
       return null;
@@ -121,24 +124,43 @@ class GarageCubit extends Cubit<GarageStates> {
     // Validation
     final cleanNationalId = nationalId.trim();
     if (cleanNationalId.length != 14 || int.tryParse(cleanNationalId) == null) {
-      safeEmit(const GarageStates.error(message: 'Please enter a valid 14-digit National ID'));
+      safeEmit(
+        const GarageStates.error(
+          message: 'Please enter a valid 14-digit National ID',
+        ),
+      );
       return;
     }
 
     final cleanIsl = isl.trim();
-    if (cleanIsl.length < 4 || cleanIsl.length > 8 || int.tryParse(cleanIsl) == null) {
-      safeEmit(const GarageStates.error(message: 'Please enter a valid Bank ISL (4–8 digits)'));
+    if (cleanIsl.length < 4 ||
+        cleanIsl.length > 8 ||
+        int.tryParse(cleanIsl) == null) {
+      safeEmit(
+        const GarageStates.error(
+          message: 'Please enter a valid Bank ISL (4–8 digits)',
+        ),
+      );
       return;
     }
 
     final cleanEmail = email.trim().toLowerCase();
     if (!cleanEmail.endsWith('@alexbank.com')) {
-      safeEmit(const GarageStates.error(message: 'Work email must be an @alexbank.com address'));
+      safeEmit(
+        const GarageStates.error(
+          message: 'Work email must be an @alexbank.com address',
+        ),
+      );
       return;
     }
 
     if (!consent) {
-      safeEmit(GarageStates.error(message: 'You must agree to the EGP $monthlyFee payroll deduction to proceed'));
+      safeEmit(
+        GarageStates.error(
+          message:
+              'You must agree to the EGP $monthlyFee payroll deduction to proceed',
+        ),
+      );
       return;
     }
 
@@ -191,12 +213,16 @@ class GarageCubit extends Cubit<GarageStates> {
   /// Toggles parking check-in / check-out and persists status to Firestore.
   Future<void> checkInOut() async {
     if (_currentSubscription == null) {
-      safeEmit(const GarageStates.error(message: 'No active subscription found'));
+      safeEmit(
+        const GarageStates.error(message: 'No active subscription found'),
+      );
       return;
     }
 
     if (_currentSubscription!.status != 'active') {
-      safeEmit(const GarageStates.error(message: 'Subscription is not active yet'));
+      safeEmit(
+        const GarageStates.error(message: 'Subscription is not active yet'),
+      );
       return;
     }
 
@@ -252,8 +278,13 @@ class GarageCubit extends Cubit<GarageStates> {
     final cleanIsl = isl.trim();
     final cleanEmail = email.trim().toLowerCase();
 
-    if (_currentSubscription!.isl != cleanIsl || _currentSubscription!.email.toLowerCase() != cleanEmail) {
-      safeEmit(const GarageStates.error(message: 'ISL and email must match your active subscription'));
+    if (_currentSubscription!.isl != cleanIsl ||
+        _currentSubscription!.email.toLowerCase() != cleanEmail) {
+      safeEmit(
+        const GarageStates.error(
+          message: 'ISL and email must match your active subscription',
+        ),
+      );
       return;
     }
 
@@ -279,7 +310,11 @@ class GarageCubit extends Cubit<GarageStates> {
       slotLabel: updated.slotLabel,
     );
 
-    safeEmit(const GarageStates.success('Cancellation request submitted for payroll cut-off'));
+    safeEmit(
+      const GarageStates.success(
+        'Cancellation request submitted for payroll cut-off',
+      ),
+    );
     safeEmit(const GarageStates.loaded());
   }
 }
