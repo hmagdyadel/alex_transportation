@@ -37,6 +37,12 @@ jobs:
       - name: Install Dependencies
         run: flutter pub get
 
+      - name: Provide Firebase Configuration for CI
+        run: |
+          if [ ! -f lib/firebase_options.dart ]; then
+            cp lib/firebase_options.example.dart lib/firebase_options.dart
+          fi
+
       - name: Verify Code Formatting
         run: dart format --output=none --set-exit-if-changed .
 
