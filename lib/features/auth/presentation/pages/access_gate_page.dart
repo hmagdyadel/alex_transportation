@@ -194,17 +194,6 @@ class _AccessGatePageState extends State<AccessGatePage> {
     );
   }
 
-  void _applyDemoCredentials({
-    required String isl,
-    required String password,
-    required String role,
-  }) {
-    setState(() {
-      _islController.text = isl;
-      _passwordController.text = password;
-      _selectedRole = role;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -482,70 +471,6 @@ class _AccessGatePageState extends State<AccessGatePage> {
           ),
           textInputAction: TextInputAction.done,
           onSubmitted: (_) => _submitLogin(),
-        ),
-        const SizedBox(height: AppSpacing.md),
-
-        // Quick demo helper chips
-        Wrap(
-          spacing: AppSpacing.xs,
-          runSpacing: AppSpacing.xs,
-          crossAxisAlignment: WrapCrossAlignment.center,
-          children: [
-            Text(
-              l10n.quickFillLabel,
-              style: AppTypography.labelSmall.copyWith(
-                color: AppColors.textSecondary,
-              ),
-            ),
-            ActionChip(
-              label: Text(l10n.quickFillNormalUser),
-              onPressed: () {
-                _applyDemoCredentials(
-                  isl: '10492',
-                  password: 'alex123',
-                  role: 'employee',
-                );
-              },
-              backgroundColor: AppColors.greenLight,
-              labelStyle: AppTypography.labelSmall.copyWith(
-                color: AppColors.primaryMid,
-                fontWeight: FontWeight.w600,
-              ),
-              padding: EdgeInsets.zero,
-            ),
-            ActionChip(
-              label: Text(l10n.quickFillDriver),
-              onPressed: () {
-                _applyDemoCredentials(
-                  isl: 'DRV-2001',
-                  password: 'alex123',
-                  role: 'driver',
-                );
-              },
-              backgroundColor: AppColors.greenLight,
-              labelStyle: AppTypography.labelSmall.copyWith(
-                color: AppColors.primary,
-                fontWeight: FontWeight.w600,
-              ),
-              padding: EdgeInsets.zero,
-            ),
-            ActionChip(
-              label: Text(l10n.quickFillAdmin),
-              onPressed: () {
-                _applyDemoCredentials(
-                  isl: 'ADM-9001',
-                  password: 'alex123',
-                  role: 'admin',
-                );
-              },
-              backgroundColor: AppColors.goldLight,
-              labelStyle: AppTypography.labelSmall.copyWith(
-                color: AppColors.accentGold,
-                fontWeight: FontWeight.w600,
-              ),
-              padding: EdgeInsets.zero,
-            ),
-          ],
         ),
         const SizedBox(height: AppSpacing.lg),
 
