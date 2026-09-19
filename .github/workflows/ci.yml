@@ -1,4 +1,4 @@
-name: Commutly CI Pipeline
+name: AlexBank Transit CI Pipeline
 
 on:
   push:
